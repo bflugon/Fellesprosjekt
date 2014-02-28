@@ -9,28 +9,23 @@ package model;
  */
 public class Alarm {
 
-    private int alarmID;
-    private int alarmFlags;
+    private final int alarmID;
+    private int alarmFlag;
 
-    public Alarm(int alarmID, int alarmFlags){
+    public Alarm(int alarmID, int alarmFlag){
         this.alarmID = alarmID;
-        this.alarmFlags = alarmFlags;
+        this.alarmFlag = alarmFlag;
     }
 
     public int getAlarmID(){
         return alarmID;
     }
 
-    public void setAlarmID(int alarmID){
-        this.alarmID = alarmID;
-    }
-
     public int getAlarmFlags(){
-        return alarmFlags;
+        return alarmFlag;
     }
 
     public void setAlarmFlags(int alarmFlags){
-        this.alarmFlags = alarmFlags;
-
+        this.alarmFlag = alarmFlags;
     }
 }

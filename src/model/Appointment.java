@@ -10,24 +10,24 @@ import java.util.Date;
  * To change this template use File | Settings | File Templates.
  */
 public class Appointment {
-    private int appointmentID;
+    private final int appointmentID;
+    private int ownerID;
     private Date appointmentDate;
     private int duration;
     private String description;
+    private String location;
 
-    public Appointment(int appointmentID, Date appointmentDate, int duration, String description){
-        this.setAppointmentID(appointmentID);
-        this.setAppointmentDate(appointmentDate);
-        this.setDuration(duration);
-        this.setDescription(description);
+    public Appointment(int appointmentID, int ownerID, Date appointmentDate, int duration, String description, String location){
+        this.appointmentID = appointmentID;
+        this.ownerID = ownerID;
+        this.appointmentDate = appointmentDate;
+        this.duration = duration;
+        this.description = description;
+        this.location = location;
     }
 
     public int getAppointmentID() {
         return appointmentID;
-    }
-
-    public void setAppointmentID(int appointmentID) {
-        this.appointmentID = appointmentID;
     }
 
     public Date getAppointmentDate() {
@@ -52,5 +52,21 @@ public class Appointment {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getLocation(){
+        return location;
+    }
+
+    public void setLocation(String location){
+        this.location = location;
+    }
+
+    public int getOwnerID(){
+        return ownerID;
+    }
+
+    public void setOwnerID(int ownerID){
+        this.ownerID = ownerID;
     }
 }
