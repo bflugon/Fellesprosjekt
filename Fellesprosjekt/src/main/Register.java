@@ -35,5 +35,11 @@ public class Register {
         } catch (SQLException e){
             this.appointments = new ArrayList<Appointment>();
         }
+
+        try{
+            this.rooms = handler.getAllRooms();
+        } catch (SQLException e){
+            this.rooms = new ArrayList<MeetingRoom>();
+        }
     }
 }

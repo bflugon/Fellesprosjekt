@@ -37,4 +37,13 @@ public class Person {
     public String getEmail(){
         return email;
     }
+
+    @Override
+    public String toString() {
+        return "Person{" +
+                "username='" + username + '\'' +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                '}';
+    }
 }
