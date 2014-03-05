@@ -68,6 +68,22 @@ public class DatabaseHandler {
         }
     }
 
+    public String createAccount(String username, String password, String name, String email) throws SQLException{
+        try{
+            PreparedStatement query = this.db.prepareStatement("INSERT INTO person(Username, Name, Password, Email VALUES (?,?,?,?)");
+            query.setString(1,username);
+            query.setString(2,password);
+            query.setString(3,name);
+            query.setString(4,email);
+            query.executeUpdate();
+
+            return username;
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     /**
      * @return an ArrayList containing every person.
      * @throws SQLException
@@ -90,6 +106,7 @@ public class DatabaseHandler {
         return results;
     }
 
+    /*
     public ArrayList<Appointment> getAllAppointments() throws SQLException{
         PreparedStatement query = this.db.prepareStatement("SELECT * FROM appointment");
         ResultSet rs = query.executeQuery();
@@ -99,8 +116,11 @@ public class DatabaseHandler {
         }
 
         ArrayList<Appointment> results = new ArrayList<Appointment>();
-        //results.add(new Appointment(rs.getInt("AID"),OWNERID, APPOINTMENTDATE, DURATION, DESCRIPTION, LOCATION));
+        results.add(new Appointment(rs.getInt("AID"),OWNERID, APPOINTMENTDATE, DURATION, DESCRIPTION, LOCATION));
 
         return results;
     }
+    */
+
+
 }
