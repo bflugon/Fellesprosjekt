@@ -1,5 +1,7 @@
 package model;
 
+import util.GeneralUtil;
+
 import java.util.Date;
 
 /**
@@ -13,18 +15,20 @@ public class Appointment {
     private final int appointmentID;
     private String ownerName;
     private String appointmentName;
-    private Date appointmentStart;
-    private Date appointmentEnd;
+    private String appointmentStart;
+    private String appointmentEnd;
     private String description;
     private String location;
     private int priority;
+
+
 
     public Appointment(int appointmentID, String ownerName, String appointmentName, Date appointmentStart, Date appointmentEnd, int priority, String description, String location){
         this.appointmentID = appointmentID;
         this.ownerName = ownerName;
         this.appointmentName = appointmentName;
-        this.appointmentStart = appointmentStart;
-        this.appointmentEnd = appointmentEnd;
+        this.appointmentStart = GeneralUtil.dateToString(appointmentStart);
+        this.appointmentEnd = GeneralUtil.dateToString(appointmentEnd);
         this.priority = priority;
         this.description = description;
         this.location = location;
@@ -34,20 +38,20 @@ public class Appointment {
         return appointmentID;
     }
 
-    public Date getAppointmentStart(){
+    public String getAppointmentStart(){
         return appointmentStart;
     }
 
-    public Date getAppointmentEnd(){
+    public String getAppointmentEnd(){
         return appointmentEnd;
     }
 
     public void setAppointmentStart(Date appointmentStart){
-        this.appointmentStart = appointmentStart;
+        this.appointmentStart = GeneralUtil.dateToString(appointmentStart);
     }
 
     public void setAppointmentEnd(Date appointmentEnd){
-        this.appointmentEnd = appointmentEnd;
+        this.appointmentEnd = GeneralUtil.dateToString(appointmentEnd);
     }
 
     public String getDescription() {

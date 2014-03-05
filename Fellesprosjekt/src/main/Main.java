@@ -62,10 +62,10 @@ public class Main {
                 System.out.println(a.toString());
             }
 
-
+            /*
             System.out.println("Adding appointment");
             db.addAppointment("Test123", "2014-05-09 12:00:00", "2014-05-09 13:00:00", "Testing blabla", 2,"2014-05-03 12:00:00");
-
+            */
 
         } catch(SQLException e){
             e.printStackTrace();

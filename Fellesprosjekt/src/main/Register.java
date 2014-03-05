@@ -2,9 +2,11 @@ package main;
 
 import db.DatabaseHandler;
 import model.*;
+import util.GeneralUtil;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created with IntelliJ IDEA.
@@ -40,6 +42,15 @@ public class Register {
             this.rooms = handler.getAllRooms();
         } catch (SQLException e){
             this.rooms = new ArrayList<MeetingRoom>();
+        }
+    }
+
+    public void addAppointment(Appointment a){
+        try{
+        Date currentTime = new Date();
+        mHandler.addAppointment(a.getAppointmentName(),a.getAppointmentStart(),a.getAppointmentEnd(),a.getDescription(),a.getPriority(), GeneralUtil.dateToString(currentTime));
+        } catch (SQLException e){
+            e.printStackTrace();
         }
     }
 }
