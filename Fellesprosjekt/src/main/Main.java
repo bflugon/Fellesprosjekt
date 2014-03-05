@@ -36,6 +36,7 @@ public class Main {
 
         System.out.println("Creating connection");
         DatabaseHandler db = new DatabaseHandler();
+        Register reg = new Register(db);
 
         try{
             /*
@@ -61,6 +62,8 @@ public class Main {
             for(Appointment a : appointments){
                 System.out.println(a.toString());
             }
+
+
 
             /*
             System.out.println("Adding appointment");

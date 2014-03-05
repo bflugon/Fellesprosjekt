@@ -47,10 +47,50 @@ public class Register {
 
     public void addAppointment(Appointment a){
         try{
-        Date currentTime = new Date();
-        mHandler.addAppointment(a.getAppointmentName(),a.getAppointmentStart(),a.getAppointmentEnd(),a.getDescription(),a.getPriority(), GeneralUtil.dateToString(currentTime));
+            Date currentTime = new Date();
+            mHandler.addAppointment(a.getAppointmentName(),a.getAppointmentStart(),a.getAppointmentEnd(),a.getDescription(),a.getPriority(), GeneralUtil.dateToString(currentTime));
         } catch (SQLException e){
             e.printStackTrace();
         }
     }
+
+    public ArrayList<Appointment> getAppointments(){
+        return appointments;
+    }
+
+    public Appointment getAppointment(int AID){
+        for (Appointment a : appointments){
+            if(a.getAppointmentID() == AID){
+                return a;
+            }
+        }
+        return null;
+    }
+
+    public ArrayList<Person> getPersons(){
+        return persons;
+    }
+
+    public Person getPersonByUsername(String username){
+        for(Person p : persons){
+            if (p.getUsername().equals(username)){
+                return p;
+            }
+        }
+        return null;
+    }
+
+    public ArrayList<MeetingRoom> getRooms(){
+        return rooms;
+    }
+
+    public MeetingRoom getRoom(int roomID){
+        for(MeetingRoom mr : rooms){
+            if (roomID == mr.getRoomID()){
+                return mr;
+            }
+        }
+        return null;
+    }
+
 }
