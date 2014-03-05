@@ -7,7 +7,7 @@ CREATE TABLE Groups
 CREATE TABLE Person
 (
 	Username	varchar(20)	NOT NULL,
-	Name	varchar(30),
+	PName	varchar(30),
 	Email	varchar(320),
 	Password	varchar(30),
 	LastLoggedIn	DATETIME,
@@ -17,7 +17,8 @@ CREATE TABLE Person
 CREATE TABLE Appointment
 (
 	AID	int	NOT NULL AUTO_INCREMENT,
-	Name varchar(30),
+	AName varchar(30),
+	Description varchar(200)
 	Start	DATETIME,
 	End	DATETIME,
 	Priority varchar(1),
@@ -29,14 +30,14 @@ CREATE TABLE Appointment
 CREATE TABLE Room
 (
 	RID int NOT NULL AUTO_INCREMENT,
-	Name varchar(30),
+	RName varchar(30),
 	Capacity varchar(4),
 	Primary key (RID)
 );
 
 CREATE TABLE MemberOf
 (
-	ID INT NOT NULL,
+	moID INT NOT NULL,
 	GID	int NOT NULL,
 	Username varchar(20),
 	PRIMARY KEY(id),
@@ -46,7 +47,7 @@ CREATE TABLE MemberOf
 
 CREATE TABLE InvitedTo
 (
-	ID INT NOT NULL AUTO_INCREMENT,
+	itID INT NOT NULL AUTO_INCREMENT,
 	Username varchar(20) NOT NULL,
 	AID	int	NOT NULL,
 	Attends	BOOLEAN DEFAULT NULL,
@@ -59,7 +60,7 @@ CREATE TABLE InvitedTo
 
 CREATE TABLE IsLeader
 (
-	ID INT NOT NULL AUTO_INCREMENT,
+	ilID INT NOT NULL AUTO_INCREMENT,
 	Username	varchar(20)	NOT NULL,
 	AID	int	NOT NULL,
 	PRIMARY KEY (ID),
@@ -69,7 +70,7 @@ CREATE TABLE IsLeader
 
 CREATE TABLE TakesPlace
 (
-	ID INT NOT NULL AUTO_INCREMENT,
+	tpID INT NOT NULL AUTO_INCREMENT,
 	AID	int	NOT NULL,
 	RID int NOT NULL,
 	PRIMARY KEY (ID),
