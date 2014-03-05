@@ -8,6 +8,7 @@ CREATE TABLE Person
 (
 	Username	varchar(20)	NOT NULL,
 	Name	varchar(30),
+	Email	varchar(320),
 	Password	varchar(30),
 	LastLoggedIn	DATETIME,
 	PRIMARY KEY	(Username)
