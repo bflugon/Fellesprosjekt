@@ -22,4 +22,5 @@ public class DatabaseHandlerTest {
         assert(db.authenticate("Bob","hei"));
         assert(db.authenticate("WRONG", "WRONG") == false);
     }
+
 }

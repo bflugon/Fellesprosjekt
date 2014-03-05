@@ -1,10 +1,17 @@
 package main;
 
 import db.DatabaseHandler;
+import model.Appointment;
 import model.Person;
+import util.GeneralUtil;
 
+import java.security.Timestamp;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 /**
  * Created with IntelliJ IDEA.
@@ -31,7 +38,7 @@ public class Main {
         DatabaseHandler db = new DatabaseHandler();
 
         try{
-
+            /*
             System.out.println("Trying to authenticate with username 'Bob' and password 'hei'");
             if(db.authenticate("Bob", "hei")){
                 System.out.println("Authentication successful");
@@ -45,6 +52,19 @@ public class Main {
             for (Person p : persons){
                 System.out.println(p.getName());
             }
+            */
+
+
+            System.out.println("Getting all appointments and prints them");
+            ArrayList<Appointment> appointments = db.getAllAppointments();
+
+            for(Appointment a : appointments){
+                System.out.println(a.toString());
+            }
+
+
+            System.out.println("Adding appointment");
+            db.addAppointment("Test123", "2014-05-09 12:00:00", "2014-05-09 13:00:00", "Testing blabla", 2,"2014-05-03 12:00:00");
 
 
         } catch(SQLException e){

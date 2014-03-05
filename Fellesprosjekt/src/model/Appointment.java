@@ -11,17 +11,21 @@ import java.util.Date;
  */
 public class Appointment {
     private final int appointmentID;
-    private int ownerID;
-    private Date appointmentDate;
-    private int duration;
+    private String ownerName;
+    private String appointmentName;
+    private Date appointmentStart;
+    private Date appointmentEnd;
     private String description;
     private String location;
+    private int priority;
 
-    public Appointment(int appointmentID, int ownerID, Date appointmentDate, int duration, String description, String location){
+    public Appointment(int appointmentID, String ownerName, String appointmentName, Date appointmentStart, Date appointmentEnd, int priority, String description, String location){
         this.appointmentID = appointmentID;
-        this.ownerID = ownerID;
-        this.appointmentDate = appointmentDate;
-        this.duration = duration;
+        this.ownerName = ownerName;
+        this.appointmentName = appointmentName;
+        this.appointmentStart = appointmentStart;
+        this.appointmentEnd = appointmentEnd;
+        this.priority = priority;
         this.description = description;
         this.location = location;
     }
@@ -30,24 +34,41 @@ public class Appointment {
         return appointmentID;
     }
 
-    public Date getAppointmentDate() {
-        return appointmentDate;
+    public Date getAppointmentStart(){
+        return appointmentStart;
     }
 
-    public void setAppointmentDate(Date appointmentDate) {
-        this.appointmentDate = appointmentDate;
+    public Date getAppointmentEnd(){
+        return appointmentEnd;
     }
 
-    public int getDuration() {
-        return duration;
+    public void setAppointmentStart(Date appointmentStart){
+        this.appointmentStart = appointmentStart;
     }
 
-    public void setDuration(int duration) {
-        this.duration = duration;
+    public void setAppointmentEnd(Date appointmentEnd){
+        this.appointmentEnd = appointmentEnd;
     }
 
     public String getDescription() {
         return description;
+    }
+
+    public int getPriority() {
+        return priority;
+    }
+
+    public void setPriority(int priority) {
+        this.priority = priority;
+    }
+
+    public String getAppointmentName() {
+
+        return appointmentName;
+    }
+
+    public void setAppointmentName(String appointmentName) {
+        this.appointmentName = appointmentName;
     }
 
     public void setDescription(String description) {
@@ -62,11 +83,25 @@ public class Appointment {
         this.location = location;
     }
 
-    public int getOwnerID(){
-        return ownerID;
+    public String getOwnerName(){
+        return ownerName;
     }
 
-    public void setOwnerID(int ownerID){
-        this.ownerID = ownerID;
+    public void setOwnerName(String ownerName){
+        this.ownerName = ownerName;
+    }
+
+    @Override
+    public String toString() {
+        return "Appointment{" +
+                "appointmentID=" + appointmentID +
+                ", ownerName='" + ownerName + '\'' +
+                ", appointmentName='" + appointmentName + '\'' +
+                ", appointmentStart=" + appointmentStart +
+                ", appointmentEnd=" + appointmentEnd +
+                ", description='" + description + '\'' +
+                ", location='" + location + '\'' +
+                ", priority=" + priority +
+                '}';
     }
 }
