@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox prefHeight="400.0" prefWidth="250.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.roomFinder.RoomFinderController">
+  <children>
+    <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
+<children><ListView layoutX="13.0" layoutY="47.0" prefHeight="277.0" prefWidth="225.0" /><Label layoutX="79.0" layoutY="14.0" text="Velg rom">
+<font>
+<Font size="21.0" />
+</font></Label><TextField layoutX="13.0" layoutY="331.0" prefHeight="26.0" prefWidth="225.0" promptText="Alternativt rom" /><Button layoutX="108.0" layoutY="366.0" mnemonicParsing="false" onAction="#closeOnOk" text="OK" />
+</children>
+    </AnchorPane>
+  </children>
+</VBox>

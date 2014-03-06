@@ -28,17 +28,10 @@ public class CalendarController implements Initializable{
     }
 
     public void makeMeeting(ActionEvent actionEvent) throws Exception{
-
-
-
         Stage newStage = new Stage();
         Parent root = FXMLLoader.load(getClass().getResource("../meeting/meeting.fxml"));
         newStage.setTitle("Hello World");
         newStage.setScene(new Scene(root));
         newStage.show();
-
-
-
-
     }
 }
