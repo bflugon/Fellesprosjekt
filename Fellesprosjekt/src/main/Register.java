@@ -99,6 +99,11 @@ public class Register {
         return null;
     }
 
+    /**
+     * Gets members of a group by groupID
+     * @param groupID
+     * @return
+     */
     public ArrayList<Person> getMembersOfGroup(int groupID){
         if(!allGroupMembers.containsKey(groupID)){
             return null;
