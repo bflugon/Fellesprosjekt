@@ -10,6 +10,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.ListView;
 import javafx.scene.control.cell.ComboBoxListCell;
 import javafx.stage.Stage;
+import main.GuiUtils;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -28,10 +29,14 @@ public class CalendarController implements Initializable{
     }
 
     public void makeMeeting(ActionEvent actionEvent) throws Exception{
-        Stage newStage = new Stage();
-        Parent root = FXMLLoader.load(getClass().getResource("../meeting/meeting.fxml"));
-        newStage.setTitle("Hello World");
-        newStage.setScene(new Scene(root));
-        newStage.show();
+        GuiUtils.createView("../meeting/meeting.fxml", "Lag møte", this.getClass());
     }
+
+    public void importButtonOnAction(ActionEvent actionEvent) throws  Exception{
+        GuiUtils.createView("../importCalendars/importCalendars.fxml", "Importer", this.getClass());
+    }
+
+    //LEGGES EN MER FORNUFTIG PLASS SENERE ^^
+
+
 }
