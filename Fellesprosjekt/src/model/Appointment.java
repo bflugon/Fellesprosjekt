@@ -1,5 +1,7 @@
 package model;
 
+import util.GeneralUtil;
+
 import java.util.Date;
 
 /**
@@ -11,62 +13,100 @@ import java.util.Date;
  */
 public class Appointment {
     private final int appointmentID;
-    private int ownerID;
-    private Date appointmentDate;
-    private int duration;
+    private String ownerName;
+    private String appointmentName;
+    private Date appointmentStart;
+    private Date appointmentEnd;
     private String description;
-    private String location;
+    private MeetingRoom meetingRoom;
+    private int priority;
+    private Date createdDate;
 
-    public Appointment(int appointmentID, int ownerID, Date appointmentDate, int duration, String description, String location){
+
+
+    public Appointment(int appointmentID, String ownerName, String appointmentName, Date appointmentStart, Date appointmentEnd, int priority, String description, Date createdDate, MeetingRoom mr){
         this.appointmentID = appointmentID;
-        this.ownerID = ownerID;
-        this.appointmentDate = appointmentDate;
-        this.duration = duration;
+        this.ownerName = ownerName;
+        this.appointmentName = appointmentName;
+        this.appointmentStart = appointmentStart;
+        this.appointmentEnd = appointmentEnd;
+        this.priority = priority;
         this.description = description;
-        this.location = location;
+        this.meetingRoom = mr;
+        this.createdDate = createdDate;
     }
 
     public int getAppointmentID() {
         return appointmentID;
     }
 
-    public Date getAppointmentDate() {
-        return appointmentDate;
+    public String getAppointmentStart(){
+        return GeneralUtil.dateToString(appointmentStart);
     }
 
-    public void setAppointmentDate(Date appointmentDate) {
-        this.appointmentDate = appointmentDate;
+    public String getAppointmentEnd(){
+        return GeneralUtil.dateToString(appointmentEnd);
     }
 
-    public int getDuration() {
-        return duration;
+    public void setAppointmentStart(Date appointmentStart){
+        this.appointmentStart = appointmentStart;
     }
 
-    public void setDuration(int duration) {
-        this.duration = duration;
+    public void setAppointmentEnd(Date appointmentEnd){
+        this.appointmentEnd = appointmentEnd;
     }
 
     public String getDescription() {
         return description;
     }
 
+    public int getPriority() {
+        return priority;
+    }
+
+    public void setPriority(int priority) {
+        this.priority = priority;
+    }
+
+    public String getAppointmentName() {
+        return appointmentName;
+    }
+
+    public void setAppointmentName(String appointmentName) {
+        this.appointmentName = appointmentName;
+    }
+
     public void setDescription(String description) {
         this.description = description;
     }
 
-    public String getLocation(){
-        return location;
+    public MeetingRoom getRoom(){
+        return meetingRoom;
     }
 
-    public void setLocation(String location){
-        this.location = location;
+    public String getOwnerName(){
+        return ownerName;
     }
 
-    public int getOwnerID(){
-        return ownerID;
+    public void setOwnerName(String ownerName){
+        this.ownerName = ownerName;
     }
 
-    public void setOwnerID(int ownerID){
-        this.ownerID = ownerID;
+    public String getCreatedDate() {
+        return GeneralUtil.dateToString(createdDate);
     }
+
+    @Override
+    public String toString() {
+        return "Appointment{" +
+                "appointmentID=" + appointmentID +
+                ", ownerName='" + ownerName + '\'' +
+                ", appointmentName='" + appointmentName + '\'' +
+                ", appointmentStart=" + appointmentStart +
+                ", appointmentEnd=" + appointmentEnd +
+                ", description='" + description + '\'' +
+                ", priority=" + priority +
+                '}';
+    }
+
 }
