@@ -7,6 +7,8 @@ import util.GeneralUtil;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Created with IntelliJ IDEA.
@@ -22,6 +24,7 @@ public class Register {
     private ArrayList<Alarm> alarms;
     private ArrayList<MeetingRoom> rooms;
     private ArrayList<Group> groups;
+    private TreeMap<Integer, String> allGroupMembers;
 
     public Register(DatabaseHandler handler){
         this.mHandler = handler;
@@ -42,6 +45,18 @@ public class Register {
             this.rooms = handler.getAllRooms();
         } catch (SQLException e){
             this.rooms = new ArrayList<MeetingRoom>();
+        }
+
+        try{
+            this.groups = handler.getAllGroups();
+        } catch (SQLException e){
+            this.groups = new ArrayList<Group>();
+        }
+
+        try{
+            this.allGroupMembers = handler.getAllMembersOfGroups();
+        } catch (SQLException e){
+            this.allGroupMembers = new TreeMap<Integer, String>();
         }
     }
 
@@ -82,6 +97,24 @@ public class Register {
             }
         }
         return null;
+    }
+
+    public ArrayList<Person> getMembersOfGroup(int groupID){
+        if(!allGroupMembers.containsKey(groupID)){
+            return null;
+        }
+
+        ArrayList<Person> results = new ArrayList<Person>();
+
+        for (Person p : persons){
+            for (Map.Entry<Integer, String> entry : allGroupMembers.entrySet()){
+                if( (entry.getKey() == groupID) && (p.getUsername().equals(entry.getValue()) )){
+                    results.add(p);
+                }
+            }
+        }
+
+        return results;
     }
 
 }

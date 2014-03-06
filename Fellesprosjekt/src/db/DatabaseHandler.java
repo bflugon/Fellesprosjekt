@@ -1,6 +1,7 @@
 package db;
 
 import model.Appointment;
+import model.Group;
 import model.MeetingRoom;
 import model.Person;
 import util.GeneralUtil;
@@ -9,6 +10,7 @@ import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.TreeMap;
 
 /**
  * Created with IntelliJ IDEA.
@@ -84,7 +86,7 @@ public class DatabaseHandler {
     public void createAccount(String username, String password, String name, String email) throws SQLException{
         try{
             PreparedStatement query = this.db.prepareStatement("INSERT INTO person(Username, PName, Password, Email VALUES (?,?,?,?)");
-            query.setString(1,username);
+            query.setString(1, username);
             query.setString(2,password);
             query.setString(3,name);
             query.setString(4,email);
@@ -180,7 +182,7 @@ public class DatabaseHandler {
         PreparedStatement query = this.db.prepareStatement("INSERT INTO isleader(ilID,Username,AID) VALUES (?,?,?)");
         query.setInt(1,id);
         query.setString(2,ownerUsername);
-        query.setInt(3,aID);
+        query.setInt(3, aID);
         query.executeUpdate();
     }
 
@@ -195,8 +197,8 @@ public class DatabaseHandler {
 
         PreparedStatement query = this.db.prepareStatement("INSERT INTO takesplace(tpID,AID,RID) VALUES(?,?,?)");
         query.setInt(1,id);
-        query.setInt(2,aID);
-        query.setInt(3,mr.getRoomID());
+        query.setInt(2, aID);
+        query.setInt(3, mr.getRoomID());
         query.executeUpdate();
     }
 
@@ -214,9 +216,9 @@ public class DatabaseHandler {
     public void editAppointment(int aID, String name, String start, String end, String description, int priority, MeetingRoom mr) throws SQLException{
         PreparedStatement query = this.db.prepareStatement("UPDATE appointment SET AName = ?, Start = ?, End = ?, Description = ?, Priority = ?, DateChanged = ? WHERE AID = ?");
         query.setString(1,name);
-        query.setString(2,start);
-        query.setString(3,end);
-        query.setString(4,description);
+        query.setString(2, start);
+        query.setString(3, end);
+        query.setString(4, description);
         query.setInt(5,priority);
         java.util.Date currentTime = new java.util.Date();
         query.setTimestamp(6,Timestamp.valueOf(GeneralUtil.dateToString(currentTime)));
@@ -234,7 +236,7 @@ public class DatabaseHandler {
      */
     private void editTakesPlace(int aID, MeetingRoom mr) throws SQLException{
         PreparedStatement query = this.db.prepareStatement("UPDATE takesplace SET RID = ? WHERE AID = ?");
-        query.setInt(1,mr.getRoomID());
+        query.setInt(1, mr.getRoomID());
         query.setInt(2, aID);
         query.executeUpdate();
     }
@@ -275,7 +277,7 @@ public class DatabaseHandler {
 
         query.setInt(1,id);
         query.setString(2,roomName);
-        query.setInt(3,capacity);
+        query.setInt(3, capacity);
 
         query.executeUpdate();
     }
@@ -303,10 +305,50 @@ public class DatabaseHandler {
     public void addMemberOfGroup(int gID, Person p) throws SQLException{
         int id = getNextAutoIncrement("memberof");
 
-        PreparedStatement query = this.db.prepareStatement("INSERT INTO memberof(moID, GID, Username)");
+        PreparedStatement query = this.db.prepareStatement("INSERT INTO memberof(moID, GID, Username) VALUES (?,?,?)");
         query.setInt(1,id);
-        query.setInt(2,gID);
-        query.setString(3,p.getUsername());
+        query.setInt(2, gID);
+        query.setString(3, p.getUsername());
+        query.executeUpdate();
+    }
+
+    public ArrayList<Group> getAllGroups() throws SQLException{
+        PreparedStatement query = this.db.prepareStatement("SELECT * FROM groups");
+        ResultSet rs = query.executeQuery();
+
+        if (!rs.next()){
+            return null;
+        }
+
+        ArrayList<Group> results = new ArrayList<Group>();
+        results.add(new Group(rs.getInt("GID"),rs.getString("GName")));
+        while (rs.next()){
+            results.add(new Group(rs.getInt("GID"),rs.getString("GName")));
+        }
+        return results;
+    }
+
+    /**
+     * Get every person which is a member of a group.
+     * @return
+     * @throws SQLException
+     */
+    public TreeMap<Integer,String> getAllMembersOfGroups() throws SQLException{
+        PreparedStatement query = this.db.prepareStatement("SELECT * FROM memberof");
+
+        ResultSet rs = query.executeQuery();
+
+        if (!rs.next()){
+            return null;
+        }
+
+        TreeMap<Integer, String> results = new TreeMap<Integer, String>();
+        results.put(rs.getInt("GID"),rs.getString("Username"));
+
+        while(rs.next()){
+            results.put(rs.getInt("GID"),rs.getString("Username"));
+        }
+        return results;
     }
 
     /**
