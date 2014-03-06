@@ -12,8 +12,14 @@ class Client(object):
 
     def start(self, host, port):
         self.connection.connect((host, port))
+        #messageworker = MessageWorker()
+        #message.start()
+        username = ''
+        username = raw_input('Enter username:')
+        self.send(json.dumps({'request': 'login', 'message': username}))
+        received_data = self.connection.recv(1024)
         while True:
-            self.send(raw_input("Skriv din melding her"))
+            self.send(raw_input("Type a message"))
             received_data = self.connection.recv(1024).strip()
             print 'Received from server: ' + received_data
         self.connection.close()
@@ -25,9 +31,9 @@ class Client(object):
         elif data[response] == 'login':
             pass
         elif data[response] == 'message':
-            pass
+            pass # Do nothing, will be removes
         elif data[response] == 'logout':
-            pass
+            pass #Idk, prompt login?
 
 
     def connection_closed(self, connection):
