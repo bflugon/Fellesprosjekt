@@ -10,6 +10,7 @@ package db;
 
 import main.Register;
 import model.Appointment;
+import model.Person;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -32,7 +33,7 @@ public class DatabaseMainTest {
         Register reg = new Register(db);
 
         try{
-            /*
+
             System.out.println("Trying to authenticate with username 'Bob' and password 'hei'");
             if(db.authenticate("Bob", "hei")){
                 System.out.println("Authentication successful");
@@ -46,8 +47,6 @@ public class DatabaseMainTest {
             for (Person p : persons){
                 System.out.println(p.getName());
             }
-            */
-
 
             System.out.println("Getting all appointments and prints them");
             ArrayList<Appointment> appointments = db.getAllAppointments();
