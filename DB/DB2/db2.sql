@@ -18,7 +18,7 @@ CREATE TABLE Appointment
 (
 	AID	int	NOT NULL AUTO_INCREMENT,
 	AName varchar(30),
-	Description varchar(200)
+	Description varchar(200),
 	Start	DATETIME,
 	End	DATETIME,
 	Priority varchar(1),
@@ -40,7 +40,7 @@ CREATE TABLE MemberOf
 	moID INT NOT NULL,
 	GID	int NOT NULL,
 	Username varchar(20),
-	PRIMARY KEY(id),
+	PRIMARY KEY(moID),
 	FOREIGN KEY (GID) REFERENCES Groups(GID),
 	FOREIGN KEY (Username) REFERENCES Person(Username)
 );
@@ -53,7 +53,7 @@ CREATE TABLE InvitedTo
 	Attends	BOOLEAN DEFAULT NULL,
 	hasAlarm BOOLEAN,
 	AlarmTime DATETIME,
-	PRIMARY KEY (ID),
+	PRIMARY KEY (itID),
 	FOREIGN KEY (AID) REFERENCES Appointment(AID),
 	FOREIGN KEY (Username) REFERENCES Person(Username)
 );
@@ -63,7 +63,7 @@ CREATE TABLE IsLeader
 	ilID INT NOT NULL AUTO_INCREMENT,
 	Username	varchar(20)	NOT NULL,
 	AID	int	NOT NULL,
-	PRIMARY KEY (ID),
+	PRIMARY KEY (ilID),
 	FOREIGN KEY (AID) REFERENCES Appointment(AID),
 	FOREIGN KEY (Username) REFERENCES Person(Username)
 );
@@ -73,7 +73,7 @@ CREATE TABLE TakesPlace
 	tpID INT NOT NULL AUTO_INCREMENT,
 	AID	int	NOT NULL,
 	RID int NOT NULL,
-	PRIMARY KEY (ID),
+	PRIMARY KEY (tpID),
 	FOREIGN KEY (AID) REFERENCES Appointment(AID),
 	FOREIGN KEY (RID) REFERENCES Room(RID)
 );
