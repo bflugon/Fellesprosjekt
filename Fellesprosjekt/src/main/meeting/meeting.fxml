@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox maxHeight="360.0" maxWidth="380.0" prefHeight="360.0" prefWidth="380.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.meeting.MeetingController">
+  <children>
+    <AnchorPane prefHeight="361.0" prefWidth="378.0" VBox.vgrow="ALWAYS">
+      <children>
+        <Label alignment="CENTER" layoutX="166.0" layoutY="14.0" style="&#10;" text="Lag møte" textAlignment="CENTER" wrapText="false">
+          <font>
+            <Font size="18.0" />
+          </font>
+        </Label><TextField layoutX="120.0" layoutY="61.0" prefHeight="26.0" prefWidth="193.0" promptText="Lønningspils" /><Label layoutX="65.0" layoutY="69.0" text="Navn:" /><Label layoutX="334.0" layoutY="111.0" /><Label layoutX="67.0" layoutY="106.0" text="Start:" /><TextField layoutX="120.0" layoutY="98.0" prefHeight="26.0" prefWidth="57.0" promptText="00:00" /><Label layoutX="66.0" layoutY="141.0" text="Slutt:" /><TextField layoutX="120.0" layoutY="133.0" prefHeight="26.0" prefWidth="57.0" promptText="00:00" /><TextArea layoutX="117.0" layoutY="170.0" prefHeight="53.0" prefWidth="200.0" /><Label layoutX="26.0" layoutY="173.0" text="Beskrivelse:" /><Label layoutX="46.0" layoutY="237.0" text="Prioritet:" /><RadioButton layoutX="117.0" layoutY="236.0" mnemonicParsing="false" text="Lav">
+<toggleGroup>
+<ToggleGroup fx:id="priority" />
+</toggleGroup></RadioButton><RadioButton layoutX="176.0" layoutY="236.0" mnemonicParsing="false" text="Middels" toggleGroup="$priority" /><RadioButton layoutX="267.0" layoutY="236.0" mnemonicParsing="false" text="Høy" toggleGroup="$priority" /><Button layoutX="119.0" layoutY="315.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="193.0" text="Lagre" /><Button layoutX="117.0" layoutY="274.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="90.0" text="Deltakere" /><Button layoutX="222.0" layoutY="274.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="90.0" text="Møterom" /><TextField layoutX="189.0" layoutY="98.0" prefHeight="26.0" prefWidth="124.0" promptText="dd.mm.yyyyy" /><TextField layoutX="189.0" layoutY="133.0" prefHeight="26.0" prefWidth="124.0" promptText="dd.mm.yyyyy" />
+      </children>
+    </AnchorPane>
+  </children>
+</VBox>
