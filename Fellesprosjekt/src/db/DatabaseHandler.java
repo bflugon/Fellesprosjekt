@@ -168,6 +168,12 @@ public class DatabaseHandler {
         addTakesPlace(id,mr);
     }
 
+    /**
+     * Adds the leader of an appointment to the db. Called from within addAppointment.
+     * @param aID
+     * @param ownerUsername
+     * @throws SQLException
+     */
     private void addLeader(int aID,String ownerUsername) throws SQLException{
         int id = getNextAutoIncrement("isleader");
 
@@ -178,6 +184,12 @@ public class DatabaseHandler {
         query.executeUpdate();
     }
 
+    /**
+     * Adds where the meeting takes place. Gets called from within addAppointment
+     * @param aID
+     * @param mr
+     * @throws SQLException
+     */
     private void addTakesPlace(int aID, MeetingRoom mr) throws SQLException{
         int id = getNextAutoIncrement("takesplace");
 
@@ -188,6 +200,17 @@ public class DatabaseHandler {
         query.executeUpdate();
     }
 
+    /**
+     * Edit exisiting appointment
+     * @param aID
+     * @param name
+     * @param start
+     * @param end
+     * @param description
+     * @param priority
+     * @param mr
+     * @throws SQLException
+     */
     public void editAppointment(int aID, String name, String start, String end, String description, int priority, MeetingRoom mr) throws SQLException{
         PreparedStatement query = this.db.prepareStatement("UPDATE appointment SET AName = ?, Start = ?, End = ?, Description = ?, Priority = ?, DateChanged = ? WHERE AID = ?");
         query.setString(1,name);
@@ -203,6 +226,12 @@ public class DatabaseHandler {
         editTakesPlace(aID, mr);
     }
 
+    /**
+     * Edit where the metting takes place. Called from within editAppointment.
+     * @param aID
+     * @param mr
+     * @throws SQLException
+     */
     private void editTakesPlace(int aID, MeetingRoom mr) throws SQLException{
         PreparedStatement query = this.db.prepareStatement("UPDATE takesplace SET RID = ? WHERE AID = ?");
         query.setInt(1,mr.getRoomID());
@@ -233,6 +262,12 @@ public class DatabaseHandler {
         return results;
     }
 
+    /**
+     * Creates a new room and adds it to db
+     * @param roomName
+     * @param capacity
+     * @throws SQLException
+     */
     public void addRoom(String roomName, int capacity) throws SQLException{
         int id = getNextAutoIncrement("room");
 
@@ -245,8 +280,33 @@ public class DatabaseHandler {
         query.executeUpdate();
     }
 
-    public void addRoom(MeetingRoom meetingRoom) throws SQLException{
-        this.addRoom(meetingRoom.getRoomName(),meetingRoom.getCapacity());
+    /**
+     * Creates a new group and adds it to db
+     * @param GName
+     * @throws SQLException
+     */
+    public void addGroup(String GName) throws SQLException{
+         int id = getNextAutoIncrement("group");
+
+        PreparedStatement query = this.db.prepareStatement("INSERT INTO group(GID,GName) VALUES (?,?)");
+        query.setInt(1,id);
+        query.setString(2,GName);
+        query.executeUpdate();
+    }
+
+    /**
+     * Adds a person to a group
+     * @param gID
+     * @param p
+     * @throws SQLException
+     */
+    public void addMemberOfGroup(int gID, Person p) throws SQLException{
+        int id = getNextAutoIncrement("memberof");
+
+        PreparedStatement query = this.db.prepareStatement("INSERT INTO memberof(moID, GID, Username)");
+        query.setInt(1,id);
+        query.setInt(2,gID);
+        query.setString(3,p.getUsername());
     }
 
     /**
