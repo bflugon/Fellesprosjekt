@@ -15,23 +15,25 @@ public class Appointment {
     private final int appointmentID;
     private String ownerName;
     private String appointmentName;
-    private String appointmentStart;
-    private String appointmentEnd;
+    private Date appointmentStart;
+    private Date appointmentEnd;
     private String description;
-    private String location;
+    private MeetingRoom meetingRoom;
     private int priority;
+    private Date createdDate;
 
 
 
-    public Appointment(int appointmentID, String ownerName, String appointmentName, Date appointmentStart, Date appointmentEnd, int priority, String description, String location){
+    public Appointment(int appointmentID, String ownerName, String appointmentName, Date appointmentStart, Date appointmentEnd, int priority, String description, Date createdDate, MeetingRoom mr){
         this.appointmentID = appointmentID;
         this.ownerName = ownerName;
         this.appointmentName = appointmentName;
-        this.appointmentStart = GeneralUtil.dateToString(appointmentStart);
-        this.appointmentEnd = GeneralUtil.dateToString(appointmentEnd);
+        this.appointmentStart = appointmentStart;
+        this.appointmentEnd = appointmentEnd;
         this.priority = priority;
         this.description = description;
-        this.location = location;
+        this.meetingRoom = mr;
+        this.createdDate = createdDate;
     }
 
     public int getAppointmentID() {
@@ -39,19 +41,19 @@ public class Appointment {
     }
 
     public String getAppointmentStart(){
-        return appointmentStart;
+        return GeneralUtil.dateToString(appointmentStart);
     }
 
     public String getAppointmentEnd(){
-        return appointmentEnd;
+        return GeneralUtil.dateToString(appointmentEnd);
     }
 
     public void setAppointmentStart(Date appointmentStart){
-        this.appointmentStart = GeneralUtil.dateToString(appointmentStart);
+        this.appointmentStart = appointmentStart;
     }
 
     public void setAppointmentEnd(Date appointmentEnd){
-        this.appointmentEnd = GeneralUtil.dateToString(appointmentEnd);
+        this.appointmentEnd = appointmentEnd;
     }
 
     public String getDescription() {
@@ -67,7 +69,6 @@ public class Appointment {
     }
 
     public String getAppointmentName() {
-
         return appointmentName;
     }
 
@@ -79,12 +80,8 @@ public class Appointment {
         this.description = description;
     }
 
-    public String getLocation(){
-        return location;
-    }
-
-    public void setLocation(String location){
-        this.location = location;
+    public MeetingRoom getRoom(){
+        return meetingRoom;
     }
 
     public String getOwnerName(){
@@ -93,6 +90,10 @@ public class Appointment {
 
     public void setOwnerName(String ownerName){
         this.ownerName = ownerName;
+    }
+
+    public String getCreatedDate() {
+        return GeneralUtil.dateToString(createdDate);
     }
 
     @Override
@@ -104,8 +105,8 @@ public class Appointment {
                 ", appointmentStart=" + appointmentStart +
                 ", appointmentEnd=" + appointmentEnd +
                 ", description='" + description + '\'' +
-                ", location='" + location + '\'' +
                 ", priority=" + priority +
                 '}';
     }
+
 }

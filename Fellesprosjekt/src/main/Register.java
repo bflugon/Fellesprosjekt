@@ -45,15 +45,6 @@ public class Register {
         }
     }
 
-    public void addAppointment(Appointment a){
-        try{
-            Date currentTime = new Date();
-            mHandler.addAppointment(a.getAppointmentName(),a.getAppointmentStart(),a.getAppointmentEnd(),a.getDescription(),a.getPriority(), GeneralUtil.dateToString(currentTime));
-        } catch (SQLException e){
-            e.printStackTrace();
-        }
-    }
-
     public ArrayList<Appointment> getAppointments(){
         return appointments;
     }
