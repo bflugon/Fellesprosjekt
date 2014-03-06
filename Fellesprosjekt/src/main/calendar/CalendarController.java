@@ -25,6 +25,7 @@ public class CalendarController implements Initializable{
         System.out.println(listViewMonday);
         listViewMonday.setItems(test1);
         listViewMonday.setCellFactory(ComboBoxListCell.forListView(test1));
+        //Legger til comment
     }
 
     public void makeMeeting(ActionEvent actionEvent) throws Exception{
