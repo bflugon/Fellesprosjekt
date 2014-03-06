@@ -20,7 +20,6 @@ import java.util.TreeMap;
 public class DatabaseHandler {
     private Connection db;
 
-
     /**
      * Initializes database connection.
      */
