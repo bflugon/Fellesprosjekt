@@ -76,7 +76,7 @@ public class DatabaseHandler {
      * @return
      * @throws java.sql.SQLException
      */
-    public void createAccount(String username, String password, String name, String email) throws SQLException{
+    public Person createAccount(String username, String password, String name, String email) throws SQLException{
         try{
             PreparedStatement query = this.db.prepareStatement("INSERT INTO person(Username, PName, Password, Email VALUES (?,?,?,?)");
             query.setString(1, username);
@@ -84,10 +84,11 @@ public class DatabaseHandler {
             query.setString(3,name);
             query.setString(4,email);
             query.executeUpdate();
+            return (this.getPersonByUsername(username));
 
         }catch (Exception e){
             e.printStackTrace();
-
+            return null;
         }
     }
 
@@ -112,6 +113,18 @@ public class DatabaseHandler {
         }
 
         return results;
+    }
+
+    public Person getPersonByUsername(String username) throws SQLException{
+        PreparedStatement query = this.db.prepareStatement("SELECT * FROM person WHERE Username = ?");
+        query.setString(1,"username");
+        ResultSet rs = query.executeQuery();
+
+        if (!rs.next()){
+            return null;
+        }
+
+        return new Person(rs.getString("Username"), rs.getString("PName"), rs.getString("Email"));
     }
 
     /**
@@ -146,7 +159,7 @@ public class DatabaseHandler {
      * @param priority
      * @throws java.sql.SQLException
      */
-    public void addAppointment(String name, String start, String end, String description, int priority, String ownerUsername, MeetingRoom mr) throws SQLException{
+    public Appointment addAppointment(String name, String start, String end, String description, int priority, String ownerUsername, MeetingRoom mr) throws SQLException{
         int id = getNextAutoIncrement("appointment");
 
         PreparedStatement query = this.db.prepareStatement("INSERT INTO appointment(AID, AName, Start, End, Description, Priority, DateCreated) VALUES (?,?,?,?,?,?,?)");
@@ -162,6 +175,8 @@ public class DatabaseHandler {
 
         addLeader(id,ownerUsername);
         addTakesPlace(id,mr);
+
+        return (new Appointment(id, ownerUsername,name,GeneralUtil.stringToDate(start),GeneralUtil.stringToDate(end),priority,description,new java.util.Date(),mr));
     }
 
     /**
@@ -288,7 +303,7 @@ public class DatabaseHandler {
      * @param capacity
      * @throws java.sql.SQLException
      */
-    public void addRoom(String roomName, int capacity) throws SQLException{
+    public MeetingRoom addRoom(String roomName, int capacity) throws SQLException{
         int id = getNextAutoIncrement("room");
 
         PreparedStatement query = this.db.prepareStatement("INSERT INTO room(RID,RName,Capacity) VALUES (?,?,?)");
@@ -298,6 +313,8 @@ public class DatabaseHandler {
         query.setInt(3, capacity);
 
         query.executeUpdate();
+
+        return (new MeetingRoom(id,roomName,capacity));
     }
 
     /**
@@ -305,13 +322,15 @@ public class DatabaseHandler {
      * @param GName
      * @throws java.sql.SQLException
      */
-    public void addGroup(String GName) throws SQLException{
+    public Group addGroup(String GName) throws SQLException{
          int id = getNextAutoIncrement("group");
 
         PreparedStatement query = this.db.prepareStatement("INSERT INTO group(GID,GName) VALUES (?,?)");
         query.setInt(1,id);
         query.setString(2,GName);
         query.executeUpdate();
+
+        return (new Group(id, GName));
     }
 
     /**
@@ -419,7 +438,7 @@ public class DatabaseHandler {
     /**
      * Activates or deactivates alarm
      * @param appointmentID
-     * @param Username
+     * @param username
      * @param hasAlarm
      * @throws SQLException
      */
@@ -440,7 +459,7 @@ public class DatabaseHandler {
     public void activateAlarm(int alarmID, int hasAlarm) throws SQLException{
         PreparedStatement query = this.db.prepareStatement("UPDATE invitedto SET hasAlarm = ? WHERE itID = ?");
         query.setInt(1, hasAlarm);
-        query.setInt(2,alarmID);
+        query.setInt(2, alarmID);
         query.executeUpdate();
     }
 
@@ -459,7 +478,7 @@ public class DatabaseHandler {
         query.setString(2, username);
         query.setInt(3,appointmentID);
         query.setInt(4,hasAlarm);
-        query.setTimestamp(5,Timestamp.valueOf(alarmTime));
+        query.setTimestamp(5, Timestamp.valueOf(alarmTime));
         query.executeUpdate();
     }
 
@@ -472,7 +491,7 @@ public class DatabaseHandler {
     public void setAttending(int alarmID, int attending) throws SQLException{
         PreparedStatement query = this.db.prepareStatement("UPDATE invitedto SET Attends = ? WHERE itID = ?");
         query.setInt(1,attending);
-        query.setInt(2,alarmID);
+        query.setInt(2, alarmID);
         query.executeUpdate();
     }
 

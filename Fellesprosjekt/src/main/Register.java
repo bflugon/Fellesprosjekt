@@ -54,6 +54,22 @@ public class Register {
     }
 
     /**
+     * Create account
+     * @param user
+     * @param pass
+     * @param name
+     * @param email
+     */
+    public void createAccount(String user, String pass, String name, String email){
+        try{
+            Person p = mHandler.createAccount(user,pass,name,email);
+            persons.add(p);
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * Get all appointments
      * @return
      */
@@ -73,6 +89,46 @@ public class Register {
             }
         }
         return null;
+    }
+
+    /**
+     * Adds appointment to database.
+     * @param a Appointment
+     * @param mr MeetingRoom
+     */
+    public void addAppointment(Appointment a, MeetingRoom mr){
+        try{
+            Appointment appointment = mHandler.addAppointment(a.getAppointmentName(),a.getAppointmentStart(),a.getAppointmentEnd(),a.getDescription(),a.getPriority(),a.getOwnerName(),mr);
+            appointments.add(appointment);
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Edit appointment
+     * @param a Appointment
+     * @param mr MeetingRoom
+     */
+    public void editAppointment(Appointment a, MeetingRoom mr){
+        try{
+            mHandler.editAppointment(a.getAppointmentID(),a.getAppointmentName(),a.getAppointmentStart(),a.getAppointmentEnd(),a.getDescription(),a.getPriority(),mr);
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Delete appointment
+     * @param a Appointment
+     */
+    public void deleteAppointment(Appointment a){
+        try{
+            mHandler.deleteAppointment(a.getAppointmentID());
+            appointments.remove(a);
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -120,6 +176,20 @@ public class Register {
     }
 
     /**
+     * Add new room
+     * @param name
+     * @param capacity
+     */
+    public void addRoom(String name, int capacity){
+        try{
+            MeetingRoom room = mHandler.addRoom(name, capacity);
+            rooms.add(room);
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * Get all groups
      * @return
      */
@@ -139,6 +209,36 @@ public class Register {
             }
         }
         return null;
+    }
+
+    /**
+     * Add group
+     * @param name
+     */
+    public void addGroup(String name){
+        try{
+            Group group = mHandler.addGroup(name);
+            groups.add(group);
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Add person to group
+     * @param g
+     * @param p
+     */
+    public void addPersonToGroup(Group g, Person p){
+        try{
+            mHandler.addPersonToGroup(g.getGroupID(),p);
+
+            if(allGroupMembers.containsKey(g.getGroupID())){
+                allGroupMembers.get(g.getGroupID()).add(p.getUsername());
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
     }
 
     /**
