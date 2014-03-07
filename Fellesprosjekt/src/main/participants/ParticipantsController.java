@@ -1,5 +1,6 @@
 package main.participants;
 
+import main.GuiUtils;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
 
@@ -9,6 +10,6 @@ import javafx.scene.Node;
 public class ParticipantsController {
 
     public void participantsOkOnAction(ActionEvent actionEvent) {
-        ((Node)(actionEvent.getSource())).getScene().getWindow().hide();
+        GuiUtils.closeWindow(actionEvent);
     }
 }

@@ -28,6 +28,6 @@ public class MeetingController implements Initializable {
     }
 
     public void exitOnSave(ActionEvent actionEvent) {
-        ((Node)(actionEvent.getSource())).getScene().getWindow().hide();
+        GuiUtils.closeWindow(actionEvent);
     }
 }

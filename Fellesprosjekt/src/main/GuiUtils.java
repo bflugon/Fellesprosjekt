@@ -1,6 +1,8 @@
 package main;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -16,6 +18,10 @@ public class GuiUtils {
         newStage.setTitle(title);
         newStage.setScene(new Scene(root));
         newStage.show();
+    }
+    
+    public static void closeWindow(ActionEvent actionEvent) {
+    	((Node) (actionEvent.getSource())).getScene().getWindow().hide();
     }
 
 }

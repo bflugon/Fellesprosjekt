@@ -5,6 +5,7 @@ import javafx.scene.Node;
 import javafx.scene.effect.Glow;
 import javafx.scene.image.ImageView;
 import main.GuiUtils;
+import main.Main;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -27,7 +28,7 @@ public class LogInViewController{
     public void logInButtonOnAction(ActionEvent actionEvent) throws Exception{
         if (true){
             GuiUtils.createView("../calendar/calendar.fxml", "Kalender", this.getClass());
-            ((Node) (actionEvent.getSource())).getScene().getWindow().hide();
+            GuiUtils.closeWindow(actionEvent);
         }else{
 
         }

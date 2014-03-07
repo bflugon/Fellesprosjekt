@@ -1,5 +1,6 @@
 package main.roomFinder;
 
+import main.GuiUtils;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
 
@@ -8,6 +9,6 @@ import javafx.scene.Node;
  */
 public class RoomFinderController {
     public void closeOnOk(ActionEvent actionEvent) {
-        ((Node)(actionEvent.getSource())).getScene().getWindow().hide();
+        GuiUtils.closeWindow(actionEvent);
     }
 }
