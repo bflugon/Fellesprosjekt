@@ -15,13 +15,14 @@ public class Alarm {
 
     private final int alarmID;
     private String username;
-    private boolean attends;
+    private int attends;
     private String alarmTime;
 
-    public Alarm(int alarmID, String username, Date alarmTime){
+    public Alarm(int alarmID, String username, Date alarmTime, int attends){
         this.alarmID = alarmID;
         this.username = username;
         this.alarmTime = GeneralUtil.dateToString(alarmTime);
+        this.attends = attends;
     }
 
     public String getUsername() {
@@ -32,11 +33,11 @@ public class Alarm {
         this.username = username;
     }
 
-    public boolean isAttends() {
+    public int isAttends() {
         return attends;
     }
 
-    public void setAttends(boolean attends) {
+    public void setAttends(int attends) {
         this.attends = attends;
     }
 

@@ -22,7 +22,7 @@ public class Register {
     private ArrayList<MeetingRoom> rooms;
     private ArrayList<Group> groups;
     private TreeMap<Integer, ArrayList<String>> allGroupMembers;
-    private TreeMap<Integer, ArrayList<Alarm>> alarms;
+    private TreeMap<Integer, ArrayList<Alarm>> activeAlarms;
 
     public Register(DatabaseHandler handler){
         this.mHandler = handler;
@@ -47,16 +47,25 @@ public class Register {
         } catch (SQLException e){
             this.allGroupMembers = new TreeMap<Integer, ArrayList<String>>();
         }try{
-            this.alarms = handler.getAllAlarms();
+            this.activeAlarms = handler.getAllActiveAlarms();
         }catch (SQLException e){
-            this.alarms = new TreeMap<Integer, ArrayList<Alarm>>();
+            this.activeAlarms = new TreeMap<Integer, ArrayList<Alarm>>();
         }
     }
 
+    /**
+     * Get all appointments
+     * @return
+     */
     public ArrayList<Appointment> getAppointments(){
         return appointments;
     }
 
+    /**
+     * Get appointment by appointment ID
+     * @param AID
+     * @return
+     */
     public Appointment getAppointment(int AID){
         for (Appointment a : appointments){
             if(a.getAppointmentID() == AID){
@@ -66,10 +75,19 @@ public class Register {
         return null;
     }
 
+    /**
+     * Get an arraylist of every person
+     * @return
+     */
     public ArrayList<Person> getPersons(){
         return persons;
     }
 
+    /**
+     * Get person by username
+     * @param username
+     * @return
+     */
     public Person getPersonByUsername(String username){
         for(Person p : persons){
             if (p.getUsername().equals(username)){
@@ -79,10 +97,19 @@ public class Register {
         return null;
     }
 
+    /**
+     * Get all rooms
+     * @return
+     */
     public ArrayList<MeetingRoom> getRooms(){
         return rooms;
     }
 
+    /**
+     * Get room by roomID
+     * @param roomID
+     * @return
+     */
     public MeetingRoom getRoom(int roomID){
         for(MeetingRoom mr : rooms){
             if (roomID == mr.getRoomID()){
@@ -92,10 +119,19 @@ public class Register {
         return null;
     }
 
+    /**
+     * Get all groups
+     * @return
+     */
     public ArrayList<Group> getGroups(){
         return groups;
     }
 
+    /**
+     * Returns a group by groupID
+     * @param groupID
+     * @return
+     */
     public Group getGroup(int groupID){
         for(Group group : groups){
             if(group.getGroupID() == groupID){
@@ -129,16 +165,25 @@ public class Register {
         return results;
     }
 
-    public TreeMap<Integer,ArrayList<Alarm>> getAllAlarms(){
-        return alarms;
+    /**
+     * get all active alarms
+     * @return
+     */
+    public TreeMap<Integer,ArrayList<Alarm>> getAllActiveAlarms(){
+        return activeAlarms;
     }
 
-    public ArrayList<Alarm> getAlarmsByAID(int appointmentID){
-        if(!alarms.containsKey(appointmentID)){
+    /**
+     * Get an arraylist of active alarms by appointment
+     * @param appointmentID
+     * @return
+     */
+    public ArrayList<Alarm> getActiveAlarmByAID(int appointmentID){
+        if(!activeAlarms.containsKey(appointmentID)){
             return null;
         }
 
-        return alarms.get(appointmentID);
+        return activeAlarms.get(appointmentID);
     }
 
 }

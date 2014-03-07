@@ -385,12 +385,12 @@ public class DatabaseHandler {
     }
 
     /**
-     * Returns a treemap containing all alarms, sorted by appointmentID.
+     * Returns a treemap containing all active alarms, sorted by appointmentID.
      * @return
      * @throws SQLException
      */
-    public TreeMap<Integer, ArrayList<Alarm>> getAllAlarms() throws SQLException{
-        PreparedStatement query = this.db.prepareStatement("SELECT * FROM invitedto");
+    public TreeMap<Integer, ArrayList<Alarm>> getAllActiveAlarms() throws SQLException{
+        PreparedStatement query = this.db.prepareStatement("SELECT * FROM invitedto WHERE hasAlarm = 1");
         ResultSet rs = query.executeQuery();
 
         if (!rs.next()){
@@ -401,7 +401,7 @@ public class DatabaseHandler {
         int temp = rs.getInt("AID");
         ArrayList<Alarm> alarms = new ArrayList<Alarm>();
 
-        alarms.add(new Alarm(rs.getInt("itID"), rs.getString("Username"), rs.getTimestamp("AlarmTime")));
+        alarms.add(new Alarm(rs.getInt("itID"), rs.getString("Username"), rs.getTimestamp("AlarmTime"), rs.getInt("Attends")));
 
         while(rs.next()){
             if (temp != rs.getInt("AID")){
@@ -409,11 +409,71 @@ public class DatabaseHandler {
                 alarms = new ArrayList<Alarm>();
             }
             temp = rs.getInt("AID");
-            alarms.add(new Alarm(rs.getInt("itID"), rs.getString("Username"), rs.getTimestamp("AlarmTime")));
+            alarms.add(new Alarm(rs.getInt("itID"), rs.getString("Username"), rs.getTimestamp("AlarmTime"), rs.getInt("Attends")));
         }
 
         results.put(temp, alarms);
         return results;
+    }
+
+    /**
+     * Activates or deactivates alarm
+     * @param appointmentID
+     * @param Username
+     * @param hasAlarm
+     * @throws SQLException
+     */
+    public void alarmActivation(int appointmentID, String username, int hasAlarm) throws SQLException{
+        PreparedStatement query = this.db.prepareStatement("UPDATE invitedto SET hasAlarm = ? WHERE AID = ?, Username = ?");
+        query.setInt(1, hasAlarm);
+        query.setInt(2, appointmentID);
+        query.setString(3,username);
+        query.executeUpdate();
+    }
+
+    /**
+     * Activates or deactivates alarm
+     * @param alarmID
+     * @param hasAlarm
+     * @throws SQLException
+     */
+    public void activateAlarm(int alarmID, int hasAlarm) throws SQLException{
+        PreparedStatement query = this.db.prepareStatement("UPDATE invitedto SET hasAlarm = ? WHERE itID = ?");
+        query.setInt(1, hasAlarm);
+        query.setInt(2,alarmID);
+        query.executeUpdate();
+    }
+
+    /**
+     * Add a new alarm
+     * @param username
+     * @param appointmentID
+     * @param hasAlarm
+     * @param alarmTime
+     * @throws SQLException
+     */
+    public void addAlarm(String username, int appointmentID, int hasAlarm, String alarmTime) throws SQLException{
+        PreparedStatement query = this.db.prepareStatement("INSERT INTO invitedto(itID,Username,AID,hasAlarm,AlarmTime) VALUES (?,?,?,?,?)");
+        int id = getNextAutoIncrement("invitedto");
+        query.setInt(1, id);
+        query.setString(2, username);
+        query.setInt(3,appointmentID);
+        query.setInt(4,hasAlarm);
+        query.setTimestamp(5,Timestamp.valueOf(alarmTime));
+        query.executeUpdate();
+    }
+
+    /**
+     * Set attending status of alarm
+     * @param alarmID
+     * @param attending
+     * @throws SQLException
+     */
+    public void setAttending(int alarmID, int attending) throws SQLException{
+        PreparedStatement query = this.db.prepareStatement("UPDATE invitedto SET Attends = ? WHERE itID = ?");
+        query.setInt(1,attending);
+        query.setInt(2,alarmID);
+        query.executeUpdate();
     }
 
     /**

@@ -52,9 +52,9 @@ public class DatabaseMainTest {
                 System.out.println(p.getUsername());
             }
 
-            ArrayList<Alarm> alarms = reg.getAlarmsByAID(1);
+            ArrayList<Alarm> alarms = reg.getActiveAlarmByAID(1);
             for (Alarm a : alarms){
-                System.out.println(a.getAlarmTime());
+                System.out.println(a.getUsername());
             }
 
         } catch(Exception e){
