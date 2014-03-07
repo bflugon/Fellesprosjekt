@@ -97,6 +97,19 @@ public class Register {
         return null;
     }
 
+    public ArrayList<Group> getGroups(){
+        return groups;
+    }
+
+    public Group getGroup(int groupID){
+        for(Group group : groups){
+            if(group.getGroupID() == groupID){
+                return group;
+            }
+        }
+        return null;
+    }
+
     /**
      * Gets members of a group by groupID
      * @param groupID

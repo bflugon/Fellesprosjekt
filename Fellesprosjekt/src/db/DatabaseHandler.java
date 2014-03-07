@@ -141,6 +141,7 @@ public class DatabaseHandler {
 
     /**
      * Adds an appointment to db
+     * String start and end should be in the format yyyy-MM-dd hh:mm:ss
      * @param name
      * @param start
      * @param end
@@ -238,6 +239,30 @@ public class DatabaseHandler {
     }
 
     /**
+     * Deletes appointment
+     * @param aID
+     * @throws SQLException
+     */
+    public void deleteAppointment(int aID) throws SQLException{
+
+        PreparedStatement query = this.db.prepareStatement("DELETE FROM isleader WHERE AID = ?");
+        query.setInt(1,aID);
+        query.executeUpdate();
+
+        query = this.db.prepareStatement("DELETE FROM invitedto WHERE AID = ?");
+        query.setInt(1,aID);
+        query.executeUpdate();
+
+        query = this.db.prepareStatement("DELETE FROM takesplace WHERE AID = ?");
+        query.setInt(1,aID);
+        query.executeUpdate();
+
+        query = this.db.prepareStatement("DELETE FROM appointment WHERE AID = ?");
+        query.setInt(1,aID);
+        query.executeUpdate();
+    }
+
+    /**
      * Returns an ArrayList containing all meeting rooms
      * @return Arraylist<MeetingRoom>
      * @throws java.sql.SQLException
@@ -298,7 +323,7 @@ public class DatabaseHandler {
      * @param p
      * @throws java.sql.SQLException
      */
-    public void addMemberOfGroup(int gID, Person p) throws SQLException{
+    public void addPersonToGroup(int gID, Person p) throws SQLException{
         int id = getNextAutoIncrement("memberof");
 
         PreparedStatement query = this.db.prepareStatement("INSERT INTO memberof(moID, GID, Username) VALUES (?,?,?)");
@@ -346,6 +371,8 @@ public class DatabaseHandler {
         }
         return results;
     }
+
+
 
     /**
      * Returns next auto increment of table
