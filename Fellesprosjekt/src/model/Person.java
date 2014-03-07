@@ -8,18 +8,18 @@ package model;
  * To change this template use File | Settings | File Templates.
  */
 public class Person {
-    private final int personID;
+    private final String username;
     private String name;
     private String email;
 
-    public Person(int personID, String name, String email){
-        this.personID = personID;
+    public Person(String username, String name, String email){
+        this.username = username;
         this.name = name;
         this.email = email;
     }
 
-    public int getPersonID(){
-        return personID;
+    public String getUsername(){
+        return username;
     }
 
     public void setName(String name){
@@ -36,5 +36,14 @@ public class Person {
 
     public String getEmail(){
         return email;
+    }
+
+    @Override
+    public String toString() {
+        return "Person{" +
+                "username='" + username + '\'' +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                '}';
     }
 }
