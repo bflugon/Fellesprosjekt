@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.logInView.LogInViewController">
+  <children>
+    <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
+      <children><Label layoutX="147.0" layoutY="111.0" text="Brukernavn:">
+<font>
+<Font name="System Bold" size="16.0" />
+</font></Label><TextField layoutX="262.0" layoutY="108.0" prefHeight="26.0" prefWidth="193.0" /><PasswordField layoutX="262.0" layoutY="146.0" prefHeight="26.0" prefWidth="193.0" /><Label layoutX="177.0" layoutY="149.0" text="Passord:">
+<font>
+<Font name="System Bold" size="16.0" />
+</font></Label><Button layoutX="208.0" layoutY="223.0" mnemonicParsing="false" text="Se på frosken for lys og varme ^^" /><ImageView fx:id="glowFrogImageView" fitHeight="99.0" fitWidth="106.0" layoutX="23.0" layoutY="22.0" onMouseEntered="#frogGlowOn" onMouseExited="#frogGlowOff" pickOnBounds="true" preserveRatio="true">
+<image>
+<Image url="@latexFrog.jpg" />
+</image></ImageView><Button layoutX="283.0" layoutY="186.0" mnemonicParsing="false" onAction="#logInButtonOnAction" text="Logg inn" />
+      </children>
+    </AnchorPane>
+  </children>
+</VBox>
