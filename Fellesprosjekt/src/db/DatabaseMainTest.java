@@ -9,28 +9,61 @@ package db;
  */
 
 import main.Register;
+import model.Alarm;
 import model.Appointment;
 import model.MeetingRoom;
 import model.Person;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.TreeMap;
 
 /**
  * DO NOT TOUCH!
  */
 public class DatabaseMainTest {
+    DatabaseHandler db;
+    Register reg;
+
 
     public static void main(String[] args){
         DatabaseMainTest main = new DatabaseMainTest();
-        main.testDB();
+        main.createConnection();
+        //main.testDB();
+        main.testRegister();
+        main.closeConnection();
+    }
+
+    public void createConnection(){
+        System.out.println("Creating connection");
+        db = new DatabaseHandler();
+        reg = new Register(db);
+    }
+
+    public void closeConnection(){
+        System.out.println("Closing connection");
+        db.close();
+    }
+
+    public void testRegister(){
+        try{
+            ArrayList<Person> results = reg.getMembersOfGroup(1);
+            for(Person p : results){
+                System.out.println(p.getUsername());
+            }
+
+            ArrayList<Alarm> alarms = reg.getAlarmsByAID(1);
+            for (Alarm a : alarms){
+                System.out.println(a.getAlarmTime());
+            }
+
+        } catch(Exception e){
+            //Do nothing
+        }
     }
 
     public void testDB(){
 
-        System.out.println("Creating connection");
-        DatabaseHandler db = new DatabaseHandler();
-        Register reg = new Register(db);
 
         try{
 
@@ -87,8 +120,6 @@ public class DatabaseMainTest {
             e.printStackTrace();
         }
 
-        System.out.println("Closing db connection");
-        db.close();
     }
 
 }

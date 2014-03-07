@@ -19,42 +19,37 @@ public class Register {
     private DatabaseHandler mHandler;
     private ArrayList<Person> persons;
     private ArrayList<Appointment> appointments;
-    private ArrayList<Alarm> alarms;
     private ArrayList<MeetingRoom> rooms;
     private ArrayList<Group> groups;
-    private TreeMap<Integer, String> allGroupMembers;
+    private TreeMap<Integer, ArrayList<String>> allGroupMembers;
+    private TreeMap<Integer, ArrayList<Alarm>> alarms;
 
     public Register(DatabaseHandler handler){
         this.mHandler = handler;
-
         try{
             this.persons = handler.getAllPersons();
-        } catch (SQLException e){
+        }catch (SQLException e){
             this.persons = new ArrayList<Person>();
-        }
-
-        try{
+        }try{
             this.appointments = handler.getAllAppointments();
         } catch (SQLException e){
             this.appointments = new ArrayList<Appointment>();
-        }
-
-        try{
+        }try{
             this.rooms = handler.getAllRooms();
         } catch (SQLException e){
             this.rooms = new ArrayList<MeetingRoom>();
-        }
-
-        try{
+        }try{
             this.groups = handler.getAllGroups();
         } catch (SQLException e){
             this.groups = new ArrayList<Group>();
-        }
-
-        try{
+        }try{
             this.allGroupMembers = handler.getAllMembersOfGroups();
         } catch (SQLException e){
-            this.allGroupMembers = new TreeMap<Integer, String>();
+            this.allGroupMembers = new TreeMap<Integer, ArrayList<String>>();
+        }try{
+            this.alarms = handler.getAllAlarms();
+        }catch (SQLException e){
+            this.alarms = new TreeMap<Integer, ArrayList<Alarm>>();
         }
     }
 
@@ -116,21 +111,34 @@ public class Register {
      * @return
      */
     public ArrayList<Person> getMembersOfGroup(int groupID){
+
         if(!allGroupMembers.containsKey(groupID)){
             return null;
         }
 
         ArrayList<Person> results = new ArrayList<Person>();
+        ArrayList<String> names = allGroupMembers.get(groupID);
 
-        for (Person p : persons){
-            for (Map.Entry<Integer, String> entry : allGroupMembers.entrySet()){
-                if( (entry.getKey() == groupID) && (p.getUsername().equals(entry.getValue()) )){
+        for(Person p : persons){
+            for(String s : names){
+                if(p.getUsername().equals(s)){
                     results.add(p);
                 }
             }
         }
-
         return results;
+    }
+
+    public TreeMap<Integer,ArrayList<Alarm>> getAllAlarms(){
+        return alarms;
+    }
+
+    public ArrayList<Alarm> getAlarmsByAID(int appointmentID){
+        if(!alarms.containsKey(appointmentID)){
+            return null;
+        }
+
+        return alarms.get(appointmentID);
     }
 
 }

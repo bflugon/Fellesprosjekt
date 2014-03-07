@@ -1,9 +1,6 @@
 package db;
 
-import model.Appointment;
-import model.Group;
-import model.MeetingRoom;
-import model.Person;
+import model.*;
 import util.GeneralUtil;
 
 import java.sql.*;
@@ -258,7 +255,7 @@ public class DatabaseHandler {
         query.executeUpdate();
 
         query = this.db.prepareStatement("DELETE FROM appointment WHERE AID = ?");
-        query.setInt(1,aID);
+        query.setInt(1, aID);
         query.executeUpdate();
     }
 
@@ -333,6 +330,11 @@ public class DatabaseHandler {
         query.executeUpdate();
     }
 
+    /**
+     * Returns a list of all groups
+     * @return
+     * @throws SQLException
+     */
     public ArrayList<Group> getAllGroups() throws SQLException{
         PreparedStatement query = this.db.prepareStatement("SELECT * FROM groups");
         ResultSet rs = query.executeQuery();
@@ -342,7 +344,7 @@ public class DatabaseHandler {
         }
 
         ArrayList<Group> results = new ArrayList<Group>();
-        results.add(new Group(rs.getInt("GID"),rs.getString("GName")));
+        results.add(new Group(rs.getInt("GID"), rs.getString("GName")));
         while (rs.next()){
             results.add(new Group(rs.getInt("GID"),rs.getString("GName")));
         }
@@ -354,7 +356,7 @@ public class DatabaseHandler {
      * @return
      * @throws java.sql.SQLException
      */
-    public TreeMap<Integer,String> getAllMembersOfGroups() throws SQLException{
+    public TreeMap<Integer, ArrayList<String>> getAllMembersOfGroups() throws SQLException{
         PreparedStatement query = this.db.prepareStatement("SELECT * FROM memberof");
 
         ResultSet rs = query.executeQuery();
@@ -363,16 +365,56 @@ public class DatabaseHandler {
             return null;
         }
 
-        TreeMap<Integer, String> results = new TreeMap<Integer, String>();
-        results.put(rs.getInt("GID"),rs.getString("Username"));
+        TreeMap<Integer, ArrayList<String>> results = new TreeMap<Integer, ArrayList<String>>();
+        int temp = rs.getInt("GID");
+        ArrayList<String> strings = new ArrayList<String>();
+        strings.add(rs.getString("Username"));
 
         while(rs.next()){
-            results.put(rs.getInt("GID"),rs.getString("Username"));
+            //if new groupID is different, put the old one and the arraylist into the TreeMap.
+            if (temp != rs.getInt("GID")){
+                results.put(temp,strings);
+                strings = new ArrayList<String>();
+            }
+            temp = rs.getInt("GID");
+            strings.add(rs.getString("Username"));
         }
+        //add the final key + arraylist<String> to the TreeMap
+        results.put(temp,strings);
         return results;
     }
 
+    /**
+     * Returns a treemap containing all alarms, sorted by appointmentID.
+     * @return
+     * @throws SQLException
+     */
+    public TreeMap<Integer, ArrayList<Alarm>> getAllAlarms() throws SQLException{
+        PreparedStatement query = this.db.prepareStatement("SELECT * FROM invitedto");
+        ResultSet rs = query.executeQuery();
 
+        if (!rs.next()){
+            return null;
+        }
+
+        TreeMap<Integer, ArrayList<Alarm>> results = new TreeMap<Integer, ArrayList<Alarm>>();
+        int temp = rs.getInt("AID");
+        ArrayList<Alarm> alarms = new ArrayList<Alarm>();
+
+        alarms.add(new Alarm(rs.getInt("itID"), rs.getString("Username"), rs.getTimestamp("AlarmTime")));
+
+        while(rs.next()){
+            if (temp != rs.getInt("AID")){
+                results.put(temp,alarms);
+                alarms = new ArrayList<Alarm>();
+            }
+            temp = rs.getInt("AID");
+            alarms.add(new Alarm(rs.getInt("itID"), rs.getString("Username"), rs.getTimestamp("AlarmTime")));
+        }
+
+        results.put(temp, alarms);
+        return results;
+    }
 
     /**
      * Returns next auto increment of table

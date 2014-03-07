@@ -14,43 +14,22 @@ import java.util.Date;
 public class Alarm {
 
     private final int alarmID;
-    private int userID;
-    private int appointmentID;
-    private boolean answered;
+    private String username;
     private boolean attends;
     private String alarmTime;
 
-    public Alarm(int alarmID, int userID, int appointmentID, Date alarmTime){
+    public Alarm(int alarmID, String username, Date alarmTime){
         this.alarmID = alarmID;
-        this.userID = userID;
-        this.appointmentID = appointmentID;
-        this.answered = false;
-        this.attends = false;
+        this.username = username;
         this.alarmTime = GeneralUtil.dateToString(alarmTime);
     }
 
-    public int getUserID() {
-        return userID;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUserID(int userID) {
-        this.userID = userID;
-    }
-
-    public int getAppointmentID() {
-        return appointmentID;
-    }
-
-    public void setAppointmentID(int appointmentID) {
-        this.appointmentID = appointmentID;
-    }
-
-    public boolean isAnswered() {
-        return answered;
-    }
-
-    public void setAnswered(boolean answered) {
-        this.answered = answered;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public boolean isAttends() {
