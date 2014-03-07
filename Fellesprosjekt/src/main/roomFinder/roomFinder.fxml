@@ -8,10 +8,13 @@
 <VBox prefHeight="400.0" prefWidth="250.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.roomFinder.RoomFinderController">
   <children>
     <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
-<children><ListView layoutX="13.0" layoutY="47.0" prefHeight="277.0" prefWidth="225.0" /><Label layoutX="79.0" layoutY="14.0" text="Velg rom">
+<children><Label layoutX="79.0" layoutY="14.0" text="Velg rom">
 <font>
 <Font size="21.0" />
-</font></Label><TextField layoutX="13.0" layoutY="331.0" prefHeight="26.0" prefWidth="225.0" promptText="Alternativt rom" /><Button layoutX="108.0" layoutY="366.0" mnemonicParsing="false" onAction="#closeOnOk" text="OK" />
+</font></Label><TextField layoutX="13.0" layoutY="331.0" prefHeight="26.0" prefWidth="225.0" promptText="Alternativt rom" /><Button layoutX="85.0" layoutY="365.0" mnemonicParsing="false" onAction="#closeOnOk" prefHeight="26.0" prefWidth="80.0" text="OK" /><TableView fx:id="roomFinderTableView" layoutX="12.0" layoutY="41.0" prefHeight="278.0" prefWidth="225.0">
+<columns><TableColumn fx:id="roomTableColumn" maxWidth="120.0" prefWidth="119.0" text="Rom" /><TableColumn fx:id="capacityTableColumn" prefWidth="90.0" text="Størrelse" />
+</columns>
+</TableView>
 </children>
     </AnchorPane>
   </children>
