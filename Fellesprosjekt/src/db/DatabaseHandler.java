@@ -3,6 +3,8 @@ package db;
 import model.*;
 import util.GeneralUtil;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.TreeMap;
@@ -56,12 +58,15 @@ public class DatabaseHandler {
             if (!rs.next()){
                 return false;
             }
-            if(password.equals(rs.getString("password"))){
+
+            String hash = encryptPassword(password);
+
+            if(hash.equals(rs.getString("password"))){
                 return true;
             }
             return false;
 
-        } catch (SQLException e) {
+        } catch (SQLException | NoSuchAlgorithmException e) {
             e.printStackTrace();
             return false;
         }
@@ -80,13 +85,13 @@ public class DatabaseHandler {
         try{
             PreparedStatement query = this.db.prepareStatement("INSERT INTO person(Username, PName, Password, Email VALUES (?,?,?,?)");
             query.setString(1, username);
-            query.setString(2,password);
+            query.setString(2,encryptPassword(password));
             query.setString(3,name);
             query.setString(4,email);
             query.executeUpdate();
             return (this.getPersonByUsername(username));
 
-        }catch (Exception e){
+        }catch (NoSuchAlgorithmException e){
             e.printStackTrace();
             return null;
         }
@@ -509,5 +514,15 @@ public class DatabaseHandler {
         rs.next();
 
         return rs.getInt("Auto_increment");
+    }
+
+    private String encryptPassword(String string) throws NoSuchAlgorithmException{
+        MessageDigest messageDigest = MessageDigest.getInstance("SHA1");
+        byte[] result = messageDigest.digest(string.getBytes());
+        StringBuffer buffer = new StringBuffer();
+        for (int i = 0; i < result.length; i++){
+            buffer.append(Integer.toString((result[i] & 0xff) + 0x100, 16).substring(1));
+        }
+        return buffer.toString();
     }
 }
