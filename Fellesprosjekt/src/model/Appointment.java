@@ -101,6 +101,7 @@ public class Appointment implements Serializable {
         return this;
     }
 
+
     @Override
     public String toString() {
         return "Appointment{" +

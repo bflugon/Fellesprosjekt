@@ -16,37 +16,28 @@ import java.net.Socket;
  * To change this template use File | Settings | File Templates.
  */
 public class Client {
-    protected int clientEventPort = 8080;
     protected int clientRequestPort = 8080;
-    private Socket clientEventSocket;
     private Socket clientRequestSocket;
-    private ObjectInputStream clientEventInput;
-    private ObjectOutputStream clientEventOutput;
     private ObjectInputStream clientRequestInput;
     private ObjectOutputStream clientRequestOutput;
-    private Register register;
 
     public Client (String ip){
-        this.register = register;
 
         try{
-            System.out.println("Binding Socket");
-            //this.clientEventSocket = new Socket(ip, clientEventPort);
+            System.out.println("Client: Binding Socket");
             this.clientRequestSocket = new Socket(ip, clientRequestPort);
         } catch (IOException e){
             e.printStackTrace();
         }
 
         try{
-            System.out.println("Creating new Streams");
-            //clientEventInput = new ObjectInputStream(this.clientEventSocket.getInputStream());
-            //clientEventOutput = new ObjectOutputStream(this.clientEventSocket.getOutputStream());
+            System.out.println("Client: Creating new Streams");
             clientRequestOutput = new ObjectOutputStream(this.clientRequestSocket.getOutputStream());
             clientRequestOutput.flush();
             clientRequestInput = new ObjectInputStream(this.clientRequestSocket.getInputStream());
-            System.out.println("Created new streams");
+            System.out.println("Client: Created new streams");
         } catch (IOException e){
-            System.out.println("Something went wrong when creating streams");
+            System.out.println("Client: Something went wrong when creating streams");
             e.printStackTrace();
         }
     }

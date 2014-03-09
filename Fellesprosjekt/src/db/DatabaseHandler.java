@@ -83,7 +83,7 @@ public class DatabaseHandler {
      */
     public Person createAccount(String username, String password, String name, String email) throws SQLException{
         try{
-            PreparedStatement query = this.db.prepareStatement("INSERT INTO person(Username, PName, Password, Email VALUES (?,?,?,?)");
+            PreparedStatement query = this.db.prepareStatement("INSERT INTO person(Username, Password, PName, Email) VALUES (?,?,?,?)");
             query.setString(1, username);
             query.setString(2,encryptPassword(password));
             query.setString(3,name);
@@ -409,11 +409,11 @@ public class DatabaseHandler {
     }
 
     /**
-     * Returns a treemap containing all active alarms, sorted by appointmentID.
+     * Returns a treemap containing all alarms, sorted by appointmentID.
      * @return
      * @throws SQLException
      */
-    public TreeMap<Integer, ArrayList<Alarm>> getAllActiveAlarms() throws SQLException{
+    public TreeMap<Integer, ArrayList<Alarm>> getAllAlarms() throws SQLException{
         PreparedStatement query = this.db.prepareStatement("SELECT * FROM invitedto WHERE hasAlarm = 1");
         ResultSet rs = query.executeQuery();
 
@@ -447,7 +447,7 @@ public class DatabaseHandler {
      * @param hasAlarm
      * @throws SQLException
      */
-    public void alarmActivation(int appointmentID, String username, int hasAlarm) throws SQLException{
+    public void activateAlarm(int appointmentID, String username, int hasAlarm) throws SQLException{
         PreparedStatement query = this.db.prepareStatement("UPDATE invitedto SET hasAlarm = ? WHERE AID = ?, Username = ?");
         query.setInt(1, hasAlarm);
         query.setInt(2, appointmentID);
@@ -476,15 +476,18 @@ public class DatabaseHandler {
      * @param alarmTime
      * @throws SQLException
      */
-    public void addAlarm(String username, int appointmentID, int hasAlarm, String alarmTime) throws SQLException{
-        PreparedStatement query = this.db.prepareStatement("INSERT INTO invitedto(itID,Username,AID,hasAlarm,AlarmTime) VALUES (?,?,?,?,?)");
+    public Alarm addAlarm(String username, int appointmentID, int hasAlarm, String alarmTime, int attending) throws SQLException{
+        PreparedStatement query = this.db.prepareStatement("INSERT INTO invitedto(itID,Username,AID,hasAlarm,AlarmTime,Attends) VALUES (?,?,?,?,?,?)");
         int id = getNextAutoIncrement("invitedto");
         query.setInt(1, id);
         query.setString(2, username);
         query.setInt(3,appointmentID);
         query.setInt(4,hasAlarm);
         query.setTimestamp(5, Timestamp.valueOf(alarmTime));
+        query.setInt(6,attending);
         query.executeUpdate();
+
+        return new Alarm(id,username,GeneralUtil.stringToDate(alarmTime),attending);
     }
 
     /**
@@ -493,7 +496,7 @@ public class DatabaseHandler {
      * @param attending
      * @throws SQLException
      */
-    public void setAttending(int alarmID, int attending) throws SQLException{
+    public void updateAttending(int alarmID, int attending) throws SQLException{
         PreparedStatement query = this.db.prepareStatement("UPDATE invitedto SET Attends = ? WHERE itID = ?");
         query.setInt(1,attending);
         query.setInt(2, alarmID);

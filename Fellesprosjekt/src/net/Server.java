@@ -14,7 +14,7 @@ import java.io.IOException;
 public class Server implements Runnable {
     protected int serverPort = 8080;
     protected ServerSocket serverSocket = null;
-    protected boolean isStopped = false;
+    protected boolean running = false;
     protected Thread runningThread = null;
 
     public Server(int serverPort){
@@ -26,33 +26,33 @@ public class Server implements Runnable {
             this.runningThread = Thread.currentThread();
         }
         openServerSocket();
-        while (!isStopped){
+        while (!isRunning()){
             Socket clientSocket;
             try{
                 clientSocket = this.serverSocket.accept();
-            } catch (IOException e){
-                if (isStopped()){
+            }
+            catch (IOException e){
+                if (isRunning()){
                     System.out.println("Server is stopped");
                     return;
                 }
-                throw new RuntimeException("Error accepting client connection",e);
+                throw new RuntimeException("ERROR: Couldn't accept client connection",e);
             }
-            new Thread( new RequestThread(clientSocket,this)).start();
-
+            new Thread( new RequestThread(clientSocket)).start();
         }
-        System.out.println("Server stopped");
 
     }
 
-    public synchronized boolean isStopped(){
-        return this.isStopped;
+    public synchronized boolean isRunning(){
+        return this.running;
     }
 
     public synchronized void stop(){
-        this.isStopped = true;
+        this.running = true;
         try{
             this.serverSocket.close();
-        } catch (IOException e){
+        }
+        catch (IOException e){
             throw new RuntimeException("Error closing socket", e);
         }
     }
@@ -60,7 +60,8 @@ public class Server implements Runnable {
     private void openServerSocket(){
         try{
             this.serverSocket = new ServerSocket(this.serverPort);
-        } catch (IOException e){
+        }
+        catch (IOException e){
             throw new RuntimeException("Cannot open port " + this.serverPort, e);
         }
     }

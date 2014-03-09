@@ -14,7 +14,7 @@ import java.util.ArrayList;
  * Time: 8:40 PM
  * To change this template use File | Settings | File Templates.
  */
-public class ClientMain {
+public class ClientTest {
     public static void main (String[] args){
         Client client = new Client("localhost");
         System.out.println("Trying to get appointments");
