@@ -96,6 +96,10 @@ public class Appointment {
         return GeneralUtil.dateToString(createdDate);
     }
 
+    public Appointment getAppointment(){
+        return this;
+    }
+
     @Override
     public String toString() {
         return "Appointment{" +
