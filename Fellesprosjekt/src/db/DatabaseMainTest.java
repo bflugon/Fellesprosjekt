@@ -29,8 +29,8 @@ public class DatabaseMainTest {
     public static void main(String[] args){
         DatabaseMainTest main = new DatabaseMainTest();
         main.createConnection();
-        //main.testDB();
-        main.testRegister();
+        main.testDB();
+        //main.testRegister();
         main.closeConnection();
     }
 

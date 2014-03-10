@@ -88,13 +88,19 @@ public class Register {
         return null;
     }
 
+
     /**
      * Adds appointment
-     * @param a
+     * @param name
+     * @param start
+     * @param end
+     * @param description
+     * @param priority
+     * @param username
      * @param mr
      */
-    public void addAppointment(Appointment a, MeetingRoom mr){
-        Packet response = this.client.request(new Packet("ADD_APPOINTMENT", a, mr));
+    public void addAppointment(String name, String start, String end, String description, int priority, String username, MeetingRoom mr){
+        Packet response = this.client.request(new Packet("ADD_APPOINTMENT", name, start, end, description, priority, username, mr));
         if (response.getName().equals("APPOINTMENT_ADDED")){
             appointments.add((Appointment)response.getObjects()[0]);
         }
