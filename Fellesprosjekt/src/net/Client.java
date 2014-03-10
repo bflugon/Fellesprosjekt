@@ -22,7 +22,6 @@ public class Client {
     private ObjectOutputStream clientRequestOutput;
 
     public Client (String ip){
-
         try{
             System.out.println("Client: Binding Socket");
             this.clientRequestSocket = new Socket(ip, clientRequestPort);
