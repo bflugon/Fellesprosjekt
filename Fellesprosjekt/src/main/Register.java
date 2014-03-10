@@ -102,7 +102,8 @@ public class Register {
     public void addAppointment(String name, String start, String end, String description, int priority, String username, MeetingRoom mr){
         Packet response = this.client.request(new Packet("ADD_APPOINTMENT", name, start, end, description, priority, username, mr));
         if (response.getName().equals("APPOINTMENT_ADDED")){
-            appointments.add((Appointment)response.getObjects()[0]);
+            Appointment a = (Appointment)response.getObjects()[0];
+            appointments.add(a);
         }
     }
 
@@ -190,7 +191,8 @@ public class Register {
     public void addRoom(String name, int capacity){
         Packet response = this.client.request(new Packet("ADD_ROOM",name,capacity));
         if(response.getName().equals("ROOM_ADDED")){
-            rooms.add((MeetingRoom) response.getObjects()[0]);
+            MeetingRoom mr = (MeetingRoom) response.getObjects()[0];
+            rooms.add(mr);
         }
     }
 
@@ -227,9 +229,10 @@ public class Register {
      * @param name
      */
     public void addGroup(String name){
-        Packet response = this.client.request(new Packet("ADD_GROUP", name));
+        Packet response = this.client.request(new Packet("ADD_GROUP",name));
         if (response.getName().equals("GROUP_ADDED")){
-            groups.add((Group)response.getObjects()[0]);
+            Group g = (Group) response.getObjects()[0];
+            groups.add(g);
         }
     }
 
@@ -239,7 +242,7 @@ public class Register {
      * @param p
      */
     public void addPersonToGroup(Group g, Person p){
-        Packet response = this.client.request(new Packet("ADD_PERSON_TO_GROUP", g,p));
+        Packet response = this.client.request(new Packet("ADD_PERSON_TO_GROUP",g,p));
         if(response.getName().equals("PERSON_ADDED_TO_GROUP")){
             if(allGroupMembers.containsKey(g.getGroupID())){
                 allGroupMembers.get(g.getGroupID()).add(p.getUsername());
@@ -249,6 +252,18 @@ public class Register {
                 allGroupMembers.put(g.getGroupID(),temp);
             }
         }
+    }
+
+    /**
+     * Gets all people that's member of a group
+     * @return
+     */
+    public TreeMap<Integer, ArrayList<String>> getAllMembersOfGroup(){
+        if (this.allGroupMembers == null){
+            Packet response = this.client.request(new Packet("GET_ALL_GROUPMEMBERS"));
+            allGroupMembers = (TreeMap<Integer, ArrayList<String>>)response.getObjects()[0];
+        }
+        return allGroupMembers;
     }
 
     /**
