@@ -33,7 +33,6 @@ public class Client {
         try{
             System.out.println("Client: Creating new Streams");
             clientRequestOutput = new ObjectOutputStream(this.clientRequestSocket.getOutputStream());
-            clientRequestOutput.flush();
             clientRequestInput = new ObjectInputStream(this.clientRequestSocket.getInputStream());
             System.out.println("Client: Created new streams");
         } catch (IOException e){

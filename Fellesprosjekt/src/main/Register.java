@@ -29,6 +29,12 @@ public class Register {
         this.client = client;
     }
 
+    /**
+     * Authenticates account.
+     * @param user
+     * @param pass
+     * @return
+     */
     public boolean authenticate(String user, String pass){
         Packet response = this.client.request(new Packet("AUTHENTICATE", user, pass));
         if (response.getName().equals("AUTHENTICATION")){
@@ -49,8 +55,10 @@ public class Register {
     public void createAccount(String user, String pass, String name, String email){
         Packet response = this.client.request(new Packet("CREATE_ACCOUNT",user,pass,name,email));
 
-        if(response.getName().equals("ACCOUNT_CREATED") && response.getObjects()[0] instanceof SQLException){
-            persons.add((Person) response.getObjects()[0]);
+        if(response.getName().equals("ACCOUNT_CREATED")){
+            Person p = (Person) response.getObjects()[0];
+            persons.add(p);
+            p.toString();
         }
     }
 

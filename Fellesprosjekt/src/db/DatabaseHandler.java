@@ -89,7 +89,7 @@ public class DatabaseHandler {
             query.setString(3,name);
             query.setString(4,email);
             query.executeUpdate();
-            return (this.getPersonByUsername(username));
+            return (new Person(username, name, email));
 
         }catch (NoSuchAlgorithmException e){
             e.printStackTrace();

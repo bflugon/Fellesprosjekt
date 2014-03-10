@@ -9,8 +9,8 @@ package db;
  */
 public class DatabaseSettings {
     private static final String db_url = "jdbc:mysql://localhost:3306/fellesprosjekt";
-    private static final String db_username = "herp";
-    private static final String db_password = "derp";
+    private static final String db_username = "fellesprosjektet";
+    private static final String db_password = "password";
 
     public static String getURL(){
         return db_url;
