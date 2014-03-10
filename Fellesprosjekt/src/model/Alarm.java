@@ -2,6 +2,7 @@ package model;
 
 import util.GeneralUtil;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -11,7 +12,7 @@ import java.util.Date;
  * Time: 4:30 PM
  * To change this template use File | Settings | File Templates.
  */
-public class Alarm {
+public class Alarm implements Serializable{
 
     private final int alarmID;
     private String username;

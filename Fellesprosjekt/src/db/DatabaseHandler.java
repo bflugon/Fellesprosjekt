@@ -3,6 +3,8 @@ package db;
 import model.*;
 import util.GeneralUtil;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.TreeMap;
@@ -56,12 +58,15 @@ public class DatabaseHandler {
             if (!rs.next()){
                 return false;
             }
-            if(password.equals(rs.getString("password"))){
+
+            String hash = encryptPassword(password);
+
+            if(hash.equals(rs.getString("password"))){
                 return true;
             }
             return false;
 
-        } catch (SQLException e) {
+        } catch (SQLException | NoSuchAlgorithmException e) {
             e.printStackTrace();
             return false;
         }
@@ -78,15 +83,15 @@ public class DatabaseHandler {
      */
     public Person createAccount(String username, String password, String name, String email) throws SQLException{
         try{
-            PreparedStatement query = this.db.prepareStatement("INSERT INTO person(Username, PName, Password, Email VALUES (?,?,?,?)");
+            PreparedStatement query = this.db.prepareStatement("INSERT INTO person(Username, Password, PName, Email) VALUES (?,?,?,?)");
             query.setString(1, username);
-            query.setString(2,password);
+            query.setString(2,encryptPassword(password));
             query.setString(3,name);
             query.setString(4,email);
             query.executeUpdate();
             return (this.getPersonByUsername(username));
 
-        }catch (Exception e){
+        }catch (NoSuchAlgorithmException e){
             e.printStackTrace();
             return null;
         }
@@ -404,11 +409,11 @@ public class DatabaseHandler {
     }
 
     /**
-     * Returns a treemap containing all active alarms, sorted by appointmentID.
+     * Returns a treemap containing all alarms, sorted by appointmentID.
      * @return
      * @throws SQLException
      */
-    public TreeMap<Integer, ArrayList<Alarm>> getAllActiveAlarms() throws SQLException{
+    public TreeMap<Integer, ArrayList<Alarm>> getAllAlarms() throws SQLException{
         PreparedStatement query = this.db.prepareStatement("SELECT * FROM invitedto WHERE hasAlarm = 1");
         ResultSet rs = query.executeQuery();
 
@@ -442,7 +447,7 @@ public class DatabaseHandler {
      * @param hasAlarm
      * @throws SQLException
      */
-    public void alarmActivation(int appointmentID, String username, int hasAlarm) throws SQLException{
+    public void activateAlarm(int appointmentID, String username, int hasAlarm) throws SQLException{
         PreparedStatement query = this.db.prepareStatement("UPDATE invitedto SET hasAlarm = ? WHERE AID = ?, Username = ?");
         query.setInt(1, hasAlarm);
         query.setInt(2, appointmentID);
@@ -471,15 +476,18 @@ public class DatabaseHandler {
      * @param alarmTime
      * @throws SQLException
      */
-    public void addAlarm(String username, int appointmentID, int hasAlarm, String alarmTime) throws SQLException{
-        PreparedStatement query = this.db.prepareStatement("INSERT INTO invitedto(itID,Username,AID,hasAlarm,AlarmTime) VALUES (?,?,?,?,?)");
+    public Alarm addAlarm(String username, int appointmentID, int hasAlarm, String alarmTime, int attending) throws SQLException{
+        PreparedStatement query = this.db.prepareStatement("INSERT INTO invitedto(itID,Username,AID,hasAlarm,AlarmTime,Attends) VALUES (?,?,?,?,?,?)");
         int id = getNextAutoIncrement("invitedto");
         query.setInt(1, id);
         query.setString(2, username);
         query.setInt(3,appointmentID);
         query.setInt(4,hasAlarm);
         query.setTimestamp(5, Timestamp.valueOf(alarmTime));
+        query.setInt(6,attending);
         query.executeUpdate();
+
+        return new Alarm(id,username,GeneralUtil.stringToDate(alarmTime),attending);
     }
 
     /**
@@ -488,7 +496,7 @@ public class DatabaseHandler {
      * @param attending
      * @throws SQLException
      */
-    public void setAttending(int alarmID, int attending) throws SQLException{
+    public void updateAttending(int alarmID, int attending) throws SQLException{
         PreparedStatement query = this.db.prepareStatement("UPDATE invitedto SET Attends = ? WHERE itID = ?");
         query.setInt(1,attending);
         query.setInt(2, alarmID);
@@ -509,5 +517,15 @@ public class DatabaseHandler {
         rs.next();
 
         return rs.getInt("Auto_increment");
+    }
+
+    private String encryptPassword(String string) throws NoSuchAlgorithmException{
+        MessageDigest messageDigest = MessageDigest.getInstance("SHA1");
+        byte[] result = messageDigest.digest(string.getBytes());
+        StringBuffer buffer = new StringBuffer();
+        for (int i = 0; i < result.length; i++){
+            buffer.append(Integer.toString((result[i] & 0xff) + 0x100, 16).substring(1));
+        }
+        return buffer.toString();
     }
 }

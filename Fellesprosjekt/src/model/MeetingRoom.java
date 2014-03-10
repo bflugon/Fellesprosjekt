@@ -1,5 +1,7 @@
 package model;
 
+import java.io.Serializable;
+
 /**
  * Created with IntelliJ IDEA.
  * User: FF63
@@ -7,7 +9,7 @@ package model;
  * Time: 3:26 PM
  * To change this template use File | Settings | File Templates.
  */
-public class MeetingRoom {
+public class MeetingRoom implements Serializable {
     private final int roomID;
     private String roomName;
     private int capacity;

@@ -2,6 +2,7 @@ package main;
 
 import db.DatabaseHandler;
 import model.*;
+import net.Client;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ import java.util.TreeMap;
  * To change this template use File | Settings | File Templates.
  */
 public class Register {
-    private DatabaseHandler mHandler;
+    private Client client;
     private ArrayList<Person> persons;
     private ArrayList<Appointment> appointments;
     private ArrayList<MeetingRoom> rooms;
@@ -24,33 +25,18 @@ public class Register {
     private TreeMap<Integer, ArrayList<String>> allGroupMembers;
     private TreeMap<Integer, ArrayList<Alarm>> activeAlarms;
 
-    public Register(DatabaseHandler handler){
-        this.mHandler = handler;
-        try{
-            this.persons = handler.getAllPersons();
-        }catch (SQLException e){
-            this.persons = new ArrayList<Person>();
-        }try{
-            this.appointments = handler.getAllAppointments();
-        } catch (SQLException e){
-            this.appointments = new ArrayList<Appointment>();
-        }try{
-            this.rooms = handler.getAllRooms();
-        } catch (SQLException e){
-            this.rooms = new ArrayList<MeetingRoom>();
-        }try{
-            this.groups = handler.getAllGroups();
-        } catch (SQLException e){
-            this.groups = new ArrayList<Group>();
-        }try{
-            this.allGroupMembers = handler.getAllMembersOfGroups();
-        } catch (SQLException e){
-            this.allGroupMembers = new TreeMap<Integer, ArrayList<String>>();
-        }try{
-            this.activeAlarms = handler.getAllActiveAlarms();
-        }catch (SQLException e){
-            this.activeAlarms = new TreeMap<Integer, ArrayList<Alarm>>();
+    public Register(Client client){
+        this.client = client;
+    }
+
+    public boolean authenticate(String user, String pass){
+        Packet response = this.client.request(new Packet("AUTHENTICATE", user, pass));
+        if (response.getName().equals("AUTHENTICATION")){
+            if ((boolean)response.getObjects()[0]){
+                return true;
+            }
         }
+        return false;
     }
 
     /**
@@ -61,11 +47,10 @@ public class Register {
      * @param email
      */
     public void createAccount(String user, String pass, String name, String email){
-        try{
-            Person p = mHandler.createAccount(user,pass,name,email);
-            persons.add(p);
-        }catch (SQLException e){
-            e.printStackTrace();
+        Packet response = this.client.request(new Packet("CREATE_ACCOUNT",user,pass,name,email));
+
+        if(response.getName().equals("ACCOUNT_CREATED") && response.getObjects()[0] instanceof SQLException){
+            persons.add((Person) response.getObjects()[0]);
         }
     }
 
@@ -74,6 +59,10 @@ public class Register {
      * @return
      */
     public ArrayList<Appointment> getAppointments(){
+        if (this.appointments == null){
+            Packet response = this.client.request(new Packet("GET_APPOINTMENTS"));
+            appointments = (ArrayList<Appointment>)response.getObjects()[0];
+        }
         return appointments;
     }
 
@@ -92,16 +81,14 @@ public class Register {
     }
 
     /**
-     * Adds appointment to database.
-     * @param a Appointment
-     * @param mr MeetingRoom
+     * Adds appointment
+     * @param a
+     * @param mr
      */
     public void addAppointment(Appointment a, MeetingRoom mr){
-        try{
-            Appointment appointment = mHandler.addAppointment(a.getAppointmentName(),a.getAppointmentStart(),a.getAppointmentEnd(),a.getDescription(),a.getPriority(),a.getOwnerName(),mr);
-            appointments.add(appointment);
-        } catch (SQLException e){
-            e.printStackTrace();
+        Packet response = this.client.request(new Packet("ADD_APPOINTMENT", a, mr));
+        if (response.getName().equals("APPOINTMENT_ADDED")){
+            appointments.add((Appointment)response.getObjects()[0]);
         }
     }
 
@@ -111,11 +98,7 @@ public class Register {
      * @param mr MeetingRoom
      */
     public void editAppointment(Appointment a, MeetingRoom mr){
-        try{
-            mHandler.editAppointment(a.getAppointmentID(),a.getAppointmentName(),a.getAppointmentStart(),a.getAppointmentEnd(),a.getDescription(),a.getPriority(),mr);
-        }catch (SQLException e){
-            e.printStackTrace();
-        }
+        this.client.request(new Packet("EDIT_APPOINTMENT", a, mr));
     }
 
     /**
@@ -123,11 +106,9 @@ public class Register {
      * @param a Appointment
      */
     public void deleteAppointment(Appointment a){
-        try{
-            mHandler.deleteAppointment(a.getAppointmentID());
+        Packet response = this.client.request(new Packet("DELETE_APPOINTMENT",a));
+        if (response.getName().equals("APPOINTMENT_DELETED")){
             appointments.remove(a);
-        }catch (SQLException e){
-            e.printStackTrace();
         }
     }
 
@@ -136,6 +117,12 @@ public class Register {
      * @return
      */
     public ArrayList<Person> getPersons(){
+        if (persons == null){
+            Packet response = this.client.request(new Packet("GET_ALL_PEOPLE"));
+            if(response.getName().equals("ALL_PERSONS")){
+                persons = (ArrayList<Person>)response.getObjects()[0];
+            }
+        }
         return persons;
     }
 
@@ -158,6 +145,12 @@ public class Register {
      * @return
      */
     public ArrayList<MeetingRoom> getRooms(){
+        if (rooms == null){
+            Packet response = this.client.request(new Packet("GET_ALL_ROOMS"));
+            if (response.getName().equals("ALL_ROOMS")){
+                rooms = (ArrayList<MeetingRoom>) response.getObjects()[0];
+            }
+        }
         return rooms;
     }
 
@@ -181,11 +174,9 @@ public class Register {
      * @param capacity
      */
     public void addRoom(String name, int capacity){
-        try{
-            MeetingRoom room = mHandler.addRoom(name, capacity);
-            rooms.add(room);
-        }catch (SQLException e){
-            e.printStackTrace();
+        Packet response = this.client.request(new Packet("ADD_ROOM",name,capacity));
+        if(response.getName().equals("ROOM_ADDED")){
+            rooms.add((MeetingRoom) response.getObjects()[0]);
         }
     }
 
@@ -194,6 +185,12 @@ public class Register {
      * @return
      */
     public ArrayList<Group> getGroups(){
+        if (groups == null){
+            Packet response = this.client.request(new Packet("GET_ALL_GROUPS"));
+            if (response.getName().equals("ALL_GROUPS")){
+                groups = (ArrayList<Group>) response.getObjects()[0];
+            }
+        }
         return groups;
     }
 
@@ -216,11 +213,9 @@ public class Register {
      * @param name
      */
     public void addGroup(String name){
-        try{
-            Group group = mHandler.addGroup(name);
-            groups.add(group);
-        } catch (SQLException e){
-            e.printStackTrace();
+        Packet response = this.client.request(new Packet("ADD_GROUP", name));
+        if (response.getName().equals("GROUP_ADDED")){
+            groups.add((Group)response.getObjects()[0]);
         }
     }
 
@@ -230,14 +225,15 @@ public class Register {
      * @param p
      */
     public void addPersonToGroup(Group g, Person p){
-        try{
-            mHandler.addPersonToGroup(g.getGroupID(),p);
-
+        Packet response = this.client.request(new Packet("ADD_PERSON_TO_GROUP", g,p));
+        if(response.getName().equals("PERSON_ADDED_TO_GROUP")){
             if(allGroupMembers.containsKey(g.getGroupID())){
                 allGroupMembers.get(g.getGroupID()).add(p.getUsername());
+            } else{
+                ArrayList<String> temp = new ArrayList<String>();
+                temp.add(p.getUsername());
+                allGroupMembers.put(g.getGroupID(),temp);
             }
-        }catch (SQLException e){
-            e.printStackTrace();
         }
     }
 
@@ -270,6 +266,13 @@ public class Register {
      * @return
      */
     public TreeMap<Integer,ArrayList<Alarm>> getAllActiveAlarms(){
+        if (activeAlarms == null){
+            Packet response = this.client.request(new Packet("GET_ALL_ALARMS"));
+            if (response.getName().equals("ALL_ALARMS")){
+                activeAlarms = (TreeMap<Integer,ArrayList<Alarm>>) response.getObjects()[0];
+            }
+        }
+
         return activeAlarms;
     }
 

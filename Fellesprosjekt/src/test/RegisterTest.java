@@ -16,7 +16,6 @@ public class RegisterTest {
 
     public RegisterTest(){
         DatabaseHandler mHandler = new DatabaseHandler();
-        reg = new Register(mHandler);
     }
 
     @Test

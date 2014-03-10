@@ -2,6 +2,7 @@ package model;
 
 import util.GeneralUtil;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -11,7 +12,7 @@ import java.util.Date;
  * Time: 4:55 PM
  * To change this template use File | Settings | File Templates.
  */
-public class Appointment {
+public class Appointment implements Serializable {
     private final int appointmentID;
     private String ownerName;
     private String appointmentName;
@@ -99,6 +100,7 @@ public class Appointment {
     public Appointment getAppointment(){
         return this;
     }
+
 
     @Override
     public String toString() {

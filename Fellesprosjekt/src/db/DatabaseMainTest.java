@@ -37,7 +37,6 @@ public class DatabaseMainTest {
     public void createConnection(){
         System.out.println("Creating connection");
         db = new DatabaseHandler();
-        reg = new Register(db);
     }
 
     public void closeConnection(){
