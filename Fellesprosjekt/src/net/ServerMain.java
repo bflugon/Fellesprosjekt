@@ -14,5 +14,6 @@ public class ServerMain {
         Server server = new Server(8080);
         System.out.println("Server starting");
         new Thread(server).start();
+
     }
 }
