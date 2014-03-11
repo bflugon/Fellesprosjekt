@@ -4,7 +4,7 @@
 *.gz
 .idea
 *.iml
--.DS_Store
+.DS_Store
 smtp.txt
 ip.txt
 database.txt
