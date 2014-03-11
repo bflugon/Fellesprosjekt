@@ -4,6 +4,8 @@ Very simple server implementation that should serve as a basis
 for implementing the chat server
 '''
 import SocketServer
+import json
+from datatime import datetime
 
 '''
 The RequestHandler class for our server.
@@ -25,29 +27,46 @@ class CLientHandler(SocketServer.BaseRequestHandler):
         self.ip = self.client_address[0]
         # Get the remote port number of the socket
         self.port = self.client_address[1]
+        user = ''
         print 'Client connected @' + self.ip + ':' + str(self.port)
         while True:
             # Wait for data from the client
             data = self.connection.recv(1024).strip()
             # Check if the data exists
             # (recv could have returned due to a disconnect)
-            if data:
-                data = json.loads(data)
-                if data[request] == login:
-                    #sjekk gyldig brukernavn
-                    user = data[username]
-                    if False:
-                        self.connection.sendall(json.dumps({'response':'login', 'error': 'Invalid username!', 'username': user}))
-                    if user in clients:
-                        self.connection.sendall(json.dumps({'response':'login', 'error': 'Name already taken', 'username': user}))
-                    else:
-                        clients[user] = self.connection
-                        self.connection.sendall(json.dumps({'response': 'login', 'username': user, 'messages': messages}))
-                elif data[request] == message:
-                    pass #legg melding til listen
-                    #send melding til tilkoblede klienter
-                elif data[request] == logout:
-                    pass #behandle logout
+            if not data:
+                break
+            data = json.loads(data)
+            if data['request'] == 'message':
+                timestamp = datatime.now()
+                print data['message']
+                message = [timestamp, user, data['message']]
+                messages.append(message)
+                response = json.dumps({'response': 'message', 'message': message})
+                #for client in clients:
+                clients['test'].sendall(response)
+            elif data['request'] == 'login':
+                #sjekk gyldig brukernavn
+                tempUser = data['username']
+                if False:
+                    self.connection.sendall(json.dumps({'response':'login', 'error': 'Invalid username!', 'username': tempUser}))
+                elif tempUser in clients:
+                    self.connection.sendall(json.dumps({'response':'login', 'error': 'Name already taken', 'username': tempUser}))
+                else:
+                    user = tempUser
+                    clients[user] = self.connection
+                    self.connection.sendall(json.dumps({'response': 'login', 'username': user, 'messages': messages}))
+            elif data['request'] == 'logout':
+                if self.connection in clients:
+                    response = {'response': 'logout', 'username': user}
+                else:
+                    response = {'response': 'logout', 'error': 'Not logged in'}
+                self.connection.sendall(json.dumps(response))
+                clients.remove(user)
+                user = ''
+
+
+            
 
 '''
 This will make all Request handlers being called in its own thread.

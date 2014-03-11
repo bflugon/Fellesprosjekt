@@ -3,6 +3,7 @@ KTN-project 2013 / 2014
 '''
 import socket
 import json
+from MessageWorker import ReceiveMessageWorker
 
 
 class Client(object):
@@ -18,7 +19,7 @@ class Client(object):
             message = ''
             message = raw_input()
             if message.startswith('/login'):
-                self.send(json.dumps({'request': 'login', 'message': message.split(' ', 1)[1]}))
+                self.send(json.dumps({'request': 'login', 'username': message.split(' ', 1)[1]}))
             elif message == '/logout':
                 self.send(json.dumps({'request': 'logout'}))
             else:
@@ -26,24 +27,24 @@ class Client(object):
         self.connection.close()
 
     def message_received(self, message, connection):
-        data = json.dumps(message)
-        if data.has_key(error):
-            if data[response] == 'login':
-                pass #Logg inn på nytt
-            elif data[response] == 'message':
-                pass # Do nothing, will be removes
-            elif data[response] == 'logout':
-                pass #Idk, prompt login?
-        elif data[response] == 'login':
-            print(data.messages)
-        elif data[response] == 'message':
-            print(message)
-        elif data[response] == 'logout':
+        data = json.loads(message)
+        if data.has_key('error'):
+            print('Du er ikke logget inn')
+        elif data['response'] == 'login':
+            for message in data['messages']:
+                if message:
+                    self.read(message)
+        elif data['response'] == 'message':
+            self.read(message)
+        elif data['response'] == 'logout':
             pass #Idk, prompt login?
 
 
     def connection_closed(self, connection):
         pass
+
+    def read(self, liste):
+        print(liste[0] + '\t' + liste[1] + ':' + liste[2])
 
     def send(self, data):
         self.connection.sendall(data)
