@@ -1,7 +1,5 @@
 package net;
 
-import db.DatabaseHandler;
-
 /**
  * Created with IntelliJ IDEA.
  * User: FF63

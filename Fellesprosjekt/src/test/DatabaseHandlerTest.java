@@ -1,7 +1,9 @@
 package test;
 
 import db.DatabaseHandler;
-import model.*;
+import model.Appointment;
+import model.MeetingRoom;
+import model.Person;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;

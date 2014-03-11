@@ -1,7 +1,7 @@
 package net;
 
-import main.Register;
 import model.Packet;
+import util.GeneralUtil;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -20,9 +20,10 @@ public class Client {
     private Socket clientRequestSocket;
     private ObjectInputStream clientRequestInput;
     private ObjectOutputStream clientRequestOutput;
+    private String ip;
 
-    public Client (String ip){
-
+    public Client (){
+        ip = GeneralUtil.readFile("ip.txt").get(0);
         try{
             System.out.println("Client: Binding Socket");
             this.clientRequestSocket = new Socket(ip, clientRequestPort);
@@ -33,7 +34,6 @@ public class Client {
         try{
             System.out.println("Client: Creating new Streams");
             clientRequestOutput = new ObjectOutputStream(this.clientRequestSocket.getOutputStream());
-            clientRequestOutput.flush();
             clientRequestInput = new ObjectInputStream(this.clientRequestSocket.getInputStream());
             System.out.println("Client: Created new streams");
         } catch (IOException e){

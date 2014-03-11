@@ -1,12 +1,9 @@
 package main;
 
-import db.DatabaseHandler;
 import model.*;
 import net.Client;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.TreeMap;
 
 /**
@@ -29,6 +26,12 @@ public class Register {
         this.client = client;
     }
 
+    /**
+     * Authenticates account.
+     * @param user
+     * @param pass
+     * @return
+     */
     public boolean authenticate(String user, String pass){
         Packet response = this.client.request(new Packet("AUTHENTICATE", user, pass));
         if (response.getName().equals("AUTHENTICATION")){
@@ -49,8 +52,10 @@ public class Register {
     public void createAccount(String user, String pass, String name, String email){
         Packet response = this.client.request(new Packet("CREATE_ACCOUNT",user,pass,name,email));
 
-        if(response.getName().equals("ACCOUNT_CREATED") && response.getObjects()[0] instanceof SQLException){
-            persons.add((Person) response.getObjects()[0]);
+        if(response.getName().equals("ACCOUNT_CREATED")){
+            Person p = (Person) response.getObjects()[0];
+            persons.add(p);
+            p.toString();
         }
     }
 
@@ -80,15 +85,22 @@ public class Register {
         return null;
     }
 
+
     /**
      * Adds appointment
-     * @param a
+     * @param name
+     * @param start
+     * @param end
+     * @param description
+     * @param priority
+     * @param username
      * @param mr
      */
-    public void addAppointment(Appointment a, MeetingRoom mr){
-        Packet response = this.client.request(new Packet("ADD_APPOINTMENT", a, mr));
+    public void addAppointment(String name, String start, String end, String description, int priority, String username, MeetingRoom mr){
+        Packet response = this.client.request(new Packet("ADD_APPOINTMENT", name, start, end, description, priority, username, mr));
         if (response.getName().equals("APPOINTMENT_ADDED")){
-            appointments.add((Appointment)response.getObjects()[0]);
+            Appointment a = (Appointment)response.getObjects()[0];
+            appointments.add(a);
         }
     }
 
@@ -176,7 +188,8 @@ public class Register {
     public void addRoom(String name, int capacity){
         Packet response = this.client.request(new Packet("ADD_ROOM",name,capacity));
         if(response.getName().equals("ROOM_ADDED")){
-            rooms.add((MeetingRoom) response.getObjects()[0]);
+            MeetingRoom mr = (MeetingRoom) response.getObjects()[0];
+            rooms.add(mr);
         }
     }
 
@@ -213,9 +226,10 @@ public class Register {
      * @param name
      */
     public void addGroup(String name){
-        Packet response = this.client.request(new Packet("ADD_GROUP", name));
+        Packet response = this.client.request(new Packet("ADD_GROUP",name));
         if (response.getName().equals("GROUP_ADDED")){
-            groups.add((Group)response.getObjects()[0]);
+            Group g = (Group) response.getObjects()[0];
+            groups.add(g);
         }
     }
 
@@ -225,7 +239,7 @@ public class Register {
      * @param p
      */
     public void addPersonToGroup(Group g, Person p){
-        Packet response = this.client.request(new Packet("ADD_PERSON_TO_GROUP", g,p));
+        Packet response = this.client.request(new Packet("ADD_PERSON_TO_GROUP",g,p));
         if(response.getName().equals("PERSON_ADDED_TO_GROUP")){
             if(allGroupMembers.containsKey(g.getGroupID())){
                 allGroupMembers.get(g.getGroupID()).add(p.getUsername());
@@ -235,6 +249,18 @@ public class Register {
                 allGroupMembers.put(g.getGroupID(),temp);
             }
         }
+    }
+
+    /**
+     * Gets all people that's member of a group
+     * @return
+     */
+    public TreeMap<Integer, ArrayList<String>> getAllMembersOfGroup(){
+        if (this.allGroupMembers == null){
+            Packet response = this.client.request(new Packet("GET_ALL_GROUPMEMBERS"));
+            allGroupMembers = (TreeMap<Integer, ArrayList<String>>)response.getObjects()[0];
+        }
+        return allGroupMembers;
     }
 
     /**

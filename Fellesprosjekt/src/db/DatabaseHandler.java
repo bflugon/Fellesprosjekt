@@ -89,7 +89,7 @@ public class DatabaseHandler {
             query.setString(3,name);
             query.setString(4,email);
             query.executeUpdate();
-            return (this.getPersonByUsername(username));
+            return (new Person(username, name, email));
 
         }catch (NoSuchAlgorithmException e){
             e.printStackTrace();
@@ -181,7 +181,7 @@ public class DatabaseHandler {
         addLeader(id,ownerUsername);
         addTakesPlace(id,mr);
 
-        return (new Appointment(id, ownerUsername,name,GeneralUtil.stringToDate(start),GeneralUtil.stringToDate(end),priority,description,new java.util.Date(),mr));
+        return (new Appointment(id, ownerUsername,name, GeneralUtil.stringToDate(start), GeneralUtil.stringToDate(end),priority,description,new java.util.Date(),mr));
     }
 
     /**
@@ -258,7 +258,7 @@ public class DatabaseHandler {
     /**
      * Deletes appointment
      * @param aID
-     * @throws SQLException
+     * @throws java.sql.SQLException
      */
     public void deleteAppointment(int aID) throws SQLException{
 
@@ -328,9 +328,9 @@ public class DatabaseHandler {
      * @throws java.sql.SQLException
      */
     public Group addGroup(String GName) throws SQLException{
-         int id = getNextAutoIncrement("group");
+        int id = getNextAutoIncrement("groups");
 
-        PreparedStatement query = this.db.prepareStatement("INSERT INTO group(GID,GName) VALUES (?,?)");
+        PreparedStatement query = this.db.prepareStatement("INSERT INTO groups(GID,GName) VALUES (?,?)");
         query.setInt(1,id);
         query.setString(2,GName);
         query.executeUpdate();
@@ -357,7 +357,7 @@ public class DatabaseHandler {
     /**
      * Returns a list of all groups
      * @return
-     * @throws SQLException
+     * @throws java.sql.SQLException
      */
     public ArrayList<Group> getAllGroups() throws SQLException{
         PreparedStatement query = this.db.prepareStatement("SELECT * FROM groups");
@@ -411,7 +411,7 @@ public class DatabaseHandler {
     /**
      * Returns a treemap containing all alarms, sorted by appointmentID.
      * @return
-     * @throws SQLException
+     * @throws java.sql.SQLException
      */
     public TreeMap<Integer, ArrayList<Alarm>> getAllAlarms() throws SQLException{
         PreparedStatement query = this.db.prepareStatement("SELECT * FROM invitedto WHERE hasAlarm = 1");
@@ -445,7 +445,7 @@ public class DatabaseHandler {
      * @param appointmentID
      * @param username
      * @param hasAlarm
-     * @throws SQLException
+     * @throws java.sql.SQLException
      */
     public void activateAlarm(int appointmentID, String username, int hasAlarm) throws SQLException{
         PreparedStatement query = this.db.prepareStatement("UPDATE invitedto SET hasAlarm = ? WHERE AID = ?, Username = ?");
@@ -459,7 +459,7 @@ public class DatabaseHandler {
      * Activates or deactivates alarm
      * @param alarmID
      * @param hasAlarm
-     * @throws SQLException
+     * @throws java.sql.SQLException
      */
     public void activateAlarm(int alarmID, int hasAlarm) throws SQLException{
         PreparedStatement query = this.db.prepareStatement("UPDATE invitedto SET hasAlarm = ? WHERE itID = ?");
@@ -474,7 +474,7 @@ public class DatabaseHandler {
      * @param appointmentID
      * @param hasAlarm
      * @param alarmTime
-     * @throws SQLException
+     * @throws java.sql.SQLException
      */
     public Alarm addAlarm(String username, int appointmentID, int hasAlarm, String alarmTime, int attending) throws SQLException{
         PreparedStatement query = this.db.prepareStatement("INSERT INTO invitedto(itID,Username,AID,hasAlarm,AlarmTime,Attends) VALUES (?,?,?,?,?,?)");
@@ -487,14 +487,14 @@ public class DatabaseHandler {
         query.setInt(6,attending);
         query.executeUpdate();
 
-        return new Alarm(id,username,GeneralUtil.stringToDate(alarmTime),attending);
+        return new Alarm(id,username, GeneralUtil.stringToDate(alarmTime),attending);
     }
 
     /**
      * Set attending status of alarm
      * @param alarmID
      * @param attending
-     * @throws SQLException
+     * @throws java.sql.SQLException
      */
     public void updateAttending(int alarmID, int attending) throws SQLException{
         PreparedStatement query = this.db.prepareStatement("UPDATE invitedto SET Attends = ? WHERE itID = ?");
