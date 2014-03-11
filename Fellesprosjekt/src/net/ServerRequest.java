@@ -40,7 +40,7 @@ public class ServerRequest {
             } else if(name.equals("GET_ALL_ROOMS")){
                 return getAllRooms();
             } else if(name.equals("ADD_APPOINTMENT")){
-                return addAppointment((Appointment) objects[0], (MeetingRoom) objects[1]);
+                return addAppointment((String) objects[0], (String) objects[1], (String) objects[2], (String) objects[3], (int) objects[4], (String) objects[5], (MeetingRoom) objects[6]);
             } else if(name.equals("EDIT_APPOINTMENT")){
                 return editAppointment((Appointment) objects[0], (MeetingRoom) objects[1]);
             } else if(name.equals("DELETE_APPOINTMENT")){
@@ -72,8 +72,8 @@ public class ServerRequest {
         return new Packet("ACCOUNT_CREATED",db.createAccount(user,pass,name,email));
     }
 
-    private Packet addAppointment(Appointment a, MeetingRoom mr) throws SQLException{
-        return new Packet("APPOINTMENT_ADDED", db.addAppointment(a.getAppointmentName(), a.getAppointmentStart(), a.getAppointmentEnd(), a.getDescription(), a.getPriority(), a.getOwnerName(), mr));
+    private Packet addAppointment(String name, String start, String end, String description, int priority, String username, MeetingRoom mr) throws SQLException{
+        return new Packet("APPOINTMENT_ADDED", db.addAppointment(name,start,end,description,priority,username,mr));
     }
 
     private Packet editAppointment(Appointment a, MeetingRoom mr) throws SQLException{
