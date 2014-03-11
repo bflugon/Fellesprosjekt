@@ -27,8 +27,6 @@ public class MailClient {
         username = mailInfo.get(0);
         password = mailInfo.get(1);
 
-        System.out.println(username +"    " + password);
-
         Properties properties = new Properties();
         properties.put("mail.smtp.auth", "true");
         properties.put("mail.smtp.starttls.enable","true");
