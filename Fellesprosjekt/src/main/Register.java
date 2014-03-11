@@ -269,6 +269,9 @@ public class Register {
      * @return
      */
     public ArrayList<Person> getMembersOfGroup(int groupID){
+        if (this.allGroupMembers == null){
+            getAllMembersOfGroup();
+        }
 
         if(!allGroupMembers.containsKey(groupID)){
             return null;
@@ -308,6 +311,10 @@ public class Register {
      * @return
      */
     public ArrayList<Alarm> getActiveAlarmByAID(int appointmentID){
+        if (activeAlarms == null){
+            getAllActiveAlarms();
+        }
+
         if(!activeAlarms.containsKey(appointmentID)){
             return null;
         }
