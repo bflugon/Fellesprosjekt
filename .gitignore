@@ -4,6 +4,3 @@
 *.gz
 .idea
 *.iml
-smtp.txt
-ip.txt
-database.txt
