@@ -14,7 +14,7 @@ import java.io.IOException;
 public class Server implements Runnable {
     protected int serverPort = 8080;
     protected ServerSocket serverSocket = null;
-    protected boolean running = false;
+    protected boolean running = true;
     protected Thread runningThread = null;
 
     public Server(int serverPort){
@@ -26,35 +26,21 @@ public class Server implements Runnable {
             this.runningThread = Thread.currentThread();
         }
         openServerSocket();
-        while (!isRunning()){
+        while (running){
             Socket clientSocket;
             try{
                 clientSocket = this.serverSocket.accept();
             }
             catch (IOException e){
-                if (isRunning()){
+                if (!running){
                     System.out.println("Server is stopped");
                     return;
                 }
                 throw new RuntimeException("ERROR: Couldn't accept client connection",e);
             }
-            new Thread( new RequestThread(clientSocket)).start();
+            new RequestThread(clientSocket, this).start();
         }
 
-    }
-
-    public synchronized boolean isRunning(){
-        return this.running;
-    }
-
-    public synchronized void stop(){
-        this.running = true;
-        try{
-            this.serverSocket.close();
-        }
-        catch (IOException e){
-            throw new RuntimeException("Error closing socket", e);
-        }
     }
 
     private void openServerSocket(){

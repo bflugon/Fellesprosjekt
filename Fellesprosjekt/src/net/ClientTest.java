@@ -4,6 +4,7 @@ import db.DatabaseHandler;
 import main.Register;
 import model.Appointment;
 import model.Packet;
+import model.Person;
 
 import java.util.ArrayList;
 
@@ -16,7 +17,7 @@ import java.util.ArrayList;
  */
 public class ClientTest {
     public static void main (String[] args){
-        Client client = new Client("localhost");
+        Client client = new Client();
         System.out.println("Trying to get appointments");
         Packet packet = client.request(new Packet("GET_APPOINTMENTS"));
         System.out.println("Got appointments");
@@ -28,6 +29,12 @@ public class ClientTest {
             }
         }else{
             System.out.println("Get name didn't equal ALL_APPOINTMENTS");
+        }
+
+        packet = client.request(new Packet("GET_ALL_PERSONS"));
+        ArrayList<Person> persons = (ArrayList<Person>)packet.getObjects()[0];
+        for (Person p : persons){
+            System.out.println(p.toString());
         }
     }
 }

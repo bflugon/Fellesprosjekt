@@ -89,7 +89,7 @@ public class DatabaseHandler {
             query.setString(3,name);
             query.setString(4,email);
             query.executeUpdate();
-            return (this.getPersonByUsername(username));
+            return (new Person(username, name, email));
 
         }catch (NoSuchAlgorithmException e){
             e.printStackTrace();
@@ -328,9 +328,9 @@ public class DatabaseHandler {
      * @throws java.sql.SQLException
      */
     public Group addGroup(String GName) throws SQLException{
-         int id = getNextAutoIncrement("group");
+        int id = getNextAutoIncrement("groups");
 
-        PreparedStatement query = this.db.prepareStatement("INSERT INTO group(GID,GName) VALUES (?,?)");
+        PreparedStatement query = this.db.prepareStatement("INSERT INTO groups(GID,GName) VALUES (?,?)");
         query.setInt(1,id);
         query.setString(2,GName);
         query.executeUpdate();

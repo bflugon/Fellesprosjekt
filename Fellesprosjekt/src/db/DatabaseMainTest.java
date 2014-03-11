@@ -28,9 +28,12 @@ public class DatabaseMainTest {
 
     public static void main(String[] args){
         DatabaseMainTest main = new DatabaseMainTest();
+        System.out.println(DatabaseSettings.getURL());
+        System.out.println(DatabaseSettings.getUsername());
+        System.out.println(DatabaseSettings.getPassword());
         main.createConnection();
-        //main.testDB();
-        main.testRegister();
+        main.testDB();
+        //main.testRegister();
         main.closeConnection();
     }
 
