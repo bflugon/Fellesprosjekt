@@ -19,8 +19,7 @@ import java.util.ArrayList;
 public class ServerClientRegisterTest {
 
     public static void main(String[] args){
-        Client client = new Client("178.79.173.4");
-        Register reg = new Register(client);
+        Register reg = new Register(new Client());
 
         ArrayList<Appointment> appointments = reg.getAppointments();
         ArrayList<Person> persons = reg.getPersons();

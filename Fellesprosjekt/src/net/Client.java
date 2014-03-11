@@ -2,6 +2,7 @@ package net;
 
 import main.Register;
 import model.Packet;
+import util.GeneralUtil;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -20,8 +21,10 @@ public class Client {
     private Socket clientRequestSocket;
     private ObjectInputStream clientRequestInput;
     private ObjectOutputStream clientRequestOutput;
+    private String ip;
 
-    public Client (String ip){
+    public Client (){
+        ip = GeneralUtil.readFile("ip.txt").get(0);
         try{
             System.out.println("Client: Binding Socket");
             this.clientRequestSocket = new Socket(ip, clientRequestPort);

@@ -17,7 +17,7 @@ import java.util.ArrayList;
  */
 public class ClientTest {
     public static void main (String[] args){
-        Client client = new Client("localhost");
+        Client client = new Client();
         System.out.println("Trying to get appointments");
         Packet packet = client.request(new Packet("GET_APPOINTMENTS"));
         System.out.println("Got appointments");
