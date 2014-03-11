@@ -9,28 +9,60 @@ package db;
  */
 
 import main.Register;
+import model.Alarm;
 import model.Appointment;
+import model.MeetingRoom;
 import model.Person;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.TreeMap;
 
 /**
  * DO NOT TOUCH!
  */
 public class DatabaseMainTest {
+    DatabaseHandler db;
+    Register reg;
+
 
     public static void main(String[] args){
         DatabaseMainTest main = new DatabaseMainTest();
-        main.testDB();
+        main.createConnection();
+        //main.testDB();
+        main.testRegister();
+        main.closeConnection();
+    }
 
+    public void createConnection(){
+        System.out.println("Creating connection");
+        db = new DatabaseHandler();
+    }
+
+    public void closeConnection(){
+        System.out.println("Closing connection");
+        db.close();
+    }
+
+    public void testRegister(){
+        try{
+            ArrayList<Person> results = reg.getMembersOfGroup(1);
+            for(Person p : results){
+                System.out.println(p.getUsername());
+            }
+
+            ArrayList<Alarm> alarms = reg.getActiveAlarmByAID(1);
+            for (Alarm a : alarms){
+                System.out.println(a.getUsername());
+            }
+
+        } catch(Exception e){
+            //Do nothing
+        }
     }
 
     public void testDB(){
 
-        System.out.println("Creating connection");
-        DatabaseHandler db = new DatabaseHandler();
-        Register reg = new Register(db);
 
         try{
 
@@ -55,19 +87,38 @@ public class DatabaseMainTest {
                 System.out.println(a.toString());
             }
 
+            System.out.println("Getting all rooms and prints them");
+            ArrayList<MeetingRoom> meetingRooms = db.getAllRooms();
 
+            for (MeetingRoom mr : meetingRooms ){
+                System.out.println(mr.toString());
+            }
 
             /*
-            System.out.println("Adding appointment");
-            db.addAppointment("Test123", "2014-05-09 12:00:00", "2014-05-09 13:00:00", "Testing blabla", 2,"2014-05-03 12:00:00");
+            System.out.println("Adding appointment: (\"name\",\"2014-03-06 13:00:00\",\"2014-03-06 13:00:00\", \"Test\", 3, \"Bob\", mr);");
+            db.addAppointment("name","2014-03-06 13:00:00","2014-03-06 13:00:00", "Test", 3, "Bob", meetingRooms.get(0));
             */
+
+            /*
+            System.out.println("Edit first appointment");
+            db.editAppointment(1,"Edit","2014-03-06 13:00:00","2014-03-06 13:00:00","EditTest",2,meetingRooms.get(0));
+             */
+
+            /*
+            System.out.println("Deleting appointment");
+            db.deleteAppointment(5);
+            */
+
+            /*
+            System.out.println("Adding new room");
+            db.addRoom("RomTest",2);
+            */
+
 
         } catch(SQLException e){
             e.printStackTrace();
         }
 
-        System.out.println("Closing db connection");
-        db.close();
     }
 
 }

@@ -1,5 +1,6 @@
 package model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -9,7 +10,7 @@ import java.util.ArrayList;
  * Time: 5:06 PM
  * To change this template use File | Settings | File Templates.
  */
-public class Group {
+public class Group implements Serializable {
     private final int groupID;
     private ArrayList<Person> members;
     private String groupName;
@@ -52,5 +53,9 @@ public class Group {
 
     public void setGroupName(String groupName){
         this.groupName = groupName;
+    }
+
+    public int getGroupID(){
+        return groupID;
     }
 }

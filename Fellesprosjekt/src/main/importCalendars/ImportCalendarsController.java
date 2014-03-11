@@ -1,6 +1,6 @@
 package main.importCalendars;
 
-import main.GuiUtils;
+import util.GuiUtils;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
 

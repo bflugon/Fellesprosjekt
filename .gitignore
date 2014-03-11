@@ -4,4 +4,8 @@
 *.gz
 .idea
 *.iml
+<<<<<<< HEAD
 /bin
+=======
+.DS_Store
+>>>>>>> branch 'master' of https://github.com/bflugon/Fellesprosjekt.git

@@ -1,11 +1,10 @@
 package db;
 
-import model.Appointment;
-import model.Group;
-import model.MeetingRoom;
-import model.Person;
+import model.*;
 import util.GeneralUtil;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.TreeMap;
@@ -59,12 +58,15 @@ public class DatabaseHandler {
             if (!rs.next()){
                 return false;
             }
-            if(password.equals(rs.getString("password"))){
+
+            String hash = encryptPassword(password);
+
+            if(hash.equals(rs.getString("password"))){
                 return true;
             }
             return false;
 
-        } catch (SQLException e) {
+        } catch (SQLException | NoSuchAlgorithmException e) {
             e.printStackTrace();
             return false;
         }
@@ -79,18 +81,19 @@ public class DatabaseHandler {
      * @return
      * @throws java.sql.SQLException
      */
-    public void createAccount(String username, String password, String name, String email) throws SQLException{
+    public Person createAccount(String username, String password, String name, String email) throws SQLException{
         try{
-            PreparedStatement query = this.db.prepareStatement("INSERT INTO person(Username, PName, Password, Email VALUES (?,?,?,?)");
+            PreparedStatement query = this.db.prepareStatement("INSERT INTO person(Username, Password, PName, Email) VALUES (?,?,?,?)");
             query.setString(1, username);
-            query.setString(2,password);
+            query.setString(2,encryptPassword(password));
             query.setString(3,name);
             query.setString(4,email);
             query.executeUpdate();
+            return (this.getPersonByUsername(username));
 
-        }catch (Exception e){
+        }catch (NoSuchAlgorithmException e){
             e.printStackTrace();
-
+            return null;
         }
     }
 
@@ -117,6 +120,18 @@ public class DatabaseHandler {
         return results;
     }
 
+    public Person getPersonByUsername(String username) throws SQLException{
+        PreparedStatement query = this.db.prepareStatement("SELECT * FROM person WHERE Username = ?");
+        query.setString(1,"username");
+        ResultSet rs = query.executeQuery();
+
+        if (!rs.next()){
+            return null;
+        }
+
+        return new Person(rs.getString("Username"), rs.getString("PName"), rs.getString("Email"));
+    }
+
     /**
      * Returns an ArrayList containing all the Appointments in the db
      * @return ArrayList<Appointment>
@@ -141,6 +156,7 @@ public class DatabaseHandler {
 
     /**
      * Adds an appointment to db
+     * String start and end should be in the format yyyy-MM-dd hh:mm:ss
      * @param name
      * @param start
      * @param end
@@ -148,7 +164,7 @@ public class DatabaseHandler {
      * @param priority
      * @throws java.sql.SQLException
      */
-    public void addAppointment(String name, String start, String end, String description, int priority, String ownerUsername, MeetingRoom mr) throws SQLException{
+    public Appointment addAppointment(String name, String start, String end, String description, int priority, String ownerUsername, MeetingRoom mr) throws SQLException{
         int id = getNextAutoIncrement("appointment");
 
         PreparedStatement query = this.db.prepareStatement("INSERT INTO appointment(AID, AName, Start, End, Description, Priority, DateCreated) VALUES (?,?,?,?,?,?,?)");
@@ -164,6 +180,8 @@ public class DatabaseHandler {
 
         addLeader(id,ownerUsername);
         addTakesPlace(id,mr);
+
+        return (new Appointment(id, ownerUsername,name,GeneralUtil.stringToDate(start),GeneralUtil.stringToDate(end),priority,description,new java.util.Date(),mr));
     }
 
     /**
@@ -238,6 +256,30 @@ public class DatabaseHandler {
     }
 
     /**
+     * Deletes appointment
+     * @param aID
+     * @throws SQLException
+     */
+    public void deleteAppointment(int aID) throws SQLException{
+
+        PreparedStatement query = this.db.prepareStatement("DELETE FROM isleader WHERE AID = ?");
+        query.setInt(1,aID);
+        query.executeUpdate();
+
+        query = this.db.prepareStatement("DELETE FROM invitedto WHERE AID = ?");
+        query.setInt(1,aID);
+        query.executeUpdate();
+
+        query = this.db.prepareStatement("DELETE FROM takesplace WHERE AID = ?");
+        query.setInt(1,aID);
+        query.executeUpdate();
+
+        query = this.db.prepareStatement("DELETE FROM appointment WHERE AID = ?");
+        query.setInt(1, aID);
+        query.executeUpdate();
+    }
+
+    /**
      * Returns an ArrayList containing all meeting rooms
      * @return Arraylist<MeetingRoom>
      * @throws java.sql.SQLException
@@ -266,7 +308,7 @@ public class DatabaseHandler {
      * @param capacity
      * @throws java.sql.SQLException
      */
-    public void addRoom(String roomName, int capacity) throws SQLException{
+    public MeetingRoom addRoom(String roomName, int capacity) throws SQLException{
         int id = getNextAutoIncrement("room");
 
         PreparedStatement query = this.db.prepareStatement("INSERT INTO room(RID,RName,Capacity) VALUES (?,?,?)");
@@ -276,6 +318,8 @@ public class DatabaseHandler {
         query.setInt(3, capacity);
 
         query.executeUpdate();
+
+        return (new MeetingRoom(id,roomName,capacity));
     }
 
     /**
@@ -283,13 +327,15 @@ public class DatabaseHandler {
      * @param GName
      * @throws java.sql.SQLException
      */
-    public void addGroup(String GName) throws SQLException{
+    public Group addGroup(String GName) throws SQLException{
          int id = getNextAutoIncrement("group");
 
         PreparedStatement query = this.db.prepareStatement("INSERT INTO group(GID,GName) VALUES (?,?)");
         query.setInt(1,id);
         query.setString(2,GName);
         query.executeUpdate();
+
+        return (new Group(id, GName));
     }
 
     /**
@@ -298,7 +344,7 @@ public class DatabaseHandler {
      * @param p
      * @throws java.sql.SQLException
      */
-    public void addMemberOfGroup(int gID, Person p) throws SQLException{
+    public void addPersonToGroup(int gID, Person p) throws SQLException{
         int id = getNextAutoIncrement("memberof");
 
         PreparedStatement query = this.db.prepareStatement("INSERT INTO memberof(moID, GID, Username) VALUES (?,?,?)");
@@ -308,6 +354,11 @@ public class DatabaseHandler {
         query.executeUpdate();
     }
 
+    /**
+     * Returns a list of all groups
+     * @return
+     * @throws SQLException
+     */
     public ArrayList<Group> getAllGroups() throws SQLException{
         PreparedStatement query = this.db.prepareStatement("SELECT * FROM groups");
         ResultSet rs = query.executeQuery();
@@ -317,7 +368,7 @@ public class DatabaseHandler {
         }
 
         ArrayList<Group> results = new ArrayList<Group>();
-        results.add(new Group(rs.getInt("GID"),rs.getString("GName")));
+        results.add(new Group(rs.getInt("GID"), rs.getString("GName")));
         while (rs.next()){
             results.add(new Group(rs.getInt("GID"),rs.getString("GName")));
         }
@@ -329,7 +380,7 @@ public class DatabaseHandler {
      * @return
      * @throws java.sql.SQLException
      */
-    public TreeMap<Integer,String> getAllMembersOfGroups() throws SQLException{
+    public TreeMap<Integer, ArrayList<String>> getAllMembersOfGroups() throws SQLException{
         PreparedStatement query = this.db.prepareStatement("SELECT * FROM memberof");
 
         ResultSet rs = query.executeQuery();
@@ -338,13 +389,118 @@ public class DatabaseHandler {
             return null;
         }
 
-        TreeMap<Integer, String> results = new TreeMap<Integer, String>();
-        results.put(rs.getInt("GID"),rs.getString("Username"));
+        TreeMap<Integer, ArrayList<String>> results = new TreeMap<Integer, ArrayList<String>>();
+        int temp = rs.getInt("GID");
+        ArrayList<String> strings = new ArrayList<String>();
+        strings.add(rs.getString("Username"));
 
         while(rs.next()){
-            results.put(rs.getInt("GID"),rs.getString("Username"));
+            //if new groupID is different, put the old one and the arraylist into the TreeMap.
+            if (temp != rs.getInt("GID")){
+                results.put(temp,strings);
+                strings = new ArrayList<String>();
+            }
+            temp = rs.getInt("GID");
+            strings.add(rs.getString("Username"));
         }
+        //add the final key + arraylist<String> to the TreeMap
+        results.put(temp,strings);
         return results;
+    }
+
+    /**
+     * Returns a treemap containing all alarms, sorted by appointmentID.
+     * @return
+     * @throws SQLException
+     */
+    public TreeMap<Integer, ArrayList<Alarm>> getAllAlarms() throws SQLException{
+        PreparedStatement query = this.db.prepareStatement("SELECT * FROM invitedto WHERE hasAlarm = 1");
+        ResultSet rs = query.executeQuery();
+
+        if (!rs.next()){
+            return null;
+        }
+
+        TreeMap<Integer, ArrayList<Alarm>> results = new TreeMap<Integer, ArrayList<Alarm>>();
+        int temp = rs.getInt("AID");
+        ArrayList<Alarm> alarms = new ArrayList<Alarm>();
+
+        alarms.add(new Alarm(rs.getInt("itID"), rs.getString("Username"), rs.getTimestamp("AlarmTime"), rs.getInt("Attends")));
+
+        while(rs.next()){
+            if (temp != rs.getInt("AID")){
+                results.put(temp,alarms);
+                alarms = new ArrayList<Alarm>();
+            }
+            temp = rs.getInt("AID");
+            alarms.add(new Alarm(rs.getInt("itID"), rs.getString("Username"), rs.getTimestamp("AlarmTime"), rs.getInt("Attends")));
+        }
+
+        results.put(temp, alarms);
+        return results;
+    }
+
+    /**
+     * Activates or deactivates alarm
+     * @param appointmentID
+     * @param username
+     * @param hasAlarm
+     * @throws SQLException
+     */
+    public void activateAlarm(int appointmentID, String username, int hasAlarm) throws SQLException{
+        PreparedStatement query = this.db.prepareStatement("UPDATE invitedto SET hasAlarm = ? WHERE AID = ?, Username = ?");
+        query.setInt(1, hasAlarm);
+        query.setInt(2, appointmentID);
+        query.setString(3,username);
+        query.executeUpdate();
+    }
+
+    /**
+     * Activates or deactivates alarm
+     * @param alarmID
+     * @param hasAlarm
+     * @throws SQLException
+     */
+    public void activateAlarm(int alarmID, int hasAlarm) throws SQLException{
+        PreparedStatement query = this.db.prepareStatement("UPDATE invitedto SET hasAlarm = ? WHERE itID = ?");
+        query.setInt(1, hasAlarm);
+        query.setInt(2, alarmID);
+        query.executeUpdate();
+    }
+
+    /**
+     * Add a new alarm
+     * @param username
+     * @param appointmentID
+     * @param hasAlarm
+     * @param alarmTime
+     * @throws SQLException
+     */
+    public Alarm addAlarm(String username, int appointmentID, int hasAlarm, String alarmTime, int attending) throws SQLException{
+        PreparedStatement query = this.db.prepareStatement("INSERT INTO invitedto(itID,Username,AID,hasAlarm,AlarmTime,Attends) VALUES (?,?,?,?,?,?)");
+        int id = getNextAutoIncrement("invitedto");
+        query.setInt(1, id);
+        query.setString(2, username);
+        query.setInt(3,appointmentID);
+        query.setInt(4,hasAlarm);
+        query.setTimestamp(5, Timestamp.valueOf(alarmTime));
+        query.setInt(6,attending);
+        query.executeUpdate();
+
+        return new Alarm(id,username,GeneralUtil.stringToDate(alarmTime),attending);
+    }
+
+    /**
+     * Set attending status of alarm
+     * @param alarmID
+     * @param attending
+     * @throws SQLException
+     */
+    public void updateAttending(int alarmID, int attending) throws SQLException{
+        PreparedStatement query = this.db.prepareStatement("UPDATE invitedto SET Attends = ? WHERE itID = ?");
+        query.setInt(1,attending);
+        query.setInt(2, alarmID);
+        query.executeUpdate();
     }
 
     /**
@@ -361,5 +517,15 @@ public class DatabaseHandler {
         rs.next();
 
         return rs.getInt("Auto_increment");
+    }
+
+    private String encryptPassword(String string) throws NoSuchAlgorithmException{
+        MessageDigest messageDigest = MessageDigest.getInstance("SHA1");
+        byte[] result = messageDigest.digest(string.getBytes());
+        StringBuffer buffer = new StringBuffer();
+        for (int i = 0; i < result.length; i++){
+            buffer.append(Integer.toString((result[i] & 0xff) + 0x100, 16).substring(1));
+        }
+        return buffer.toString();
     }
 }
