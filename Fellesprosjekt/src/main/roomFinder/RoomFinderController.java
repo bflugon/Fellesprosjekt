@@ -5,9 +5,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TablePosition;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.net.URL;
@@ -21,37 +19,54 @@ public class RoomFinderController implements Initializable {
     public TableColumn roomTableColumn;
     public TableColumn capacityTableColumn;
     public TableView roomFinderTableView;
+    public TextField alternativeRoomTextField;
+    public TestRoom returnedRoom;
+    public Label chosenRoomLabel;
+    public int minCapacity;
     ObservableList<TestRoom> romData;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
-        //Henter alle rom
+        minCapacity = 7;
+
         romData = fetchRoomData();
-
         capacityTableColumn.setSortType(TableColumn.SortType.ASCENDING);
-
         roomTableColumn.setCellValueFactory(new PropertyValueFactory<TestRoom, String>("roomName"));
         capacityTableColumn.setCellValueFactory(new PropertyValueFactory<TestRoom, String>("capacity"));
-
         roomFinderTableView.setItems(romData);
         roomFinderTableView.getSortOrder().add(capacityTableColumn);
+    }
 
+    public void clickSelection(){
+        if (!roomFinderTableView.getSelectionModel().getSelectedCells().isEmpty()){
+            ObservableList<TablePosition> c;
+            c = roomFinderTableView.getSelectionModel().getSelectedCells();
+            int rowIndex = c.get(0).getRow();
+            TestRoom room = romData.get(rowIndex);
+            returnedRoom = room;
+            chosenRoomLabel.setText(room.toString());
+        }
+    }
+
+    public void alternativeRoomKeyReleased() {
+        returnedRoom = (new TestRoom("Default", 99));
+        chosenRoomLabel.setText(alternativeRoomTextField.getText());
     }
 
     public void closeOnOk(ActionEvent actionEvent) {
-        ObservableList<TablePosition> c;
-        c = roomFinderTableView.getSelectionModel().getSelectedCells();
-        int rowIndex = c.get(0).getRow();
-        System.out.println(romData.get(rowIndex).toString());
-
+        if (chosenRoomLabel != null && returnedRoom != null){
+            System.out.println(chosenRoomLabel.getText());
+            System.out.println(returnedRoom.toString());
+        }
         ((Node)(actionEvent.getSource())).getScene().getWindow().hide();
-
     }
 
     private ObservableList<TestRoom> fetchRoomData() {
-        return FXCollections.observableArrayList(
-                new TestRoom("Rom 1", 5),
+        ObservableList<TestRoom> approvedRooms = FXCollections.observableArrayList();
+        ObservableList<TestRoom> allRooms = FXCollections.observableArrayList(
+                new TestRoom("Rom 1", 12),
+                new TestRoom("Rom 2", 5),
                 new TestRoom("Rom 3", 4),
                 new TestRoom("Rom 4", 4),
                 new TestRoom("Rom 5", 7),
@@ -66,9 +81,16 @@ public class RoomFinderController implements Initializable {
                 new TestRoom("Rom 14", 50),
                 new TestRoom("Rom 15", 12),
                 new TestRoom("Rom 16", 7),
-                new TestRoom("Rom 17", 7),
-                new TestRoom("Rom 2", 12)
+                new TestRoom("Rom 17", 7)
         );
+
+        for (TestRoom r : allRooms){
+            if (r.capacity > this.minCapacity){
+                approvedRooms.add(r);
+            }
+        }
+
+        return approvedRooms;
     }
 
     public static class TestRoom {
