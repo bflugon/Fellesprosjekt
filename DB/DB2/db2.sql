@@ -1,7 +1,7 @@
 CREATE TABLE Groups
 (
 	GID int NOT NULL AUTO_INCREMENT PRIMARY KEY,
-	Name varchar(30)
+	GName varchar(30)
 );
 
 CREATE TABLE Person
