@@ -5,7 +5,7 @@ for implementing the chat server
 '''
 import SocketServer
 import json
-from datatime import datetime
+from datetime import datetime
 
 '''
 The RequestHandler class for our server.
@@ -17,7 +17,7 @@ client.
 
 clients = {}
 
-messages = [[]]
+messages = []
 
 class CLientHandler(SocketServer.BaseRequestHandler):
     def handle(self):
@@ -38,20 +38,19 @@ class CLientHandler(SocketServer.BaseRequestHandler):
                 break
             data = json.loads(data)
             if data['request'] == 'message':
-                timestamp = datatime.now()
-                print data['message']
-                message = [timestamp, user, data['message']]
+                message = user + ': ' + data['message']
+                print message
                 messages.append(message)
                 response = json.dumps({'response': 'message', 'message': message})
-                #for client in clients:
-                clients['test'].sendall(response)
+                for client in clients:
+                    clients[client].sendall(response)
             elif data['request'] == 'login':
                 #sjekk gyldig brukernavn
-                tempUser = data['username']
-                if False:
-                    self.connection.sendall(json.dumps({'response':'login', 'error': 'Invalid username!', 'username': tempUser}))
+                tempUser = data['username'] 
+                if not tempUser.replace('_', '').isalnum():
+                    self.connection.sendall(json.dumps({'response': 'login', 'error': 'Invalid username!', 'username': tempUser}))
                 elif tempUser in clients:
-                    self.connection.sendall(json.dumps({'response':'login', 'error': 'Name already taken', 'username': tempUser}))
+                    self.connection.sendall(json.dumps({'response': 'login', 'error': 'Name already taken', 'username': tempUser}))
                 else:
                     user = tempUser
                     clients[user] = self.connection
@@ -78,8 +77,8 @@ class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
     pass
 
 if __name__ == "__main__":
-    HOST = 'localhost'
-    PORT = 9999
+    HOST = raw_input('Enter the address of the server (localhost')
+    PORT = int(raw_input('Enter the portnumber to use (9999)'))
 
     # Create the server, binding to localhost on port 9999
     server = ThreadedTCPServer((HOST, PORT), CLientHandler)

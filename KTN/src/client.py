@@ -18,10 +18,14 @@ class Client(object):
         while True:
             message = ''
             message = raw_input()
-            if message.startswith('/login'):
-                self.send(json.dumps({'request': 'login', 'username': message.split(' ', 1)[1]}))
-            elif message == '/logout':
-                self.send(json.dumps({'request': 'logout'}))
+            if message.startswith('/'):
+                if message.startswith('/login') and message.count(' ') < 2:
+                    self.send(json.dumps({'request': 'login', 'username': message.split(' ', 1)[1]}))
+                elif message == '/logout':
+                    self.send(json.dumps({'request': 'logout'}))
+                else:
+                    print 'Invalid command'
+                    continue
             else:
                 self.send(json.dumps({'request':'message', 'message': message}))
         self.connection.close()
@@ -29,22 +33,18 @@ class Client(object):
     def message_received(self, message, connection):
         data = json.loads(message)
         if data.has_key('error'):
-            print('Du er ikke logget inn')
+            print data['error']
         elif data['response'] == 'login':
             for message in data['messages']:
-                if message:
-                    self.read(message)
+                print message
         elif data['response'] == 'message':
-            self.read(message)
+            print data['message']
         elif data['response'] == 'logout':
             pass #Idk, prompt login?
 
 
     def connection_closed(self, connection):
         pass
-
-    def read(self, liste):
-        print(liste[0] + '\t' + liste[1] + ':' + liste[2])
 
     def send(self, data):
         self.connection.sendall(data)
@@ -55,4 +55,6 @@ class Client(object):
 
 if __name__ == "__main__":
     client = Client()
+    host = raw_input('Enter the address to the host (localhost)')
+    port = int(raw_input('Enter the portnumber of the server (9999)'))
     client.start('localhost', 9999)
