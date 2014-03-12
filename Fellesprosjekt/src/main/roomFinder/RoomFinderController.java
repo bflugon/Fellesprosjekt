@@ -1,12 +1,16 @@
 package main.roomFinder;
 
-import util.GuiUtils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import main.meeting.MeetingController;
+import model.Appointment;
+import model.MeetingRoom;
+import util.GuiUtils;
+
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -19,108 +23,106 @@ public class RoomFinderController implements Initializable {
     public TableColumn capacityTableColumn;
     public TableView roomFinderTableView;
     public TextField alternativeRoomTextField;
-    public TestRoom returnedRoom;
+    public MeetingRoom selectedRoom;
     public Label chosenRoomLabel;
-    public int minCapacity;
-    ObservableList<TestRoom> romData;
+    public int minCapacity = 0;
+    ObservableList<MeetingRoom> romData;
+    private Appointment appointment;
+    private MeetingController parentController;
+
+    //Denne må hentes fra register.
+    public MeetingRoom defaultMeetingRoom = new MeetingRoom(1, "Default", 999);
+
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
-        minCapacity = 7;
-
         romData = fetchRoomData();
         capacityTableColumn.setSortType(TableColumn.SortType.ASCENDING);
-        roomTableColumn.setCellValueFactory(new PropertyValueFactory<TestRoom, String>("roomName"));
-        capacityTableColumn.setCellValueFactory(new PropertyValueFactory<TestRoom, String>("capacity"));
+        roomTableColumn.setCellValueFactory(new PropertyValueFactory<MeetingRoom, String>("roomName"));
+        capacityTableColumn.setCellValueFactory(new PropertyValueFactory<MeetingRoom, String>("capacity"));
         roomFinderTableView.setItems(romData);
         roomFinderTableView.getSortOrder().add(capacityTableColumn);
     }
 
     public void clickSelection(){
+
         if (!roomFinderTableView.getSelectionModel().getSelectedCells().isEmpty()){
+
             ObservableList<TablePosition> c;
             c = roomFinderTableView.getSelectionModel().getSelectedCells();
             int rowIndex = c.get(0).getRow();
-            TestRoom room = romData.get(rowIndex);
-            returnedRoom = room;
-            chosenRoomLabel.setText(room.toString());
+            MeetingRoom room = romData.get(rowIndex);
+
+            appointment.setAlternativeRoomName(null);
+            appointment.setRoom(room);
+            selectedRoom = room;
+            chosenRoomLabel.setText(appointment.getRoom().getRoomName());
+
         }
+
     }
 
     public void alternativeRoomKeyReleased() {
-        returnedRoom = (new TestRoom("Default", 99));
+
+        selectedRoom = defaultMeetingRoom;
         chosenRoomLabel.setText(alternativeRoomTextField.getText());
+        appointment.setRoom(selectedRoom);
+        appointment.setAlternativeRoomName(alternativeRoomTextField.getText());
+
     }
 
     public void closeOnOk(ActionEvent actionEvent) {
-        if (chosenRoomLabel != null && returnedRoom != null){
-            System.out.println(chosenRoomLabel.getText());
-            System.out.println(returnedRoom.toString());
+
+        if (chosenRoomLabel != null && selectedRoom != null){
+
+            parentController.updateView();
+            
         }
         GuiUtils.closeWindow(actionEvent);
+
     }
 
-    private ObservableList<TestRoom> fetchRoomData() {
-        ObservableList<TestRoom> approvedRooms = FXCollections.observableArrayList();
-        ObservableList<TestRoom> allRooms = FXCollections.observableArrayList(
-                new TestRoom("Rom 1", 12),
-                new TestRoom("Rom 2", 5),
-                new TestRoom("Rom 3", 4),
-                new TestRoom("Rom 4", 4),
-                new TestRoom("Rom 5", 7),
-                new TestRoom("Rom 6", 10),
-                new TestRoom("Rom 7", 10),
-                new TestRoom("Rom 8", 10),
-                new TestRoom("Rom 9", 10),
-                new TestRoom("Rom 10", 20),
-                new TestRoom("Rom 11", 30),
-                new TestRoom("Rom 12", 35),
-                new TestRoom("Rom 13", 25),
-                new TestRoom("Rom 14", 50),
-                new TestRoom("Rom 15", 12),
-                new TestRoom("Rom 16", 7),
-                new TestRoom("Rom 17", 7)
+    private ObservableList<MeetingRoom> fetchRoomData() {
+        ObservableList<MeetingRoom> approvedRooms = FXCollections.observableArrayList();
+        ObservableList<MeetingRoom> allRooms = FXCollections.observableArrayList(
+                new MeetingRoom(12,"Rom 1", 12),
+                new MeetingRoom(2,"Rom 2", 5),
+                new MeetingRoom(3,"Rom 3", 4),
+                new MeetingRoom(4,"Rom 4", 4),
+                new MeetingRoom(5,"Rom 5", 7),
+                new MeetingRoom(6,"Rom 6", 10),
+                new MeetingRoom(7,"Rom 7", 10),
+                new MeetingRoom(8,"Rom 8", 10),
+                new MeetingRoom(9,"Rom 9", 10),
+                new MeetingRoom(10,"Rom 10", 20),
+                new MeetingRoom(11,"Rom 17", 7)
         );
 
-        for (TestRoom r : allRooms){
-            if (r.capacity > this.minCapacity){
+        for (MeetingRoom r : allRooms){
+            if (r.getCapacity() > this.minCapacity){
                 approvedRooms.add(r);
             }
         }
         return approvedRooms;
     }
 
-    public static class TestRoom {
-
-        private String roomName;
-        private int capacity;
-
-        private TestRoom(String roomName, int capacity) {
-            this.roomName = roomName;
-            this.capacity = capacity;
-        }
-
-        public String getRoomName() {
-            return roomName;
-        }
-
-        public void setRoomName(String name) {
-            this.roomName = name;
-        }
-
-        public int getCapacity() {
-            return this.capacity;
-        }
-
-        public void setCapacity(int cap) {
-            this.capacity = cap;
-        }
-
-        public String toString(){
-            return this.roomName;
-        }
-
+    public void setAppointment(Appointment appointment) {
+        this.appointment = appointment;
     }
 
+    public void setParentController(MeetingController m){
+        parentController = m;
+    }
+
+    public void setRoom(String s){
+        if (appointment.getRoom().getRoomID() == 1){
+            this.alternativeRoomTextField.setText(s);
+        }
+            this.chosenRoomLabel.setText(s);
+    }
+
+    public void setMinCapacity(int i){
+        this.minCapacity = i;
+    }
 }
