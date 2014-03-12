@@ -21,7 +21,7 @@ public class ServerClientRegisterTest {
     public static void main(String[] args){
         Register reg = new Register(new Client());
 
-        //ArrayList<Appointment> appointments = reg.getAppointments();
+        ArrayList<Appointment> appointments = reg.getAppointments();
         ArrayList<Person> persons = reg.getPersons();
         ArrayList<Group> groups = reg.getGroups();
         ArrayList<MeetingRoom> meetingRooms = reg.getRooms();
@@ -29,7 +29,7 @@ public class ServerClientRegisterTest {
 
         //System.out.println(reg.getPersonByUsername("herp").toString());
         //System.out.println(reg.getGroup(1).getGroupName());
-        reg.addRoom("TestRom",5);
+        //reg.addRoom("TestRom",5);
         //reg.addGroup("TestGruppe");
         //reg.addPersonToGroup(reg.getGroup(1), reg.getPersonByUsername("herp"));
         //reg.addAppointment("Test","2014-03-06 13:00:00", "2014-03-06 14:00:00", "AddTest", 1, "herp", reg.getRoom(1));
