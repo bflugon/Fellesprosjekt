@@ -56,16 +56,19 @@ public class LogInViewController{
         statusLabel.setVisible(false);
         progressIndicator.setVisible(true);
 
-//        RegisterSingleton.sharedInstance().setRegister(new Register(new Client("178.79.173.4")));
-//        System.out.print(RegisterSingleton.sharedInstance().getRegister());
-//        RegisterSingleton.sharedInstance().getRegister().createAccount("yo", "yo", "yoMann", "lol");
+        RegisterSingleton.sharedInstance().setRegister(new Register(new Client()));
+        System.out.print(RegisterSingleton.sharedInstance().getRegister());
+//        RegisterSingleton.sharedInstance().getRegister().authenticate(usernameTextField.getText(), passwordField.getText());
 
-//        if (RegisterSingleton.sharedInstance().getRegister().authenticate(usernameTextField.getText(), passwordField.getText()){
+        if (RegisterSingleton.sharedInstance().getRegister().authenticate(usernameTextField.getText(), passwordField.getText())){
             GuiUtils.createView("../calendar/calendar.fxml", "Kalender", this.getClass());
             ((Node) (actionEvent.getSource())).getScene().getWindow().hide();
-//        }else{
-//            statusLabel.setText("Kunne ikke logge inn. Prøv igjen.");
-//        }
+        }else{
+            statusLabel.setVisible(true);
+            progressIndicator.setVisible(false);
+
+            statusLabel.setText("Kunne ikke logge inn. Prøv igjen.");
+        }
     }
 
     private boolean emptyUsernameTextField(){
@@ -88,4 +91,13 @@ public class LogInViewController{
 		}
     }
 
+
+    public void usernameTextFieldOnAction(ActionEvent actionEvent) throws Exception{
+        logInButtonOnAction(actionEvent);
+    }
+
+    public void passwordFieldTextField(ActionEvent actionEvent) throws Exception{
+        logInButtonOnAction(actionEvent);
+
+    }
 }
