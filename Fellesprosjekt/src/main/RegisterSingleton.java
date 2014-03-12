@@ -22,7 +22,7 @@ public class RegisterSingleton {
 
     public void setRegister(Register register){
         //Burde kanskje legge inn en begrensning her
-        if (instance.register == null){
+        if (instance.register != null){
             return;
         }
         instance.register = register;
