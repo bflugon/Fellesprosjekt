@@ -25,6 +25,9 @@ public class Appointment implements Serializable {
     private String alternativeLocation;
 
 
+    private String alternativeRoomName;
+
+
     public Appointment(int appointmentID, String ownerName, String appointmentName, Date appointmentStart, Date appointmentEnd, int priority, String description, Date createdDate, MeetingRoom mr, String alternativeLocation){
         this.appointmentID = appointmentID;
         this.ownerName = ownerName;
@@ -110,6 +113,17 @@ public class Appointment implements Serializable {
         return this;
     }
 
+    public void setRoom(MeetingRoom m){
+        this.meetingRoom = m;
+    }
+
+    public String getAlternativeRoomName() {
+        return alternativeRoomName;
+    }
+
+    public void setAlternativeRoomName(String alternativeRoomName) {
+        this.alternativeRoomName = alternativeRoomName;
+    }
 
     @Override
     public String toString() {
