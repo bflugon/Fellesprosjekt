@@ -27,9 +27,9 @@ public class ServerClientRegisterTest {
         ArrayList<MeetingRoom> meetingRooms = reg.getRooms();
         reg.getAllMembersOfGroup();
 
-        System.out.println(reg.getPersonByUsername("herp").toString());
-        System.out.println(reg.getGroup(1).getGroupName());
-        //reg.addRoom("TestRom",5);
+        //System.out.println(reg.getPersonByUsername("herp").toString());
+        //System.out.println(reg.getGroup(1).getGroupName());
+        reg.addRoom("TestRom",5);
         //reg.addGroup("TestGruppe");
         //reg.addPersonToGroup(reg.getGroup(1), reg.getPersonByUsername("herp"));
         //reg.addAppointment("Test","2014-03-06 13:00:00", "2014-03-06 14:00:00", "AddTest", 1, "herp", reg.getRoom(1));

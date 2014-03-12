@@ -9,7 +9,7 @@ package net;
  */
 public class ServerMain {
     public static void main(String[] args){
-        Server server = new Server(8080);
+        Server server = new Server(8080,8081);
         System.out.println("Server starting");
         new Thread(server).start();
 

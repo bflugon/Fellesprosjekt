@@ -17,7 +17,9 @@ import java.net.Socket;
  */
 public class Client {
     protected int clientRequestPort = 8080;
+    protected int clientEventPort = 8081;
     private Socket clientRequestSocket;
+    private Socket clientEventSocket;
     private ObjectInputStream clientRequestInput;
     private ObjectOutputStream clientRequestOutput;
     private String ip;
@@ -27,19 +29,22 @@ public class Client {
         try{
             System.out.println("Client: Binding Socket");
             this.clientRequestSocket = new Socket(ip, clientRequestPort);
+            this.clientEventSocket = new Socket(ip,clientEventPort);
         } catch (IOException e){
             e.printStackTrace();
         }
 
         try{
-            System.out.println("Client: Creating new Streams");
+            System.out.println("Client: Creating new request Streams");
             clientRequestOutput = new ObjectOutputStream(this.clientRequestSocket.getOutputStream());
             clientRequestInput = new ObjectInputStream(this.clientRequestSocket.getInputStream());
-            System.out.println("Client: Created new streams");
+            System.out.println("Client: Created request streams");
         } catch (IOException e){
             System.out.println("Client: Something went wrong when creating streams");
             e.printStackTrace();
         }
+
+        new ClientEventThread(clientEventSocket,this).start();
     }
 
     public Packet request(Packet request){
@@ -52,5 +57,9 @@ public class Client {
             e.printStackTrace();
             return (new Packet("ERROR", e));
         }
+    }
+
+    public void broadcast (Packet p){
+
     }
 }

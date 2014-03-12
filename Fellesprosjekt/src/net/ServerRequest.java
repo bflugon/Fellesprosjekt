@@ -16,8 +16,8 @@ public class ServerRequest {
     private final DatabaseHandler db;
     private final MailClient mailClient;
 
-    public ServerRequest(){
-        this.db = new DatabaseHandler();
+    public ServerRequest(DatabaseHandler db){
+        this.db = db;
         this.mailClient = new MailClient(db);
     }
 

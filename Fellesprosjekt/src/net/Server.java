@@ -1,8 +1,12 @@
 package net;
 
+import db.DatabaseHandler;
+import model.Packet;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 
 /**
  * Created with IntelliJ IDEA.
@@ -13,12 +17,19 @@ import java.net.Socket;
  */
 public class Server implements Runnable {
     protected int serverPort = 8080;
+    protected int eventPort = 8081;
     protected ServerSocket serverSocket = null;
+    protected ServerSocket eventSocket = null;
     protected boolean running = true;
     protected Thread runningThread = null;
+    protected DatabaseHandler db;
+    protected ArrayList<ServerEventThread> serverEventThreads;
 
-    public Server(int serverPort){
+    public Server(int serverPort, int eventPort){
         this.serverPort = serverPort;
+        this.eventPort = eventPort;
+        db = new DatabaseHandler(this);
+        serverEventThreads = new ArrayList<ServerEventThread>();
     }
 
     public void run(){
@@ -28,8 +39,10 @@ public class Server implements Runnable {
         openServerSocket();
         while (running){
             Socket clientSocket;
+            Socket eventSocket;
             try{
                 clientSocket = this.serverSocket.accept();
+                eventSocket = this.eventSocket.accept();
             }
             catch (IOException e){
                 if (!running){
@@ -38,7 +51,10 @@ public class Server implements Runnable {
                 }
                 throw new RuntimeException("ERROR: Couldn't accept client connection",e);
             }
-            new RequestThread(clientSocket, this).start();
+            new ServerRequestThread(clientSocket, this,db).start();
+            ServerEventThread serverEventThread = new ServerEventThread(eventSocket,this);
+            serverEventThreads.add(serverEventThread);
+            serverEventThread.start();
         }
 
     }
@@ -46,9 +62,16 @@ public class Server implements Runnable {
     private void openServerSocket(){
         try{
             this.serverSocket = new ServerSocket(this.serverPort);
+            this.eventSocket = new ServerSocket(this.eventPort);
         }
         catch (IOException e){
             throw new RuntimeException("Cannot open port " + this.serverPort, e);
+        }
+    }
+
+    public void broadcast(Packet p){
+        for(ServerEventThread set : serverEventThreads){
+            set.broadcast(p);
         }
     }
 }

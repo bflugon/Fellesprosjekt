@@ -22,7 +22,7 @@ public class DatabaseHandlerTest {
 
     @BeforeClass
     public static void login() throws Exception{
-        db = new DatabaseHandler();
+        //db = new DatabaseHandler();
     }
 
     @Test

@@ -1,6 +1,7 @@
 package db;
 
 import model.*;
+import net.Server;
 import util.GeneralUtil;
 
 import java.security.MessageDigest;
@@ -18,10 +19,12 @@ import java.util.TreeMap;
  */
 public class DatabaseHandler {
     private Connection db;
+    private Server server;
     /**
      * Initializes database connection.
      */
-    public DatabaseHandler(){
+    public DatabaseHandler(Server server){
+        this.server = server;
         try{
             Class.forName("com.mysql.jdbc.Driver").newInstance();
             this.db = DriverManager.getConnection(DatabaseSettings.getURL(), DatabaseSettings.getUsername(), DatabaseSettings.getPassword());
@@ -89,6 +92,7 @@ public class DatabaseHandler {
             query.setString(3,name);
             query.setString(4,email);
             query.executeUpdate();
+            broadcast(new Packet("PERSON_UPDATED"));
             return (new Person(username, name, email));
 
         }catch (NoSuchAlgorithmException e){
@@ -181,6 +185,7 @@ public class DatabaseHandler {
         addLeader(id,ownerUsername);
         addTakesPlace(id,mr);
 
+        broadcast(new Packet("APP_UPDATED"));
         return (new Appointment(id, ownerUsername,name, GeneralUtil.stringToDate(start), GeneralUtil.stringToDate(end),priority,description,new java.util.Date(),mr, altLoc));
     }
 
@@ -240,6 +245,7 @@ public class DatabaseHandler {
         query.executeUpdate();
 
         editTakesPlace(aID, mr);
+        broadcast(new Packet("APP_UPDATED"));
     }
 
     /**
@@ -277,6 +283,8 @@ public class DatabaseHandler {
         query = this.db.prepareStatement("DELETE FROM appointment WHERE AID = ?");
         query.setInt(1, aID);
         query.executeUpdate();
+
+        broadcast(new Packet("APP_UPDATED"));
     }
 
     /**
@@ -319,6 +327,7 @@ public class DatabaseHandler {
 
         query.executeUpdate();
 
+        broadcast(new Packet("ROOM_UPDATED"));
         return (new MeetingRoom(id,roomName,capacity));
     }
 
@@ -335,6 +344,7 @@ public class DatabaseHandler {
         query.setString(2,GName);
         query.executeUpdate();
 
+        broadcast(new Packet("GROUP_UPDATED"));
         return (new Group(id, GName));
     }
 
@@ -352,6 +362,8 @@ public class DatabaseHandler {
         query.setInt(2, gID);
         query.setString(3, p.getUsername());
         query.executeUpdate();
+
+        broadcast(new Packet("GROUP_MEMBER_UPDATED"));
     }
 
     /**
@@ -453,6 +465,7 @@ public class DatabaseHandler {
         query.setInt(2, appointmentID);
         query.setString(3,username);
         query.executeUpdate();
+        broadcast(new Packet("ALARM_UPDATED"));
     }
 
     /**
@@ -466,6 +479,7 @@ public class DatabaseHandler {
         query.setInt(1, hasAlarm);
         query.setInt(2, alarmID);
         query.executeUpdate();
+        broadcast(new Packet("ALARM_UPDATED"));
     }
 
     /**
@@ -485,6 +499,7 @@ public class DatabaseHandler {
         query.setInt(5,appointmentID);
         query.executeUpdate();
 
+        broadcast(new Packet("ALARM_UPDATED"));
         return true;
     }
 
@@ -505,6 +520,7 @@ public class DatabaseHandler {
         query.setInt(6,0);
         query.executeUpdate();
 
+        broadcast(new Packet("INVITED_UPDATED"));
         return true;
     }
 
@@ -520,6 +536,11 @@ public class DatabaseHandler {
         query.setInt(1,attending);
         query.setInt(2, alarmID);
         query.executeUpdate();
+        broadcast(new Packet("INVITED_UPDATED"));
+    }
+
+    private void broadcast(Packet p){
+        this.server.broadcast(p);
     }
 
     /**

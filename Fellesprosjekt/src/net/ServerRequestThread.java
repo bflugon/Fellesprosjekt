@@ -1,5 +1,6 @@
 package net;
 
+import db.DatabaseHandler;
 import model.Packet;
 
 import java.io.IOException;
@@ -14,19 +15,19 @@ import java.net.Socket;
  * Time: 4:06 PM
  * To change this template use File | Settings | File Templates.
  */
-public class RequestThread extends Thread{
+public class ServerRequestThread extends Thread{
     Socket clientSocket;
     ServerRequest serverRequest;
     ObjectInputStream input;
     ObjectOutputStream output;
     Server server;
 
-    public RequestThread(Socket clientSocket, Server server){
+    public ServerRequestThread(Socket clientSocket, Server server, DatabaseHandler db){
         System.out.println("Server: Making request thread");
         try{
             this.clientSocket = clientSocket;
             this.server = server;
-            serverRequest = new ServerRequest();
+            serverRequest = new ServerRequest(db);
             System.out.println("Server: Creating Streams");
             this.output = new ObjectOutputStream(this.clientSocket.getOutputStream());
             this.input = new ObjectInputStream(this.clientSocket.getInputStream());
