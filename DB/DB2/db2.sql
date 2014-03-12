@@ -24,6 +24,7 @@ CREATE TABLE Appointment
 	Priority varchar(1),
 	DateCreated	DATETIME,
 	DateChanged	DATETIME,
+	AlternativeLocation varchar(80),
 	PRIMARY KEY (AID)
 );
 
