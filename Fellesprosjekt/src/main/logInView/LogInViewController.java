@@ -9,8 +9,13 @@ import javafx.scene.control.TextField;
 
 import javafx.scene.effect.Glow;
 import javafx.scene.image.ImageView;
+import main.Register;
 import util.GuiUtils;
+
+import main.Register;
+import main.RegisterSingleton;
 import main.Main;
+import net.Client;
 
 import java.awt.*;
 
@@ -18,6 +23,7 @@ import java.awt.*;
  * Created by markuslund92 on 06.03.14.
  */
 public class LogInViewController{
+
 
     public ImageView glowFrogImageView;
     public TextField usernameTextField;
@@ -50,8 +56,11 @@ public class LogInViewController{
         statusLabel.setVisible(false);
         progressIndicator.setVisible(true);
 
-//        if (DatabaseHandlerSingleton.getInstance().authenticate(usernameTextField.getText(), passwordField.getText()){
-//            //Add user credentials to register
+//        RegisterSingleton.sharedInstance().setRegister(new Register(new Client("178.79.173.4")));
+//        System.out.print(RegisterSingleton.sharedInstance().getRegister());
+//        RegisterSingleton.sharedInstance().getRegister().createAccount("yo", "yo", "yoMann", "lol");
+
+//        if (RegisterSingleton.sharedInstance().getRegister().authenticate(usernameTextField.getText(), passwordField.getText()){
             GuiUtils.createView("../calendar/calendar.fxml", "Kalender", this.getClass());
             ((Node) (actionEvent.getSource())).getScene().getWindow().hide();
 //        }else{

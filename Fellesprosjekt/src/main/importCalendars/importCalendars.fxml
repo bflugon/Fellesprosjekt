@@ -19,9 +19,9 @@
   <rowConstraints>
     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
   </rowConstraints>
-<children><ListView fx:id="availibleCalendarsListView" prefHeight="200.0" prefWidth="200.0" /><ListView fx:id="chosenCalendarsListView" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" />
+<children><ListView fx:id="listViewCalendarCandidates" prefHeight="200.0" prefWidth="200.0" /><ListView fx:id="listViewCalendarSelected" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" />
 </children>
-</GridPane><Button layoutX="35.0" layoutY="384.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="112.0" text="Legg til" /><Button layoutX="184.0" layoutY="384.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="112.0" text="Fjern" />
+</GridPane><Button layoutX="35.0" layoutY="384.0" mnemonicParsing="false" onAction="#addCalendar" prefHeight="26.0" prefWidth="112.0" text="Legg til" /><Button layoutX="184.0" layoutY="384.0" mnemonicParsing="false" onAction="#removeCalendar" prefHeight="26.0" prefWidth="112.0" text="Fjern" />
 </children>
     </AnchorPane>
   </children>
