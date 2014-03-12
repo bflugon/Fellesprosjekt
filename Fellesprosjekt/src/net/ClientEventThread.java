@@ -15,13 +15,17 @@ import java.net.Socket;
  * To change this template use File | Settings | File Templates.
  */
 public class ClientEventThread extends Thread {
-
     Socket clientSocket;
     ObjectInputStream input;
     ObjectOutputStream output;
     Client client;
     boolean running;
 
+    /**
+     * Constructor. Creates event thread connection to server.
+     * @param clientSocket
+     * @param client
+     */
     public ClientEventThread(Socket clientSocket, Client client){
         System.out.println("Client: Making event thread");
         try{
@@ -37,13 +41,15 @@ public class ClientEventThread extends Thread {
         }
     }
 
+    /**
+     * Keeps checking for broadcasts from server.
+     */
     @Override
     public void run(){
         this.running = true;
         while(running){
             try{
                 Packet packet = (Packet) this.input.readObject();
-                System.out.println(packet.getName());
                 this.client.broadcast(packet);
             }catch(IOException | ClassNotFoundException e){
                 break;

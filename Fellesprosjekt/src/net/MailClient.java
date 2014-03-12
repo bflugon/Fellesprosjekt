@@ -28,13 +28,23 @@ public class MailClient {
     private Person sender;
     private String location;
 
-
+    /**
+     * Constructor
+     * @param db
+     */
     public MailClient(DatabaseHandler db) {
+        this.db = db;
         mailInfo = GeneralUtil.readFile("smtp.txt");
         username = mailInfo.get(0);
         password = mailInfo.get(1);
     }
 
+    /**
+     * Sends email.
+     * @param recipient
+     * @param appointment
+     * @return true if successful
+     */
     public boolean sendEmail(String recipient, Appointment appointment){
 
         if (appointment.getRoom().getRoomID() == 1){

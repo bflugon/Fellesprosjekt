@@ -20,6 +20,11 @@ public class ServerEventThread extends Thread{
     ObjectOutputStream output;
     Server server;
 
+    /**
+     * Server event thread constructor
+     * @param clientSocket
+     * @param server
+     */
     public ServerEventThread(Socket clientSocket, Server server){
         System.out.println("Server: Making event thread");
         try{
@@ -35,6 +40,9 @@ public class ServerEventThread extends Thread{
         }
     }
 
+    /**
+     * Keeps checking for input
+     */
     @Override
     public void run(){
         while(server.running){
@@ -46,6 +54,10 @@ public class ServerEventThread extends Thread{
         }
     }
 
+    /**
+     * Broadcasts packet to connected clients
+     * @param p
+     */
     public void broadcast(Packet p){
         try{
             this.output.writeObject(p);

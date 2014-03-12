@@ -25,6 +25,11 @@ public class Server implements Runnable {
     protected DatabaseHandler db;
     protected ArrayList<ServerEventThread> serverEventThreads;
 
+    /**
+     * Constructor
+     * @param serverPort
+     * @param eventPort
+     */
     public Server(int serverPort, int eventPort){
         this.serverPort = serverPort;
         this.eventPort = eventPort;
@@ -32,6 +37,9 @@ public class Server implements Runnable {
         serverEventThreads = new ArrayList<ServerEventThread>();
     }
 
+    /**
+     * Keeps checking for new clients.
+     */
     public void run(){
         synchronized (this){
             this.runningThread = Thread.currentThread();
@@ -59,6 +67,9 @@ public class Server implements Runnable {
 
     }
 
+    /**
+     * Opens server sockets
+     */
     private void openServerSocket(){
         try{
             this.serverSocket = new ServerSocket(this.serverPort);
@@ -69,6 +80,10 @@ public class Server implements Runnable {
         }
     }
 
+    /**
+     * Broadcasts packet to all connected clients
+     * @param p
+     */
     public void broadcast(Packet p){
         for(ServerEventThread set : serverEventThreads){
             set.broadcast(p);

@@ -124,6 +124,12 @@ public class DatabaseHandler {
         return results;
     }
 
+    /**
+     * Returns person by username
+     * @param username
+     * @return
+     * @throws SQLException
+     */
     public Person getPersonByUsername(String username) throws SQLException{
         PreparedStatement query = this.db.prepareStatement("SELECT * FROM person WHERE Username = ?");
         query.setString(1,"username");
@@ -520,10 +526,8 @@ public class DatabaseHandler {
         query.setInt(6,0);
         query.executeUpdate();
 
-        broadcast(new Packet("INVITED_UPDATED"));
         return true;
     }
-
 
     /**
      * Set attending status of alarm
@@ -559,6 +563,12 @@ public class DatabaseHandler {
         return rs.getInt("Auto_increment");
     }
 
+    /**
+     * Encrypts password
+     * @param string
+     * @return
+     * @throws NoSuchAlgorithmException
+     */
     private String encryptPassword(String string) throws NoSuchAlgorithmException{
         MessageDigest messageDigest = MessageDigest.getInstance("SHA1");
         byte[] result = messageDigest.digest(string.getBytes());

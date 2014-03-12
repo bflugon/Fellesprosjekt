@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
 
 /**
  * Created with IntelliJ IDEA.
@@ -15,7 +16,7 @@ import java.net.Socket;
  * Time: 2:55 PM
  * To change this template use File | Settings | File Templates.
  */
-public class Client {
+public class Client{
     protected int clientRequestPort = 8080;
     protected int clientEventPort = 8081;
     private Socket clientRequestSocket;
@@ -23,9 +24,14 @@ public class Client {
     private ObjectInputStream clientRequestInput;
     private ObjectOutputStream clientRequestOutput;
     private String ip;
+    private ArrayList<PacketListener> packetListeners;
 
+    /**
+     * Constructor. Creates connection to the server.
+     */
     public Client (){
         ip = GeneralUtil.readFile("ip.txt").get(0);
+        packetListeners = new ArrayList<PacketListener>();
         try{
             System.out.println("Client: Binding Socket");
             this.clientRequestSocket = new Socket(ip, clientRequestPort);
@@ -47,6 +53,11 @@ public class Client {
         new ClientEventThread(clientEventSocket,this).start();
     }
 
+    /**
+     * Sends a request packet to the server
+     * @param request
+     * @return
+     */
     public Packet request(Packet request){
         Packet response;
         try{
@@ -59,7 +70,29 @@ public class Client {
         }
     }
 
+    /**
+     * Sends packets to listeners.
+     * @param p
+     */
     public void broadcast (Packet p){
-
+        for (PacketListener listener : packetListeners){
+            listener.packetSent(p);
+        }
     }
+
+    /**
+     * PacketListener
+     */
+    public static interface PacketListener{
+        public void packetSent(Packet p);
+    }
+
+    /**
+     * Adds listener.
+     * @param packetListener
+     */
+    public void addListener (PacketListener packetListener){
+        packetListeners.add(packetListener);
+    }
+
 }

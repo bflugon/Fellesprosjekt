@@ -22,6 +22,12 @@ public class ServerRequestThread extends Thread{
     ObjectOutputStream output;
     Server server;
 
+    /**
+     * Server request thread constructor
+     * @param clientSocket
+     * @param server
+     * @param db
+     */
     public ServerRequestThread(Socket clientSocket, Server server, DatabaseHandler db){
         System.out.println("Server: Making request thread");
         try{
@@ -38,6 +44,9 @@ public class ServerRequestThread extends Thread{
         }
     }
 
+    /**
+     * Keeps checking for requests from clients
+     */
     @Override
     public void run(){
         while(server.running){

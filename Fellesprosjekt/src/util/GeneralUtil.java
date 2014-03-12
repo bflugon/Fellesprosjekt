@@ -37,6 +37,12 @@ public class GeneralUtil {
         }
     }
 
+    /**
+     * Function to send out emails.
+     * @param recipient
+     * @param appointment
+     * @return
+     */
     public static boolean sendEmail(String recipient, Appointment appointment){
         Packet response = new Packet("SEND_EMAIL", recipient, appointment);
         if(response.getName().equals("MAIL_SENT")){
@@ -46,6 +52,11 @@ public class GeneralUtil {
         }
     }
 
+    /**
+     * Reads file from filesystem.
+     * @param filename
+     * @return
+     */
     public static ArrayList<String> readFile(String filename){
         ArrayList<String> results = new ArrayList<String>();
         try{

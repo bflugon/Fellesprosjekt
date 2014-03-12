@@ -16,11 +16,17 @@ public class ServerRequest {
     private final DatabaseHandler db;
     private final MailClient mailClient;
 
+
     public ServerRequest(DatabaseHandler db){
         this.db = db;
         this.mailClient = new MailClient(db);
     }
 
+    /**
+     * Handles requests from clients and gets response.
+     * @param request
+     * @return
+     */
     public Packet getResponse(Packet request){
         try{
             String name = request.getName().toUpperCase();

@@ -25,6 +25,7 @@ public class Register {
 
     public Register(Client client){
         this.client = client;
+        this.client.addListener(new registerPacketListener());
     }
 
     /**
@@ -336,6 +337,37 @@ public class Register {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Updates register based on broadcast recieved by server
+     * @param p
+     */
+    public void broadcast(Packet p){
+        if (p.getName().equals("ALARM_UPDATED")){
+            getAllActiveAlarms();
+        }else if (p.getName().equals("GROUP_MEMBER_UPDATED")){
+            getAllMembersOfGroup();
+        }else if (p.getName().equals("GROUP_UPDATED")){
+            getGroups();
+        }else if (p.getName().equals("ROOM_UPDATED")){
+            getRooms();
+        }else if (p.getName().equals("APP_UPDATED")){
+            getAppointments();
+        }else if (p.getName().equals("PERSON_UPDATED")){
+            getPersons();
+        }
+    }
+
+    /**
+     * Packetlistener.
+     */
+    private class registerPacketListener implements Client.PacketListener{
+        @Override
+        public void packetSent(Packet p) {
+            System.out.println(p.getName());
+            broadcast(p);
+        }
     }
 
 }
