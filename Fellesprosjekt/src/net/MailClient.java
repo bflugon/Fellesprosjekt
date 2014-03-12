@@ -1,11 +1,15 @@
 package net;
 
+import db.DatabaseHandler;
 import model.Alarm;
+import model.Appointment;
+import model.Person;
 import util.GeneralUtil;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Properties;
 
@@ -20,12 +24,30 @@ public class MailClient {
     private final ArrayList<String> mailInfo;
     private final String username;
     private final String password;
+    private DatabaseHandler db;
+    private Person sender;
+    private String location;
 
 
-    public MailClient(String recipient, Alarm alarm) {
+    public MailClient(DatabaseHandler db) {
         mailInfo = GeneralUtil.readFile("smtp.txt");
         username = mailInfo.get(0);
         password = mailInfo.get(1);
+    }
+
+    public boolean sendEmail(String recipient, Appointment appointment){
+
+        if (appointment.getRoom().getRoomID() == 1){
+            location = appointment.getAlternativeLocation();
+        }else{
+            location = appointment.getRoom().getRoomName();
+        }
+
+        try{
+            sender = db.getPersonByUsername(appointment.getOwnerName());
+        } catch (SQLException e){
+            System.out.println("Error retrieving sender");
+        }
 
         Properties properties = new Properties();
         properties.put("mail.smtp.auth", "true");
@@ -51,11 +73,14 @@ public class MailClient {
             message.setFrom(new InternetAddress("from@gmail.com"));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipient));
             message.setSubject("CalendarAlarm");
-            message.setText("This is an automated message sent to alert you that you have a meeting at " + alarm.getAlarmTime() + ".\n\nPlease do not respond to this message.");
+            message.setText("This is an automated message sent to alert you that you have been invited to a meeting by " + sender.getName() + ". The meeting will take place at " +
+                    appointment.getAppointmentStart() + " at location " +  location +"" +   ".\n\nPlease do not respond to this message.");
             Transport.send(message);
             System.out.println ("Sent email");
+            return true;
         } catch (MessagingException e){
             e.printStackTrace();
+            return false;
         }
     }
 

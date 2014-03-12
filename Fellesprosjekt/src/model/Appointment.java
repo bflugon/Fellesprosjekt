@@ -22,10 +22,10 @@ public class Appointment implements Serializable {
     private MeetingRoom meetingRoom;
     private int priority;
     private Date createdDate;
+    private String alternativeLocation;
 
 
-
-    public Appointment(int appointmentID, String ownerName, String appointmentName, Date appointmentStart, Date appointmentEnd, int priority, String description, Date createdDate, MeetingRoom mr){
+    public Appointment(int appointmentID, String ownerName, String appointmentName, Date appointmentStart, Date appointmentEnd, int priority, String description, Date createdDate, MeetingRoom mr, String alternativeLocation){
         this.appointmentID = appointmentID;
         this.ownerName = ownerName;
         this.appointmentName = appointmentName;
@@ -35,6 +35,7 @@ public class Appointment implements Serializable {
         this.description = description;
         this.meetingRoom = mr;
         this.createdDate = createdDate;
+        this.alternativeLocation = alternativeLocation;
     }
 
     public int getAppointmentID() {
@@ -55,6 +56,14 @@ public class Appointment implements Serializable {
 
     public void setAppointmentEnd(Date appointmentEnd){
         this.appointmentEnd = appointmentEnd;
+    }
+
+    public void setAlternativeLocation(String alternativeLocation){
+        this.alternativeLocation = alternativeLocation;
+    }
+
+    public String getAlternativeLocation(){
+        return alternativeLocation;
     }
 
     public String getDescription() {

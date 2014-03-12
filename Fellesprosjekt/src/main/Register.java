@@ -96,8 +96,8 @@ public class Register {
      * @param username
      * @param mr
      */
-    public void addAppointment(String name, String start, String end, String description, int priority, String username, MeetingRoom mr){
-        Packet response = this.client.request(new Packet("ADD_APPOINTMENT", name, start, end, description, priority, username, mr));
+    public void addAppointment(String name, String start, String end, String description, int priority, String username, MeetingRoom mr, String alternativeLocation){
+        Packet response = this.client.request(new Packet("ADD_APPOINTMENT", name, start, end, description, priority, username, mr, alternativeLocation));
         if (response.getName().equals("APPOINTMENT_ADDED")){
             Appointment a = (Appointment)response.getObjects()[0];
             appointments.add(a);
@@ -320,6 +320,21 @@ public class Register {
         }
 
         return activeAlarms.get(appointmentID);
+    }
+
+    /**
+     * Invite person to appointment.
+     * Sets alarm to null by default, remember to call addAlarm() if this person is meant to get an alarm!
+     * @param p
+     * @param a
+     * @return
+     */
+    public boolean invitePerson(Person p, Appointment a){
+        Packet response = this.client.request(new Packet("INVITE_PERSON_APPOINTMENT", p, a));
+        if (response.getName().equals("PERSON_INVITED")){
+            return true;
+        }
+        return false;
     }
 
 }
