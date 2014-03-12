@@ -138,7 +138,7 @@ public class DatabaseHandler {
      * @throws java.sql.SQLException
      */
     public ArrayList<Appointment> getAllAppointments() throws SQLException{
-       PreparedStatement query = this.db.prepareStatement("select appointment.AID, appointment.AName, appointment.Description, appointment.Start, appointment.End, appointment.Priority, appointment.DateCreated, isleader.Username, room.RName, room.RID, room.Capacity FROM appointment INNER JOIN isleader ON appointment.AID = isleader.AID INNER JOIN takesplace ON appointment.AID = takesplace.AID INNER JOIN room ON takesplace.RID = room.RID ORDER BY appointment.AID");
+       PreparedStatement query = this.db.prepareStatement("select appointment.AID, appointment.AName, appointment.Description, appointment.Start, appointment.End, appointment.Priority, appointment.DateCreated, appointment.AlternativeLocation, isleader.Username, room.RName, room.RID, room.Capacity FROM appointment INNER JOIN isleader ON appointment.AID = isleader.AID INNER JOIN takesplace ON appointment.AID = takesplace.AID INNER JOIN room ON takesplace.RID = room.RID ORDER BY appointment.AID");
         ResultSet rs = query.executeQuery();
 
         if (!rs.next()){
@@ -146,10 +146,10 @@ public class DatabaseHandler {
         }
 
         ArrayList<Appointment> results = new ArrayList<Appointment>();
-        results.add(new Appointment(rs.getInt("AID"),rs.getString("Username"),rs.getString("AName"), rs.getTimestamp("Start"), rs.getTimestamp("End"), rs.getInt("Priority"), rs.getString("Description"), rs.getTimestamp("DateCreated"), new MeetingRoom(rs.getInt("RID"),rs.getString("RName"), rs.getInt("Capacity"))));
+        results.add(new Appointment(rs.getInt("AID"),rs.getString("Username"),rs.getString("AName"), rs.getTimestamp("Start"), rs.getTimestamp("End"), rs.getInt("Priority"), rs.getString("Description"), rs.getTimestamp("DateCreated"), new MeetingRoom(rs.getInt("RID"),rs.getString("RName"), rs.getInt("Capacity")),rs.getString("AlternativeLocation")));
 
         while(rs.next()){
-            results.add(new Appointment(rs.getInt("AID"),rs.getString("Username"),rs.getString("AName"), rs.getTimestamp("Start"), rs.getTimestamp("End"), rs.getInt("Priority"), rs.getString("Description"), rs.getTimestamp("DateCreated"), new MeetingRoom(rs.getInt("RID"),rs.getString("RName"), rs.getInt("Capacity"))));
+            results.add(new Appointment(rs.getInt("AID"),rs.getString("Username"),rs.getString("AName"), rs.getTimestamp("Start"), rs.getTimestamp("End"), rs.getInt("Priority"), rs.getString("Description"), rs.getTimestamp("DateCreated"), new MeetingRoom(rs.getInt("RID"),rs.getString("RName"), rs.getInt("Capacity")),rs.getString("AlternativeLocation")));
         }
         return results;
     }
@@ -164,7 +164,7 @@ public class DatabaseHandler {
      * @param priority
      * @throws java.sql.SQLException
      */
-    public Appointment addAppointment(String name, String start, String end, String description, int priority, String ownerUsername, MeetingRoom mr) throws SQLException{
+    public Appointment addAppointment(String name, String start, String end, String description, int priority, String ownerUsername, MeetingRoom mr, String altLoc) throws SQLException{
         int id = getNextAutoIncrement("appointment");
 
         PreparedStatement query = this.db.prepareStatement("INSERT INTO appointment(AID, AName, Start, End, Description, Priority, DateCreated) VALUES (?,?,?,?,?,?,?)");
@@ -181,7 +181,7 @@ public class DatabaseHandler {
         addLeader(id,ownerUsername);
         addTakesPlace(id,mr);
 
-        return (new Appointment(id, ownerUsername,name, GeneralUtil.stringToDate(start), GeneralUtil.stringToDate(end),priority,description,new java.util.Date(),mr));
+        return (new Appointment(id, ownerUsername,name, GeneralUtil.stringToDate(start), GeneralUtil.stringToDate(end),priority,description,new java.util.Date(),mr, altLoc));
     }
 
     /**
@@ -476,19 +476,38 @@ public class DatabaseHandler {
      * @param alarmTime
      * @throws java.sql.SQLException
      */
-    public Alarm addAlarm(String username, int appointmentID, int hasAlarm, String alarmTime, int attending) throws SQLException{
+    public boolean addAlarm(String username, int appointmentID, int hasAlarm, String alarmTime, int attending) throws SQLException{
+        PreparedStatement query = this.db.prepareStatement("UPDATE invitedto SET hasAlarm = ?, AlarmTime = ?, Attends = ? WHERE Username = ?, AID = ?");
+        query.setInt(1,hasAlarm);
+        query.setTimestamp(2, Timestamp.valueOf(alarmTime));
+        query.setInt(3,attending);
+        query.setString(4, username);
+        query.setInt(5,appointmentID);
+        query.executeUpdate();
+
+        return true;
+    }
+
+    /**
+     * Invite person to appointment.
+     * @param p
+     * @param a
+     * @throws SQLException
+     */
+    public boolean invitePerson(Person p, Appointment a) throws SQLException{
         PreparedStatement query = this.db.prepareStatement("INSERT INTO invitedto(itID,Username,AID,hasAlarm,AlarmTime,Attends) VALUES (?,?,?,?,?,?)");
         int id = getNextAutoIncrement("invitedto");
         query.setInt(1, id);
-        query.setString(2, username);
-        query.setInt(3,appointmentID);
-        query.setInt(4,hasAlarm);
-        query.setTimestamp(5, Timestamp.valueOf(alarmTime));
-        query.setInt(6,attending);
+        query.setString(2, p.getUsername());
+        query.setInt(3,a.getAppointmentID());
+        query.setInt(4,0);
+        query.setNull(5, Types.INTEGER);
+        query.setInt(6,0);
         query.executeUpdate();
 
-        return new Alarm(id,username, GeneralUtil.stringToDate(alarmTime),attending);
+        return true;
     }
+
 
     /**
      * Set attending status of alarm

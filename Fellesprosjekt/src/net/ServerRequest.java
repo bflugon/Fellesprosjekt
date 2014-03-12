@@ -14,9 +14,11 @@ import java.sql.SQLException;
  */
 public class ServerRequest {
     private final DatabaseHandler db;
+    private final MailClient mailClient;
 
     public ServerRequest(){
         this.db = new DatabaseHandler();
+        this.mailClient = new MailClient(db);
     }
 
     public Packet getResponse(Packet request){
@@ -40,7 +42,7 @@ public class ServerRequest {
             } else if(name.equals("GET_ALL_ROOMS")){
                 return getAllRooms();
             } else if(name.equals("ADD_APPOINTMENT")){
-                return addAppointment((String) objects[0], (String) objects[1], (String) objects[2], (String) objects[3], (int) objects[4], (String) objects[5], (MeetingRoom) objects[6]);
+                return addAppointment((String) objects[0], (String) objects[1], (String) objects[2], (String) objects[3], (int) objects[4], (String) objects[5], (MeetingRoom) objects[6], (String) objects[7]);
             } else if(name.equals("EDIT_APPOINTMENT")){
                 return editAppointment((Appointment) objects[0], (MeetingRoom) objects[1]);
             } else if(name.equals("DELETE_APPOINTMENT")){
@@ -55,8 +57,12 @@ public class ServerRequest {
                 return addAlarm((String) objects[0], (Integer) objects[1], (Integer) objects[2],(String) objects[3],(Integer) objects[4]);
             } else if (name.equals("UPDATE_ATTENDING")){
                 return updateAttending((Integer) objects[0], (Integer) objects[1]);
+            } else if (name.equals("SEND_EMAIL")){
+                return sendEmail((String) objects[0], (Appointment) objects[1]);
+            } else if (name.equals("INVITE_PERSON_APPOINTMENT")){
+                return invitePerson((Person) objects[0], (Appointment) objects[1]);
             }
-            //Create a shit ton of if statements
+
             return new Packet("ERROR");
         }catch(Exception e){
             e.printStackTrace();
@@ -72,8 +78,8 @@ public class ServerRequest {
         return new Packet("ACCOUNT_CREATED",db.createAccount(user,pass,name,email));
     }
 
-    private Packet addAppointment(String name, String start, String end, String description, int priority, String username, MeetingRoom mr) throws SQLException{
-        return new Packet("APPOINTMENT_ADDED", db.addAppointment(name,start,end,description,priority,username,mr));
+    private Packet addAppointment(String name, String start, String end, String description, int priority, String username, MeetingRoom mr, String altLoc) throws SQLException{
+        return new Packet("APPOINTMENT_ADDED", db.addAppointment(name,start,end,description,priority,username,mr,altLoc));
     }
 
     private Packet editAppointment(Appointment a, MeetingRoom mr) throws SQLException{
@@ -98,8 +104,18 @@ public class ServerRequest {
         return new Packet("ALL_ALARMS", this.db.getAllAlarms());
     }
 
+    private Packet invitePerson(Person p, Appointment a) throws SQLException{
+        if(this.db.invitePerson(p,a)){
+            return new Packet("PERSON_INVITED");
+        }
+        return new Packet("ERROR");
+    }
+
     private Packet addAlarm(String username, int appointmentID, int hasAlarm, String alarmTime, int attending) throws SQLException{
-        return new Packet("ALARM_ADDED", this.db.addAlarm(username, appointmentID, hasAlarm, alarmTime,attending));
+        if (this.db.addAlarm(username, appointmentID, hasAlarm, alarmTime,attending)){
+            return new Packet("ALARM_ADDED");
+        }
+        return new Packet("ERROR");
     }
 
     private Packet updateAttending(int alarmID, int attending) throws SQLException{
@@ -130,5 +146,13 @@ public class ServerRequest {
 
     private Packet addRoom(String name, int capacity) throws SQLException{
         return new Packet("ROOM_ADDED", this.db.addRoom(name,capacity));
+    }
+
+    private Packet sendEmail(String recipient, Appointment appointment){
+        if(mailClient.sendEmail(recipient,appointment)){
+            return new Packet("MAIL_SENT");
+        }else{
+            return new Packet("ERROR");
+        }
     }
 }

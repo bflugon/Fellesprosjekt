@@ -21,7 +21,7 @@ public class ServerClientRegisterTest {
     public static void main(String[] args){
         Register reg = new Register(new Client());
 
-        ArrayList<Appointment> appointments = reg.getAppointments();
+        //ArrayList<Appointment> appointments = reg.getAppointments();
         ArrayList<Person> persons = reg.getPersons();
         ArrayList<Group> groups = reg.getGroups();
         ArrayList<MeetingRoom> meetingRooms = reg.getRooms();
@@ -38,8 +38,11 @@ public class ServerClientRegisterTest {
             System.out.println(p.toString());
         }
 
+        /*
         for(Appointment a: appointments){
             System.out.println(a.toString());
         }
+        */
+
     }
 }

@@ -1,5 +1,8 @@
 package util;
 
+import model.Appointment;
+import model.Packet;
+
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.FileSystems;
@@ -19,7 +22,7 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 public class GeneralUtil {
-    static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     public static String dateToString(Date d){
         return sdf.format(d);
@@ -31,6 +34,15 @@ public class GeneralUtil {
         } catch (ParseException e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    public static boolean sendEmail(String recipient, Appointment appointment){
+        Packet response = new Packet("SEND_EMAIL", recipient, appointment);
+        if(response.getName().equals("MAIL_SENT")){
+            return true;
+        } else{
+            return false;
         }
     }
 
