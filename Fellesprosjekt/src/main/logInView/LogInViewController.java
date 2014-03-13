@@ -1,5 +1,6 @@
 package main.logInView;
 
+import com.javafx.tools.doclets.formats.html.SourceToHTMLConverter;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -44,6 +45,7 @@ public class LogInViewController{
 
         if (emptyUsernameTextField() && emptyPasswordField()){
             statusLabel.setText("Fyll inn brukernavn og passord");
+
             return;
         }else if (emptyUsernameTextField()){
             statusLabel.setText("Fyll inn brukernavn");
@@ -58,15 +60,18 @@ public class LogInViewController{
 
         RegisterSingleton.sharedInstance().setRegister(new Register(new Client()));
         System.out.print(RegisterSingleton.sharedInstance().getRegister());
-//        RegisterSingleton.sharedInstance().getRegister().authenticate(usernameTextField.getText(), passwordField.getText());
+
 
         if (RegisterSingleton.sharedInstance().getRegister().authenticate(usernameTextField.getText(), passwordField.getText())){
+
+            RegisterSingleton.sharedInstance().setInitialRegisterData();
+
             GuiUtils.createView("../calendar/calendar.fxml", "Kalender", this.getClass());
             ((Node) (actionEvent.getSource())).getScene().getWindow().hide();
         }else{
             statusLabel.setVisible(true);
             progressIndicator.setVisible(false);
-
+            System.out.println("Login fail" + usernameTextField.getText() + passwordField.getText());
             statusLabel.setText("Kunne ikke logge inn. Prøv igjen.");
         }
     }
