@@ -2,11 +2,10 @@ package main.importCalendars;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
 import util.GuiUtils;
-import javafx.event.ActionEvent;
-import javafx.scene.Node;
 
 import java.net.URL;
 import java.util.ResourceBundle;

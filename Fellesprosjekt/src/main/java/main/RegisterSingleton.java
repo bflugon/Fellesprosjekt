@@ -1,7 +1,5 @@
 package main;
 
-import net.Client;
-
 /**
  * Created by kristian on 11.03.14.
  */

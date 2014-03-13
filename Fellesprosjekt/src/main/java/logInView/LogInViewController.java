@@ -1,24 +1,17 @@
-package main.logInView;
+package logInView;
 
-import com.javafx.tools.doclets.formats.html.SourceToHTMLConverter;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextField;
-
 import javafx.scene.effect.Glow;
 import javafx.scene.image.ImageView;
 import main.Register;
-import util.GuiUtils;
-
-import main.Register;
 import main.RegisterSingleton;
-import main.Main;
 import net.Client;
-
-import java.awt.*;
+import util.GuiUtils;
 
 /**
  * Created by markuslund92 on 06.03.14.
@@ -66,7 +59,7 @@ public class LogInViewController{
 
             RegisterSingleton.sharedInstance().setInitialRegisterData();
 
-            GuiUtils.createView("../calendar/calendar.fxml", "Kalender", this.getClass());
+            GuiUtils.createView("src/main/calendar/calendar.fxml", "Kalender", this.getClass());
             ((Node) (actionEvent.getSource())).getScene().getWindow().hide();
         }else{
             statusLabel.setVisible(true);

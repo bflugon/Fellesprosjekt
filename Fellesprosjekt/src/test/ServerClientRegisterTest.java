@@ -1,7 +1,6 @@
 package test;
 
 import main.Register;
-import model.Appointment;
 import model.Group;
 import model.MeetingRoom;
 import model.Person;

@@ -1,6 +1,5 @@
 package test;
 
-import db.DatabaseHandler;
 import main.Register;
 import org.junit.Test;
 

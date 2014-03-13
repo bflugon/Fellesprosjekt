@@ -1,4 +1,4 @@
-package main.meeting;
+package meeting;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -10,7 +10,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import main.roomFinder.RoomFinderController;
+import roomFinder.RoomFinderController;
 import model.Appointment;
 import util.GuiUtils;
 
@@ -58,7 +58,7 @@ public class MeetingController implements Initializable {
     public void chooseRoom(ActionEvent actionEvent) throws Exception{
 
         Stage newStage = new Stage();
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../roomFinder/roomFinder.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("src/main/roomFinder/roomFinder.fxml"));
         Parent root = (Parent)fxmlLoader.load();
         RoomFinderController roomFinderController = fxmlLoader.<RoomFinderController>getController();
         roomFinderController.setAppointment(appointment);
@@ -77,7 +77,7 @@ public class MeetingController implements Initializable {
     }
 
     public void chooseParticipants(ActionEvent actionEvent) throws Exception{
-        GuiUtils.createView("../participants/participants.fxml", "Velg deltaker", this.getClass());
+        GuiUtils.createView("src/main/participants/participants.fxml", "Velg deltaker", this.getClass());
     }
 
     public void exitOnSave(ActionEvent actionEvent) {

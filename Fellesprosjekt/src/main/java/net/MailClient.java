@@ -9,7 +9,6 @@ import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Properties;
 
 /**

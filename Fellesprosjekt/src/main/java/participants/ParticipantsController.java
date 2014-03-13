@@ -1,8 +1,7 @@
-package main.participants;
+package participants;
 
-import util.GuiUtils;
 import javafx.event.ActionEvent;
-import javafx.scene.Node;
+import util.GuiUtils;
 
 /**
  * Created by markuslund92 on 06.03.14.
