@@ -67,6 +67,8 @@ public class ServerRequest {
                 return sendEmail((String) objects[0], (Appointment) objects[1]);
             } else if (name.equals("INVITE_PERSON_APPOINTMENT")){
                 return invitePerson((Person) objects[0], (Appointment) objects[1]);
+            } else if (name.equals("GET_USER_APPOINTMENTS")){
+                return getUserAppointment((String) objects[0]);
             }
 
             return new Packet("ERROR");
@@ -96,6 +98,10 @@ public class ServerRequest {
     private Packet deleteAppointment(Appointment a) throws SQLException{
         db.deleteAppointment(a.getAppointmentID());
         return new Packet("APPOINTMENT_DELETED");
+    }
+
+    private Packet getUserAppointment(String username) throws SQLException{
+        return new Packet("USER_APPOINTMENT",this.db.getUserAppointments(username));
     }
 
     private Packet getAllAppointments() throws SQLException{

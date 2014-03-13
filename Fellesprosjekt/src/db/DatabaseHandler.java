@@ -149,6 +149,30 @@ public class DatabaseHandler {
      */
     public ArrayList<Appointment> getAllAppointments() throws SQLException{
        PreparedStatement query = this.db.prepareStatement("select appointment.AID, appointment.AName, appointment.Description, appointment.Start, appointment.End, appointment.Priority, appointment.DateCreated, appointment.AlternativeLocation, isleader.Username, room.RName, room.RID, room.Capacity FROM appointment INNER JOIN isleader ON appointment.AID = isleader.AID INNER JOIN takesplace ON appointment.AID = takesplace.AID INNER JOIN room ON takesplace.RID = room.RID ORDER BY appointment.AID");
+       ResultSet rs = query.executeQuery();
+
+       if (!rs.next()){
+           return null;
+       }
+
+       ArrayList<Appointment> results = new ArrayList<Appointment>();
+       results.add(new Appointment(rs.getInt("AID"),rs.getString("Username"),rs.getString("AName"), rs.getTimestamp("Start"), rs.getTimestamp("End"), rs.getInt("Priority"), rs.getString("Description"), rs.getTimestamp("DateCreated"), new MeetingRoom(rs.getInt("RID"),rs.getString("RName"), rs.getInt("Capacity")),rs.getString("AlternativeLocation")));
+
+       while(rs.next()){
+           results.add(new Appointment(rs.getInt("AID"),rs.getString("Username"),rs.getString("AName"), rs.getTimestamp("Start"), rs.getTimestamp("End"), rs.getInt("Priority"), rs.getString("Description"), rs.getTimestamp("DateCreated"), new MeetingRoom(rs.getInt("RID"),rs.getString("RName"), rs.getInt("Capacity")),rs.getString("AlternativeLocation")));
+       }
+       return results;
+    }
+
+    /**
+     * Returns an arraylist containing all the appoints of a user.
+     * @param username
+     * @return
+     * @throws SQLException
+     */
+    public ArrayList<Appointment> getUserAppointments(String username) throws SQLException{
+        PreparedStatement query = this.db.prepareStatement("select appointment.AID, appointment.AName, appointment.Description, appointment.Start, appointment.End, appointment.Priority, appointment.DateCreated, appointment.AlternativeLocation, isleader.Username, room.RName, room.RID, room.Capacity FROM appointment INNER JOIN isleader ON appointment.AID = isleader.AID INNER JOIN takesplace ON appointment.AID = takesplace.AID INNER JOIN room ON takesplace.RID = room.RID ORDER BY appointment.AID WHERE isleader.Username = ?");
+        query.setString(1,username);
         ResultSet rs = query.executeQuery();
 
         if (!rs.next()){

@@ -1,10 +1,9 @@
 package net;
 
 import db.DatabaseHandler;
-import model.Alarm;
 import model.Appointment;
+import model.Config;
 import model.Person;
-import util.GeneralUtil;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
@@ -21,7 +20,6 @@ import java.util.Properties;
  * To change this template use File | Settings | File Templates.
  */
 public class MailClient {
-    private final ArrayList<String> mailInfo;
     private final String username;
     private final String password;
     private DatabaseHandler db;
@@ -34,9 +32,8 @@ public class MailClient {
      */
     public MailClient(DatabaseHandler db) {
         this.db = db;
-        mailInfo = GeneralUtil.readFile("smtp.txt");
-        username = mailInfo.get(0);
-        password = mailInfo.get(1);
+        username = Config.getSmtpUsername();
+        password = Config.getSmtpPassword();
     }
 
     /**

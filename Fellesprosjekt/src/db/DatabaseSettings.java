@@ -1,9 +1,5 @@
 package db;
 
-import util.GeneralUtil;
-
-import java.util.ArrayList;
-
 /**
  * Created with IntelliJ IDEA.
  * User: FF63
@@ -12,10 +8,9 @@ import java.util.ArrayList;
  * To change this template use File | Settings | File Templates.
  */
 public class DatabaseSettings {
-    private static final ArrayList<String> databaseInfo = GeneralUtil.readFile("database.txt");
-    private static final String db_url = databaseInfo.get(0);
-    private static final String db_username = databaseInfo.get(1);
-    private static final String db_password = databaseInfo.get(2);
+    private static final String db_url = "";
+    private static final String db_username = "";
+    private static final String db_password = "";
 
     public static String getURL(){
         return db_url;
