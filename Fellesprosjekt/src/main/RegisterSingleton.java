@@ -33,11 +33,11 @@ public class RegisterSingleton {
     }
 
     public void setInitialRegisterData(){
-        register.getAppointments();
-        register.getPersons();
-        register.getAllActiveAlarms();
-        register.getGroups();
-        register.getRooms();
+        register.setAppointments(register.getAppointments());
+        register.setPersons(register.getPersons());
+        register.setActiveAlarms(register.getAllActiveAlarms());
+        register.setGroups(register.getGroups());
+        register.setRooms(register.getRooms());
     }
 
 }

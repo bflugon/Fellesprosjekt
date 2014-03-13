@@ -16,12 +16,18 @@ import java.util.TreeMap;
  */
 public class Register {
     private Client client;
+
+
+
     private ArrayList<Person> persons;
     private ArrayList<Appointment> appointments;
     private ArrayList<MeetingRoom> rooms;
     private ArrayList<Group> groups;
     private TreeMap<Integer, ArrayList<String>> allGroupMembers;
+
+
     private TreeMap<Integer, ArrayList<Alarm>> activeAlarms;
+    private String userName;
 
     public Register(Client client){
         this.client = client;
@@ -38,6 +44,7 @@ public class Register {
         Packet response = this.client.request(new Packet("AUTHENTICATE", user, pass));
         if (response.getName().equals("AUTHENTICATION")){
             if ((boolean)response.getObjects()[0]){
+                userName = user;
                 return true;
             }
         }
@@ -369,5 +376,26 @@ public class Register {
             broadcast(p);
         }
     }
+
+    public void setGroups(ArrayList<Group> groups) {
+        this.groups = groups;
+    }
+
+    public void setPersons(ArrayList<Person> persons) {
+        this.persons = persons;
+    }
+
+    public void setAppointments(ArrayList<Appointment> appointments) {
+        this.appointments = appointments;
+    }
+
+    public void setRooms(ArrayList<MeetingRoom> rooms) {
+        this.rooms = rooms;
+    }
+
+    public void setActiveAlarms(TreeMap<Integer, ArrayList<Alarm>> activeAlarms) {
+        this.activeAlarms = activeAlarms;
+    }
+
 
 }
