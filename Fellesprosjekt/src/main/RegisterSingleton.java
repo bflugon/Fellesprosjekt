@@ -29,7 +29,15 @@ public class RegisterSingleton {
     }
 
     public Register getRegister(){
-        //Burde kanskje legge inn en begrensning her
         return instance.register;
     }
+
+    public void setInitialRegisterData(){
+        register.getAppointments();
+        register.getPersons();
+        register.getAllActiveAlarms();
+        register.getGroups();
+        register.getRooms();
+    }
+
 }
