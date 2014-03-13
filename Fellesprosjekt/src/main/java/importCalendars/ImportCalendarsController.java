@@ -1,4 +1,4 @@
-package main.importCalendars;
+package importCalendars;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
