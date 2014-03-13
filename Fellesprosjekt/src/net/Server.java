@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 /**
  * Created with IntelliJ IDEA.
@@ -15,15 +16,15 @@ import java.util.ArrayList;
  * Time: 2:55 PM
  * To change this template use File | Settings | File Templates.
  */
-public class Server implements Runnable {
+public class Server{
+
+    private static Server singleton;
+
     protected int serverPort = 8080;
     protected int eventPort = 8081;
-    protected ServerSocket serverSocket = null;
-    protected ServerSocket eventSocket = null;
-    protected boolean running = true;
-    protected Thread runningThread = null;
+    protected boolean running = false;
     protected DatabaseHandler db;
-    protected ArrayList<ServerEventThread> serverEventThreads;
+    protected LinkedList<ServerEventThread> serverEventThreads;
 
     /**
      * Constructor
@@ -34,49 +35,75 @@ public class Server implements Runnable {
         this.serverPort = serverPort;
         this.eventPort = eventPort;
         db = new DatabaseHandler(this);
-        serverEventThreads = new ArrayList<ServerEventThread>();
+        serverEventThreads = new LinkedList<ServerEventThread>();
+
+        this.singleton = this;
+
+        try{
+            final ServerSocket serverAcceptor = new ServerSocket(this.serverPort);
+            final ServerSocket eventAcceptor = new ServerSocket(this.eventPort);
+            this.running = true;
+
+            new Thread(){
+                public void run(){
+                    while(running){
+                        try{
+                            Socket serverSocket = serverAcceptor.accept();
+
+                            addRequest(serverSocket);
+
+                        } catch (IOException e){
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }.start();
+
+            new Thread(){
+                public void run(){
+                    while(running){
+                        try{
+                            Socket eventSocket = eventAcceptor.accept();
+                            addEvent(eventSocket);
+                        }catch(IOException e){
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }.start();
+
+        }catch (IOException e){
+            throw new RuntimeException("Cannot open port " + this.serverPort, e);
+        }
     }
 
     /**
-     * Keeps checking for new clients.
+     * Add request
+     * @param serverSocket
      */
-    public void run(){
-        synchronized (this){
-            this.runningThread = Thread.currentThread();
-        }
-        openServerSocket();
-        while (running){
-            Socket clientSocket;
-            Socket eventSocket;
-            try{
-                clientSocket = this.serverSocket.accept();
-                eventSocket = this.eventSocket.accept();
-            }
-            catch (IOException e){
-                if (!running){
-                    System.out.println("Server is stopped");
-                    return;
-                }
-                throw new RuntimeException("ERROR: Couldn't accept client connection",e);
-            }
-            new ServerRequestThread(clientSocket, this,db).start();
+    public void addRequest(Socket serverSocket){
+        new ServerRequestThread(serverSocket,this,db).start();
+    }
+
+    /**
+     * Add event
+     * @param eventSocket
+     */
+    public void addEvent(Socket eventSocket){
+        synchronized (serverEventThreads){
             ServerEventThread serverEventThread = new ServerEventThread(eventSocket,this);
             serverEventThreads.add(serverEventThread);
             serverEventThread.start();
         }
-
     }
 
     /**
-     * Opens server sockets
+     * Removes thread
+     * @param serverEventThread
      */
-    private void openServerSocket(){
-        try{
-            this.serverSocket = new ServerSocket(this.serverPort);
-            this.eventSocket = new ServerSocket(this.eventPort);
-        }
-        catch (IOException e){
-            throw new RuntimeException("Cannot open port " + this.serverPort, e);
+    public static void removeEventThread(ServerEventThread serverEventThread){
+        synchronized (singleton.serverEventThreads){
+            singleton.serverEventThreads.remove(serverEventThread);
         }
     }
 
@@ -84,9 +111,11 @@ public class Server implements Runnable {
      * Broadcasts packet to all connected clients
      * @param p
      */
-    public void broadcast(Packet p){
-        for(ServerEventThread set : serverEventThreads){
-            set.broadcast(p);
+    public static void broadcast(Packet p){
+        synchronized (singleton.serverEventThreads){
+            for(ServerEventThread set : singleton.serverEventThreads){
+                set.broadcast(p);
+            }
         }
     }
 }
