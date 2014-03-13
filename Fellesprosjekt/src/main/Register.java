@@ -21,11 +21,10 @@ public class Register {
 
     private ArrayList<Person> persons;
     private ArrayList<Appointment> appointments;
+    private ArrayList<Appointment> userAppointments;
     private ArrayList<MeetingRoom> rooms;
     private ArrayList<Group> groups;
     private TreeMap<Integer, ArrayList<String>> allGroupMembers;
-
-
     private TreeMap<Integer, ArrayList<Alarm>> activeAlarms;
     private String userName;
 
@@ -78,6 +77,19 @@ public class Register {
             appointments = (ArrayList<Appointment>)response.getObjects()[0];
         }
         return appointments;
+    }
+
+    /**
+     * Get all user appointments by username.
+     * @param username
+     * @return
+     */
+    public ArrayList<Appointment> getUserAppointments(String username){
+        if(this.userAppointments == null){
+            Packet response = this.client.request(new Packet("GET_USER_APPOINTMENT",username));
+            this.userAppointments = (ArrayList<Appointment>) response.getObjects()[0];
+        }
+        return userAppointments;
     }
 
     /**

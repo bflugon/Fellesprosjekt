@@ -1,7 +1,7 @@
 package net;
 
+import model.Config;
 import model.Packet;
-import util.GeneralUtil;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -30,7 +30,7 @@ public class Client{
      * Constructor. Creates connection to the server.
      */
     public Client (){
-        ip = GeneralUtil.readFile("ip.txt").get(0);
+        ip = Config.getIp();
         packetListeners = new ArrayList<PacketListener>();
         try{
             System.out.println("Client: Binding Socket");
