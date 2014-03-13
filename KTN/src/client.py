@@ -3,6 +3,7 @@ KTN-project 2013 / 2014
 '''
 import socket
 import json
+from MessageWorker import ReceiveMessageWorker
 
 
 class Client(object):
@@ -12,27 +13,33 @@ class Client(object):
 
     def start(self, host, port):
         self.connection.connect((host, port))
-        #messageworker = MessageWorker()
-        #message.start()
-        username = ''
-        username = raw_input('Enter username:')
-        self.send(json.dumps({'request': 'login', 'message': username}))
-        received_data = self.connection.recv(1024)
+        messageWorker = ReceiveMessageWorker(self, self.connection)
+        messageWorker.start()
         while True:
-            self.send(raw_input("Type a message"))
-            received_data = self.connection.recv(1024).strip()
-            print 'Received from server: ' + received_data
+            message = ''
+            message = raw_input()
+            if message.startswith('/'):
+                if message.startswith('/login') and message.count(' ') < 2:
+                    self.send(json.dumps({'request': 'login', 'username': message.split(' ', 1)[1]}))
+                elif message == '/logout':
+                    self.send(json.dumps({'request': 'logout'}))
+                else:
+                    print 'Invalid command'
+                    continue
+            else:
+                self.send(json.dumps({'request':'message', 'message': message}))
         self.connection.close()
 
     def message_received(self, message, connection):
-        data = json.dumps(message)
-        if data.has_key(error):
-            pass
-        elif data[response] == 'login':
-            pass
-        elif data[response] == 'message':
-            pass # Do nothing, will be removes
-        elif data[response] == 'logout':
+        data = json.loads(message)
+        if data.has_key('error'):
+            print data['error']
+        elif data['response'] == 'login':
+            for message in data['messages']:
+                print message
+        elif data['response'] == 'message':
+            print data['message']
+        elif data['response'] == 'logout':
             pass #Idk, prompt login?
 
 
@@ -48,4 +55,6 @@ class Client(object):
 
 if __name__ == "__main__":
     client = Client()
+    host = raw_input('Enter the address to the host (localhost)')
+    port = int(raw_input('Enter the portnumber of the server (9999)'))
     client.start('localhost', 9999)
