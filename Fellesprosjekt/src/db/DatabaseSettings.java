@@ -8,9 +8,9 @@ package db;
  * To change this template use File | Settings | File Templates.
  */
 public class DatabaseSettings {
-    private static final String db_url = "jdbc:mysql://localhost:3306/fellesprosjekt";
-    private static final String db_username = "herp";
-    private static final String db_password = "derp";
+    private static final String db_url = "";
+    private static final String db_username = "";
+    private static final String db_password = "";
 
     public static String getURL(){
         return db_url;
