@@ -26,6 +26,11 @@ public class Register {
     private ArrayList<Group> groups;
     private TreeMap<Integer, ArrayList<String>> allGroupMembers;
     private TreeMap<Integer, ArrayList<Alarm>> activeAlarms;
+
+    public String getUserName() {
+        return userName;
+    }
+
     private String userName;
 
     public Register(Client client){
@@ -74,7 +79,9 @@ public class Register {
     public ArrayList<Appointment> getAppointments(){
         if (this.appointments == null){
             Packet response = this.client.request(new Packet("GET_APPOINTMENTS"));
-            appointments = (ArrayList<Appointment>)response.getObjects()[0];
+            if (response.getObjects().length != 0){
+                appointments = (ArrayList<Appointment>)response.getObjects()[0];
+            }
         }
         return appointments;
     }
@@ -85,9 +92,13 @@ public class Register {
      * @return
      */
     public ArrayList<Appointment> getUserAppointments(String username){
+        System.out.println(username + "HALLA");
         if(this.userAppointments == null){
             Packet response = this.client.request(new Packet("GET_USER_APPOINTMENT",username));
-            this.userAppointments = (ArrayList<Appointment>) response.getObjects()[0];
+
+            if (response.getObjects().length != 0){
+                this.userAppointments = (ArrayList<Appointment>) response.getObjects()[0];
+            }
         }
         return userAppointments;
     }
