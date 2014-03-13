@@ -49,7 +49,6 @@ public class ServerEventThread extends Thread{
             try{
                 this.input.readObject();
             }catch(IOException | ClassNotFoundException e){
-                server.serverEventThreads.remove(this);
                 break;
             }
         }
