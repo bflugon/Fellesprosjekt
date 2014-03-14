@@ -44,6 +44,8 @@ class CLientHandler(SocketServer.BaseRequestHandler):
                 response = json.dumps({'response': 'message', 'message': message})
                 for client in clients:
                     clients[client].sendall(response)
+               
+                response = {'response': 'message', 'error': 'Not logged in'}
             elif data['request'] == 'login':
                 #sjekk gyldig brukernavn
                 tempUser = data['username'] 
@@ -51,6 +53,8 @@ class CLientHandler(SocketServer.BaseRequestHandler):
                     self.connection.sendall(json.dumps({'response': 'login', 'error': 'Invalid username!', 'username': tempUser}))
                 elif tempUser in clients:
                     self.connection.sendall(json.dumps({'response': 'login', 'error': 'Name already taken', 'username': tempUser}))
+                elif self.connection in clients:
+                    self.connection.sendall(json.dumps({'response': 'login', 'error': 'Already logged in', 'username': tempUser}))
                 else:
                     user = tempUser
                     clients[user] = self.connection
