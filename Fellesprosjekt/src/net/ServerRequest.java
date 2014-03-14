@@ -31,7 +31,9 @@ public class ServerRequest {
         try{
             String name = request.getName().toUpperCase();
             Object[] objects = request.getObjects();
-            if(name.equals("GET_APPOINTMENTS")){
+            if(name.equals("CONNECTING")){
+                db.connectToDatabase();
+            }else if(name.equals("GET_APPOINTMENTS")){
                 return getAllAppointments();
             }else if(name.equals("GET_ALL_PEOPLE")){
                 return getAllPersons();
@@ -78,6 +80,10 @@ public class ServerRequest {
         }
     }
 
+    /**
+     * All of these methods sends the information to the database, and returns
+     * a packet containing information and/or confirmation.
+     **/
     private Packet authenticate(String username, String password) throws SQLException{
         return new Packet("AUTHENTICATION",db.authenticate(username, password));
     }

@@ -58,4 +58,13 @@ public class Group implements Serializable {
     public int getGroupID(){
         return groupID;
     }
+
+    @Override
+    public String toString() {
+        return "Group{" +
+                "groupID=" + groupID +
+                ", members=" + members +
+                ", groupName='" + groupName + '\'' +
+                '}';
+    }
 }

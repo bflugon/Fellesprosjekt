@@ -31,6 +31,9 @@ public class Register {
     public Register(Client client){
         this.client = client;
         this.client.addListener(new registerPacketListener());
+
+        //Checks that the server is connected to the database
+        this.client.request(new Packet("CONNECTING"));
     }
 
     /**
