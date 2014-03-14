@@ -47,6 +47,16 @@ public class DatabaseHandler {
     }
 
     /**
+     * Checks that the server is connected to the database.
+     * _MUST HAVE_ autoReconnect=true at the end of the url in databaseSettings
+     * @throws SQLException
+     */
+    public void connectToDatabase() throws SQLException{
+        PreparedStatement query = this.db.prepareStatement("SELECT 1 FROM person");
+        query.executeQuery();
+    }
+
+    /**
      * Checks entered username/password with db.
      * @param username Username
      * @param password Password

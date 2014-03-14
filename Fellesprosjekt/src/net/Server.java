@@ -23,7 +23,7 @@ public class Server{
     protected int eventPort = 8081;
     protected boolean running = false;
     protected DatabaseHandler db;
-    protected LinkedList<ServerEventThread> serverEventThreads;
+    protected final LinkedList<ServerEventThread> serverEventThreads;
 
     /**
      * Constructor
@@ -36,7 +36,7 @@ public class Server{
         db = new DatabaseHandler(this);
         serverEventThreads = new LinkedList<ServerEventThread>();
 
-        this.singleton = this;
+        singleton = this;
 
         try{
             final ServerSocket serverAcceptor = new ServerSocket(this.serverPort);

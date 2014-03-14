@@ -8,9 +8,9 @@ package model;
  * To change this template use File | Settings | File Templates.
  */
 public class Config {
-    private static final String ip = "";
-    private static final String smtpUsername = "";
-    private static final String smtpPassword = "";
+    private static final String ip = "stian.sexy";
+    private static final String smtpUsername = "fellesprosjektgruppe31@gmail.com";
+    private static final String smtpPassword = "fppassword";
 
     public static String getIp(){
         return ip;
