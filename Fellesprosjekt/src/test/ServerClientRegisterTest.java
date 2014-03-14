@@ -21,6 +21,7 @@ public class ServerClientRegisterTest {
     public static void main(String[] args){
         Register reg = new Register(new Client());
 
+
         ArrayList<Appointment> appointments = reg.getAppointments();
         ArrayList<Person> persons = reg.getPersons();
         ArrayList<Group> groups = reg.getGroups();
