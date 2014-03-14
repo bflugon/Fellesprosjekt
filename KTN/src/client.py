@@ -19,7 +19,7 @@ class Client(object):
             message = ''
             message = raw_input()
             if message.startswith('/'):
-                if message.startswith('/login') and message.count(' ') < 2:
+                if message.startswith('/login') and message.count(' ') < 2 and len(message) > 7:
                     self.send(json.dumps({'request': 'login', 'username': message.split(' ', 1)[1]}))
                 elif message == '/logout':
                     self.send(json.dumps({'request': 'logout'}))
@@ -40,7 +40,7 @@ class Client(object):
         elif data['response'] == 'message':
             print data['message']
         elif data['response'] == 'logout':
-            pass #Idk, prompt login?
+            print "Logged out"
 
 
     def connection_closed(self, connection):
