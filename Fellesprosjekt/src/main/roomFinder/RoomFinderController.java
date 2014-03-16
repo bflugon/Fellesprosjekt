@@ -6,12 +6,14 @@ import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import main.RegisterSingleton;
 import main.meeting.MeetingController;
 import model.Appointment;
 import model.MeetingRoom;
 import util.GuiUtils;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 /**
@@ -19,13 +21,16 @@ import java.util.ResourceBundle;
  */
 public class RoomFinderController implements Initializable {
 
+    //GUI-elementer
     public TableColumn roomTableColumn;
     public TableColumn capacityTableColumn;
     public TableView roomFinderTableView;
     public TextField alternativeRoomTextField;
-    public MeetingRoom selectedRoom;
     public Label chosenRoomLabel;
-    public int minCapacity = 0;
+
+
+    public MeetingRoom selectedRoom;
+    public int minCapacity;
     ObservableList<MeetingRoom> romData;
     private Appointment appointment;
     private MeetingController parentController;
@@ -38,6 +43,7 @@ public class RoomFinderController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         romData = fetchRoomData();
+
         capacityTableColumn.setSortType(TableColumn.SortType.ASCENDING);
         roomTableColumn.setCellValueFactory(new PropertyValueFactory<MeetingRoom, String>("roomName"));
         capacityTableColumn.setCellValueFactory(new PropertyValueFactory<MeetingRoom, String>("capacity"));
@@ -84,22 +90,30 @@ public class RoomFinderController implements Initializable {
     }
 
     private ObservableList<MeetingRoom> fetchRoomData() {
+
+
         ObservableList<MeetingRoom> approvedRooms = FXCollections.observableArrayList();
-        ObservableList<MeetingRoom> allRooms = FXCollections.observableArrayList(
-                new MeetingRoom(12,"Rom 1", 12),
-                new MeetingRoom(2,"Rom 2", 5),
-                new MeetingRoom(3,"Rom 3", 4),
-                new MeetingRoom(4,"Rom 4", 4),
-                new MeetingRoom(5,"Rom 5", 7),
-                new MeetingRoom(6,"Rom 6", 10),
-                new MeetingRoom(7,"Rom 7", 10),
-                new MeetingRoom(8,"Rom 8", 10),
-                new MeetingRoom(9,"Rom 9", 10),
-                new MeetingRoom(10,"Rom 10", 20),
-                new MeetingRoom(11,"Rom 17", 7)
-        );
+        ArrayList<MeetingRoom> allRooms = RegisterSingleton.sharedInstance().getRegister().getRooms();
+
+//        ObservableList<MeetingRoom> allRooms = FXCollections.observableArrayList(
+//                new MeetingRoom(12,"Rom 1", 12),
+//                new MeetingRoom(2,"Rom 2", 5),
+//                new MeetingRoom(3,"Rom 3", 4),
+//                new MeetingRoom(4,"Rom 4", 4),
+//                new MeetingRoom(5,"Rom 5", 7),
+//                new MeetingRoom(6,"Rom 6", 10),
+//                new MeetingRoom(7,"Rom 7", 10),
+//                new MeetingRoom(8,"Rom 8", 10),
+//                new MeetingRoom(9,"Rom 9", 10),
+//                new MeetingRoom(10,"Rom 10", 20),
+//                new MeetingRoom(11,"Rom 17", 7)
+//        );
+        System.out.println("Velger ut riktige rom:");
+        System.out.println(this.minCapacity);
 
         for (MeetingRoom r : allRooms){
+            System.out.println("Inne i for-lokka");
+            System.out.println(r);
             if (r.getCapacity() > this.minCapacity){
                 approvedRooms.add(r);
             }
@@ -123,6 +137,12 @@ public class RoomFinderController implements Initializable {
     }
 
     public void setMinCapacity(int i){
+        System.out.println("Setter minCapacity:");
+        System.out.println(i);
         this.minCapacity = i;
+
+        //Oppdaterer tableView
+        romData = fetchRoomData();
+        roomFinderTableView.setItems(romData);
     }
 }
