@@ -48,6 +48,12 @@ public class CalendarController implements Initializable{
         );
     }
 
+    public void previousWeekButtonPressed(ActionEvent actionEvent) {
+    }
+
+    public void nextWeekButtonPressed(ActionEvent actionEvent) {
+    }
+
     static class CalenderCell extends ListCell<String> {
         VBox vbox = new VBox();
         Label label = new Label("(empty)");
