@@ -20,6 +20,8 @@ import java.util.ResourceBundle;
 public class MeetingController implements Initializable {
 
     Appointment appointment;
+
+    //Deklarerer GUIelementer
     public Button meetingRoomButton;
     public TextField startTimeTextField;
     public TextField startDateTextField;
@@ -31,11 +33,15 @@ public class MeetingController implements Initializable {
     public RadioButton highPriRadioButton;
     public TextArea descriptionTextArea;
 
+    private int numberOfInvited;
+
 
 
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
+
         appointment = new Appointment(0, null, null, null, null, 0, null, null,null, null);
     }
 
@@ -63,6 +69,8 @@ public class MeetingController implements Initializable {
         RoomFinderController roomFinderController = fxmlLoader.<RoomFinderController>getController();
         roomFinderController.setAppointment(appointment);
         roomFinderController.setParentController(this);
+
+        //Sender med riktig rom hvis det eksisterer
         if (appointment.getRoom() != null){
             if (appointment.getRoom().getRoomID() == 1){
                 roomFinderController.setRoom(appointment.getAlternativeRoomName());
@@ -70,6 +78,11 @@ public class MeetingController implements Initializable {
                 roomFinderController.setRoom(appointment.getRoom().getRoomName());
             }
         }
+
+        //Sender med antall personer for å finne størrelse på rom
+        System.out.println("Før setting av str");
+        roomFinderController.setMinCapacity(getNumberOfInvited());
+        System.out.println("ETTER setting av str");
 
         newStage.setTitle("Velg rom");
         newStage.setScene(new Scene(root));
@@ -120,8 +133,6 @@ public class MeetingController implements Initializable {
 
         else{
             String meetingName = nameTextField.getText();
-//            String start =
-
 
             GuiUtils.closeWindow(actionEvent);
         }
@@ -159,5 +170,12 @@ public class MeetingController implements Initializable {
         }else{
             meetingRoomButton.setText(appointment.getAlternativeRoomName());
         }
+    }
+    public int getNumberOfInvited() {
+        return numberOfInvited;
+    }
+
+    public void setNumberOfInvited(int numberOfInvited) {
+        this.numberOfInvited = numberOfInvited;
     }
 }
