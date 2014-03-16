@@ -564,6 +564,31 @@ public class DatabaseHandler {
     }
 
     /**
+     * Get people invited to an appointment
+     * @param appointmentID
+     * @return
+     * @throws SQLException
+     */
+    public ArrayList<Person> getInvitees(int appointmentID) throws SQLException{
+        PreparedStatement query = this.db.prepareStatement("SELECT * FROM invitedto WHERE AID = ?");
+        query.setInt(1, appointmentID);
+        ResultSet rs = query.executeQuery();
+
+        if (!rs.next()){
+            return null;
+        }
+
+        ArrayList<Person> results = new ArrayList<Person>();
+        results.add(this.getPersonByUsername(rs.getString("Username")));
+
+        while(rs.next()){
+            results.add(this.getPersonByUsername(rs.getString("Username")));
+        }
+
+        return results;
+    }
+
+    /**
      * Set attending status of alarm
      * @param alarmID
      * @param attending
@@ -578,7 +603,7 @@ public class DatabaseHandler {
     }
 
     private void broadcast(Packet p){
-        this.server.broadcast(p);
+        Server.broadcast(p);
     }
 
     /**

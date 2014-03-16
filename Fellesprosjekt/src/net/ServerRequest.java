@@ -71,6 +71,8 @@ public class ServerRequest {
                 return invitePerson((Person) objects[0], (Appointment) objects[1]);
             } else if (name.equals("GET_USER_APPOINTMENTS")){
                 return getUserAppointment((String) objects[0]);
+            } else if (name.equals("GET_INVITEES")){
+                return getInvitees((Integer) objects[0]);
             }
 
             return new Packet("ERROR");
@@ -164,6 +166,10 @@ public class ServerRequest {
 
     private Packet addRoom(String name, int capacity) throws SQLException{
         return new Packet("ROOM_ADDED", this.db.addRoom(name,capacity));
+    }
+
+    private Packet getInvitees(int appointmentID) throws SQLException{
+        return new Packet("INVITEES", this.db.getInvitees(appointmentID));
     }
 
     private Packet sendEmail(String recipient, Appointment appointment){
