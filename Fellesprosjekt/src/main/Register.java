@@ -26,6 +26,11 @@ public class Register {
     private ArrayList<Group> groups;
     private TreeMap<Integer, ArrayList<String>> allGroupMembers;
     private TreeMap<Integer, ArrayList<Alarm>> activeAlarms;
+
+    public String getUserName() {
+        return userName;
+    }
+
     private String userName;
 
     public Register(Client client){
@@ -408,22 +413,17 @@ public class Register {
     public void setGroups(ArrayList<Group> groups) {
         this.groups = groups;
     }
-
     public void setPersons(ArrayList<Person> persons) {
         this.persons = persons;
     }
-
     public void setAppointments(ArrayList<Appointment> appointments) {
         this.appointments = appointments;
     }
-
     public void setRooms(ArrayList<MeetingRoom> rooms) {
         this.rooms = rooms;
     }
-
     public void setActiveAlarms(TreeMap<Integer, ArrayList<Alarm>> activeAlarms) {
         this.activeAlarms = activeAlarms;
     }
-
 
 }
