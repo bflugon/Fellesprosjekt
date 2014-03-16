@@ -362,6 +362,19 @@ public class Register {
     }
 
     /**
+     * Get list of people invited to an appointment
+     * @param appointmentID
+     * @return
+     */
+    public ArrayList<Person> getInvitees(int appointmentID){
+        Packet response = this.client.request(new Packet("GET_INVITEES", appointmentID));
+        if (response.getName().equals("INVITEES")){
+            return (ArrayList<Person>) response.getObjects()[0];
+        }
+        return null;
+    }
+
+    /**
      * Updates register based on broadcast recieved by server
      * @param p
      */
