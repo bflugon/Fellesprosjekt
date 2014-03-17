@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<VBox prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.calendar.CalendarController">
+<VBox prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.calendar.CalendarController">
   <children>
     <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
 <children><GridPane layoutX="14.0" layoutY="14.0" minHeight="310.0" minWidth="618.0" prefHeight="318.0" prefWidth="618.0" style="-fx-border-color: #000; -fx-border-width: 2px;" AnchorPane.bottomAnchor="7.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="75.0">
@@ -24,10 +24,10 @@
   </rowConstraints>
 <children><ListView id="monday" fx:id="listViewMonday" prefHeight="200.0" prefWidth="200.0" /><ListView fx:id="listViewTuesday" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" /><ListView fx:id="listViewWednesday" prefHeight="340.0" prefWidth="88.0" GridPane.columnIndex="2" /><ListView fx:id="listViewThursday" prefHeight="309.0" prefWidth="88.0" GridPane.columnIndex="3" /><ListView fx:id="listViewFriday" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="4" /><ListView fx:id="listViewSaturday" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="5" /><ListView fx:id="listViewSunday" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="6" />
 </children>
-</GridPane><Button layoutX="14.33837890625" layoutY="14.0" mnemonicParsing="false" onAction="#makeMeeting" text="Legg til møte" /><Button layoutX="124.33837890625" layoutY="14.0" mnemonicParsing="false" onAction="#importButtonOnAction" text="Importer" /><Button layoutX="14.0" layoutY="44.0" mnemonicParsing="false" text="&lt;" /><Label layoutX="48.691650390625" layoutY="49.0" text="Uke: 10" /><Button layoutX="102.0" layoutY="44.0" mnemonicParsing="false" text="&gt;" /><ComboBox layoutX="426.0" layoutY="14.0" prefHeight="26.0" prefWidth="206.0" promptText="Varsler" /><Label layoutX="281.0" layoutY="26.0" text="Kristian">
+</GridPane><Button layoutX="14.33837890625" layoutY="14.0" mnemonicParsing="false" onAction="#makeMeeting" text="Legg til møte" /><Button layoutX="124.33837890625" layoutY="14.0" mnemonicParsing="false" onAction="#importButtonOnAction" text="Importer" /><Button layoutX="14.0" layoutY="44.0" mnemonicParsing="false" onAction="#previousWeekButtonPressed" text="&lt;" /><Label layoutX="48.691650390625" layoutY="49.0" text="Uke: 10" /><Button layoutX="102.0" layoutY="44.0" mnemonicParsing="false" onAction="#nextWeekButtonPressed" text="&gt;" /><ComboBox layoutX="580.0" layoutY="14.0" prefHeight="26.0" prefWidth="206.0" promptText="Varsler" AnchorPane.rightAnchor="14.0" /><Label fx:id="nameLabel" layoutX="364.0" layoutY="26.0" text="Kristian">
 <font>
 <Font name="Comic Sans MS Bold" size="21.0" />
-</font></Label><ImageView fitHeight="10.0" fitWidth="13.0" layoutX="409.0" layoutY="22.0" pickOnBounds="true" preserveRatio="true">
+</font></Label><ImageView fitHeight="10.0" fitWidth="13.0" layoutX="565.0" layoutY="23.0" pickOnBounds="true" preserveRatio="true" AnchorPane.rightAnchor="224.0">
 <image>
 <Image url="@../../../../../../../Desktop/images.jpeg" />
 </image></ImageView>
