@@ -13,6 +13,8 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.util.Callback;
+import main.RegisterSingleton;
+import model.Calendar;
 import util.GuiUtils;
 
 import java.net.URL;
@@ -23,15 +25,29 @@ import java.util.ResourceBundle;
 public class CalendarController implements Initializable, Observer{
 
     public ListView<String> listViewMonday;
+    public ListView<String> listViewTuesday;
+    public ListView<String> listViewWednesday;
+    public ListView<String> listViewThursday;
+    public ListView<String> listViewFriday;
+    public ListView<String> listViewSaturday;
+    public ListView<String> listViewSunday;
 
-    ObservableList<String> test1;
+    ObservableList<String> monday;
+    ObservableList<String> tuesday;
+    ObservableList<String> wednesday;
+    ObservableList<String> thursday;
+    ObservableList<String> friday;
+    ObservableList<String> saturday;
+    ObservableList<String> sunday;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        test1 = FXCollections.observableArrayList("Bamse", "Double", "Suite", "Family App", "Double", "Suite", "Family App", "Double", "Suite", "Family App", "Double", "Suite", "Family App", "Double", "Suite", "Family App", "Double", "Suite", "Family App", "Double", "Suite", "Family App", "Double", "Suite", "Family App");
+        RegisterSingleton.sharedInstance().getRegister().addCalendarObserver(this);
+
+        monday = FXCollections.observableArrayList("Bamse", "Double", "Suite", "Family App", "Double", "Suite", "Family App", "Double", "Suite", "Family App", "Double", "Suite", "Family App", "Double", "Suite", "Family App", "Double", "Suite", "Family App", "Double", "Suite", "Family App", "Double", "Suite", "Family App");
         System.out.println(listViewMonday);
-        listViewMonday.setItems(test1);
-        //listViewMonday.setCellFactory(ComboBoxListCell.forListView(test1));
+        listViewMonday.setItems(monday);
+        //listViewMonday.setCellFactory(ComboBoxListCell.forListView(monday));
         //Legger til comment
         //Legger til enda et comment
         //
@@ -44,6 +60,12 @@ public class CalendarController implements Initializable, Observer{
             }
         }
         );
+    }
+
+
+
+    public void setModel(Calendar model) {
+        model.addObserver(this);
     }
 
     public void previousWeekButtonPressed(ActionEvent actionEvent) {

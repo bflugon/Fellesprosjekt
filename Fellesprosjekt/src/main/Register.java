@@ -1,5 +1,6 @@
 package main;
 
+import main.calendar.CalendarController;
 import model.*;
 import net.Client;
 
@@ -392,6 +393,10 @@ public class Register {
         }else if (p.getName().equals("PERSON_UPDATED")){
             getPersons();
         }
+    }
+
+    public void addCalendarObserver(CalendarController cc) {
+        calendar.addObserver(cc);
     }
 
     public void updateCalendar(ArrayList<Person> persons) {
