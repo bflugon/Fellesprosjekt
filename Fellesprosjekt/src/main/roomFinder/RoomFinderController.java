@@ -36,12 +36,14 @@ public class RoomFinderController implements Initializable {
     private MeetingController parentController;
 
     //Denne må hentes fra register.
-    public MeetingRoom defaultMeetingRoom = new MeetingRoom(1, "Default", 999);
+    public MeetingRoom defaultMeetingRoom;
 
 
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
+        defaultMeetingRoom = RegisterSingleton.sharedInstance().getRegister().getRoom(1);
         romData = fetchRoomData();
 
         capacityTableColumn.setSortType(TableColumn.SortType.ASCENDING);
@@ -85,6 +87,8 @@ public class RoomFinderController implements Initializable {
             parentController.updateView();
             
         }
+        System.out.println("Selected room: " + appointment.getRoom());
+        System.out.println("Alternative room name: " + appointment.getAlternativeRoomName());
         GuiUtils.closeWindow(actionEvent);
 
     }
@@ -108,12 +112,8 @@ public class RoomFinderController implements Initializable {
 //                new MeetingRoom(10,"Rom 10", 20),
 //                new MeetingRoom(11,"Rom 17", 7)
 //        );
-        System.out.println("Velger ut riktige rom:");
-        System.out.println(this.minCapacity);
 
         for (MeetingRoom r : allRooms){
-            System.out.println("Inne i for-lokka");
-            System.out.println(r);
             if (r.getCapacity() > this.minCapacity){
                 approvedRooms.add(r);
             }
@@ -137,12 +137,14 @@ public class RoomFinderController implements Initializable {
     }
 
     public void setMinCapacity(int i){
-        System.out.println("Setter minCapacity:");
-        System.out.println(i);
         this.minCapacity = i;
 
         //Oppdaterer tableView
         romData = fetchRoomData();
         roomFinderTableView.setItems(romData);
+    }
+
+    public void alternativeRoomOnAction(ActionEvent actionEvent) {
+        closeOnOk(actionEvent);
     }
 }

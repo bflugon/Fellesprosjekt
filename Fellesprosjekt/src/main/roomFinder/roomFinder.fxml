@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
 <VBox prefHeight="400.0" prefWidth="250.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.roomFinder.RoomFinderController">
   <children>
     <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
 <children><Label layoutX="79.0" layoutY="3.0" text="Velg rom">
 <font>
 <Font size="21.0" />
-</font></Label><TextField fx:id="alternativeRoomTextField" layoutX="13.0" layoutY="313.0" onKeyReleased="#alternativeRoomKeyReleased" prefHeight="26.0" prefWidth="225.0" promptText="Alternativt rom" /><Button layoutX="85.0" layoutY="365.0" mnemonicParsing="false" onAction="#closeOnOk" prefHeight="26.0" prefWidth="80.0" text="OK" /><TableView fx:id="roomFinderTableView" layoutX="12.0" layoutY="31.0" onMouseClicked="#clickSelection" prefHeight="278.0" prefWidth="225.0">
+</font></Label><TextField fx:id="alternativeRoomTextField" layoutX="13.0" layoutY="313.0" onAction="#alternativeRoomOnAction" onKeyReleased="#alternativeRoomKeyReleased" prefHeight="26.0" prefWidth="225.0" promptText="Alternativt rom" /><Button layoutX="85.0" layoutY="365.0" mnemonicParsing="false" onAction="#closeOnOk" prefHeight="26.0" prefWidth="80.0" text="OK" /><TableView fx:id="roomFinderTableView" layoutX="12.0" layoutY="31.0" onMouseClicked="#clickSelection" prefHeight="278.0" prefWidth="225.0">
 <columns><TableColumn fx:id="roomTableColumn" maxWidth="120.0" prefWidth="119.0" text="Rom" /><TableColumn fx:id="capacityTableColumn" prefWidth="90.0" text="Størrelse" />
 </columns>
 </TableView><Label fx:id="chosenRoomLabel" layoutX="134.0" layoutY="342.0" text="-ingen-" /><Label layoutX="65.0" layoutY="342.0" text="Valgt rom:" />
