@@ -2,13 +2,15 @@ package main.importCalendars;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
+import main.RegisterSingleton;
+import model.Person;
 import util.GuiUtils;
-import javafx.event.ActionEvent;
-import javafx.scene.Node;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 /**
@@ -16,10 +18,10 @@ import java.util.ResourceBundle;
  */
 public class ImportCalendarsController implements Initializable {
 
-    public ListView<String> listViewCalendarCandidates;
-    public ListView<String> listViewCalendarSelected;
-    ObservableList<String> candidatePersonsList;
-    ObservableList<String> selectedPersonsList;
+    public ListView<Person> listViewCalendarCandidates;
+    public ListView<Person> listViewCalendarSelected;
+    ObservableList<Person> candidatePersonsList;
+    ObservableList<Person> selectedPersonsList;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -32,13 +34,15 @@ public class ImportCalendarsController implements Initializable {
 
 
     public void okButtonPressed(ActionEvent actionEvent) {
+        ArrayList<Person> people = new ArrayList<>(selectedPersonsList);
+        RegisterSingleton.sharedInstance().getRegister().updateCalendar(people);
         GuiUtils.closeWindow(actionEvent);
     }
 
     public void addCalendar(ActionEvent ae) {
 
         if (listViewCalendarCandidates.getSelectionModel().getSelectedItem() != null) {
-            String selected = listViewCalendarCandidates.getSelectionModel().getSelectedItem();
+            Person selected = listViewCalendarCandidates.getSelectionModel().getSelectedItem();
             if ( candidatePersonsList.contains(selected) && !selectedPersonsList.contains(selected) ) {
                 selectedPersonsList.add(selected);
                 candidatePersonsList.remove(selected);
@@ -52,7 +56,7 @@ public class ImportCalendarsController implements Initializable {
     public void removeCalendar(ActionEvent ae) {
 
         if ( listViewCalendarSelected.getSelectionModel().getSelectedItem() != null ) {
-            String selected = listViewCalendarSelected.getSelectionModel().getSelectedItem();
+            Person selected = listViewCalendarSelected.getSelectionModel().getSelectedItem();
             if ( selectedPersonsList.contains(selected) && !candidatePersonsList.contains(selected) )
                 selectedPersonsList.remove(selected);
                 listViewCalendarSelected.getSelectionModel().clearSelection();
@@ -61,8 +65,10 @@ public class ImportCalendarsController implements Initializable {
     }
 
 
-    private ObservableList<String> getAllPersons() {
-        return FXCollections.observableArrayList("Single", "Double", "Suite", "Family App", "Yoda", "kake");
+    private ObservableList<Person> getAllPersons() {
+        ArrayList<Person> people =  RegisterSingleton.sharedInstance().getRegister().getPersons();
+        return FXCollections.observableArrayList(people);
+        //return FXCollections.observableArrayList("Single", "Double", "Suite", "Family App", "Yoda", "kake");
     }
 
 

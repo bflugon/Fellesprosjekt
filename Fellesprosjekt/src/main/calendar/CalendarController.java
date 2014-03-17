@@ -55,6 +55,7 @@ public class CalendarController implements Initializable, Observer{
     @Override
     public void update(Observable o, Object arg) {
 
+
     }
 
     static class CalenderCell extends ListCell<String> {

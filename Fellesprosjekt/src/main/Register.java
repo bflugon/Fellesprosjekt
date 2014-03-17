@@ -3,7 +3,6 @@ package main;
 import model.*;
 import net.Client;
 
-import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
@@ -18,7 +17,7 @@ public class Register {
     private Client client;
 
 
-
+    private Calendar calendar;
     private ArrayList<Person> persons;
     private ArrayList<Appointment> appointments;
     private ArrayList<Appointment> userAppointments;
@@ -34,6 +33,7 @@ public class Register {
 
         //Checks that the server is connected to the database
         this.client.request(new Packet("CONNECTING"));
+        calendar = new Calendar();
     }
 
     /**
@@ -392,6 +392,18 @@ public class Register {
         }else if (p.getName().equals("PERSON_UPDATED")){
             getPersons();
         }
+    }
+
+    public void updateCalendar(ArrayList<Person> persons) {
+        ArrayList<Person_Appointments> pa = new ArrayList<>(persons.size());
+        for ( Person person : persons ) {
+            pa.add( new Person_Appointments(person, getUserAppointments(person.getUsername())) );
+        }
+        calendar.addAppointments(pa);
+    }
+
+    public void setupCalendar(String user) {
+        calendar.addAppointment(new Person_Appointments( getPersonByUsername(user), getUserAppointments(user) ));
     }
 
     /**

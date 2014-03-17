@@ -7,10 +7,24 @@ import java.util.ArrayList;
  */
 public class Calendar extends java.util.Observable{
 
-    public ArrayList<Person>  persons = new ArrayList<Person>();
+    public ArrayList<Person_Appointments> calendar = new ArrayList<>();
 
-    public void addPersonToCalendar(Person person) {
-        persons.add(person);
-        notifyObservers(persons);
+    public void addAppointment(Person_Appointments pa) {
+        if ( pa != null ) {
+            calendar.add(pa);
+            setChanged();
+            notifyObservers(calendar);
+        }
+    }
+
+    public void addAppointments(ArrayList<Person_Appointments> calendars) {
+        if ( calendars != null ) {
+            for (Person_Appointments pa : calendars) {
+                if ( pa != null ) calendar.add(pa);
+            }
+            setChanged();
+            notifyObservers(calendar);
+        }
+
     }
 }
