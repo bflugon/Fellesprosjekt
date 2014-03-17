@@ -4,25 +4,23 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.scene.control.cell.ComboBoxListCell;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.control.Button;
-
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.util.Callback;
 import util.GuiUtils;
-import javafx.scene.control.Label;
 
 import java.net.URL;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.ResourceBundle;
 
-public class CalendarController implements Initializable{
+public class CalendarController implements Initializable, Observer{
 
     public ListView<String> listViewMonday;
 
@@ -52,6 +50,11 @@ public class CalendarController implements Initializable{
     }
 
     public void nextWeekButtonPressed(ActionEvent actionEvent) {
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+
     }
 
     static class CalenderCell extends ListCell<String> {
