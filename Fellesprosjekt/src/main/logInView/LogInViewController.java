@@ -2,7 +2,6 @@ package main.logInView;
 
 //import com.javafx.tools.doclets.formats.html.SourceToHTMLConverter;
 import javafx.event.ActionEvent;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.ProgressIndicator;
@@ -11,7 +10,6 @@ import javafx.scene.effect.Glow;
 import javafx.scene.image.ImageView;
 import main.Register;
 import main.RegisterSingleton;
-import model.Calendar;
 import net.Client;
 import util.GuiUtils;
 
@@ -26,9 +24,6 @@ public class LogInViewController{
     public PasswordField passwordField;
     public Label statusLabel;
     public ProgressIndicator progressIndicator;
-
-    public Calendar calendar;
-
 
 
     public void frogGlowOn(){
@@ -64,8 +59,9 @@ public class LogInViewController{
             RegisterSingleton.sharedInstance().setInitialRegisterData();
 
             GuiUtils.createView("../calendar/calendar.fxml", "Kalender", this.getClass());
-            calendarSetUp(usernameTextField.getText());
-            ((Node) (actionEvent.getSource())).getScene().getWindow().hide();
+            RegisterSingleton.sharedInstance().getRegister().setupCalendar(usernameTextField.getText());
+            //((Node) (actionEvent.getSource())).getScene().getWindow().hide();
+            GuiUtils.closeWindow(actionEvent);
 
         }else{
             statusLabel.setVisible(true);
@@ -73,11 +69,6 @@ public class LogInViewController{
             System.out.println("Login fail" + usernameTextField.getText() + passwordField.getText());
             statusLabel.setText("Kunne ikke logge inn. Prøv igjen.");
         }
-    }
-
-    private void calendarSetUp(String text) {
-        calendar = new Calendar();
-        calendar.addPersonToCalendar(RegisterSingleton.sharedInstance().getRegister().getPersonByUsername(text));
     }
 
     private boolean emptyUsernameTextField(){
