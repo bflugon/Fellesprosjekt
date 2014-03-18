@@ -62,7 +62,7 @@ public class RoomFinderController implements Initializable {
             int rowIndex = c.get(0).getRow();
             MeetingRoom room = romData.get(rowIndex);
 
-            appointment.setAlternativeRoomName(null);
+            appointment.setAlternativeLocation(null);
             appointment.setRoom(room);
             selectedRoom = room;
             chosenRoomLabel.setText(appointment.getRoom().getRoomName());
@@ -75,7 +75,7 @@ public class RoomFinderController implements Initializable {
         selectedRoom = defaultMeetingRoom;
         chosenRoomLabel.setText(alternativeRoomTextField.getText());
         appointment.setRoom(selectedRoom);
-        appointment.setAlternativeRoomName(alternativeRoomTextField.getText());
+        appointment.setAlternativeLocation(alternativeRoomTextField.getText());
 
     }
 
@@ -87,7 +87,7 @@ public class RoomFinderController implements Initializable {
             
         }
         System.out.println("Selected room: " + appointment.getRoom());
-        System.out.println("Alternative room name: " + appointment.getAlternativeRoomName());
+        System.out.println("Alternative room name: " + appointment.getAlternativeLocation());
         GuiUtils.closeWindow(actionEvent);
 
     }
