@@ -376,6 +376,22 @@ public class Register {
         return null;
     }
 
+    public ArrayList<Person> getAttendingPeople(int appointmentID){
+        Packet response = this.client.request(new Packet("GET_PEOPLE_ATTENDING_APP", appointmentID));
+        if (response.getName().equals("PEOPLE_ATTENDING_APP")){
+            return (ArrayList<Person>) response.getObjects()[0];
+        }
+        return null;
+    }
+
+    public boolean updateAttending(int appointmentID, String username, int attends){
+        Packet response = this.client.request(new Packet("UPDATE_ATTENDING", appointmentID, username, attends));
+        if (response.getName().equals("ATTENDING_UPDATED")){
+            return true;
+        }
+        return false;
+    }
+
     /**
      * Updates register based on broadcast recieved by server
      * @param p
@@ -393,6 +409,8 @@ public class Register {
             getAppointments();
         }else if (p.getName().equals("PERSON_UPDATED")){
             getPersons();
+        }else if (p.getName().equals("INVITED_UPDATED")){
+            //Do what?
         }
     }
 
