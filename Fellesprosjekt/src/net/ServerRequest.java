@@ -64,7 +64,7 @@ public class ServerRequest {
             } else if (name.equals("ADD_ALARM")){
                 return addAlarm((String) objects[0], (Integer) objects[1], (Integer) objects[2],(String) objects[3],(Integer) objects[4]);
             } else if (name.equals("UPDATE_ATTENDING")){
-                return updateAttending((Integer) objects[0], (Integer) objects[1]);
+                return updateAttending((Integer) objects[0],(String) objects[1], (Integer) objects[2]);
             } else if (name.equals("SEND_EMAIL")){
                 return sendEmail((String) objects[0], (Appointment) objects[1]);
             } else if (name.equals("INVITE_PERSON_APPOINTMENT")){
@@ -73,6 +73,8 @@ public class ServerRequest {
                 return getUserAppointment((String) objects[0]);
             } else if (name.equals("GET_INVITEES")){
                 return getInvitees((Integer) objects[0]);
+            } else if (name.equals("GET_PEOPLE_ATTENDING_APP")){
+                return getAttending((Integer) objects[0]);
             }
 
             return new Packet("ERROR");
@@ -99,7 +101,7 @@ public class ServerRequest {
     }
 
     private Packet editAppointment(Appointment a, MeetingRoom mr) throws SQLException{
-        db.editAppointment(a.getAppointmentID(),a.getAppointmentName(),a.getAppointmentStart(),a.getAppointmentEnd(),a.getDescription(),a.getPriority(),mr);
+        db.editAppointment(a.getAppointmentID(),a.getAppointmentName(),a.getAppointmentStart(),a.getAppointmentEnd(),a.getDescription(),a.getPriority(),mr,a.getAlternativeLocation());
         return new Packet("APPOINTMENT_EDITED");
     }
 
@@ -124,6 +126,10 @@ public class ServerRequest {
         return new Packet("ALL_ALARMS", this.db.getAllAlarms());
     }
 
+    private Packet getAttending(int appointmentID) throws SQLException{
+        return new Packet("PEOPLE_ATTENDING_APP", this.db.getAttending(appointmentID));
+    }
+
     private Packet invitePerson(Person p, Appointment a) throws SQLException{
         if(this.db.invitePerson(p,a)){
             return new Packet("PERSON_INVITED");
@@ -138,8 +144,8 @@ public class ServerRequest {
         return new Packet("ERROR");
     }
 
-    private Packet updateAttending(int alarmID, int attending) throws SQLException{
-        this.db.updateAttending(alarmID, attending);
+    private Packet updateAttending(int appointmentID,String username, int attending) throws SQLException{
+        this.db.updateAttending(appointmentID, username, attending);
         return new Packet("ATTENDING_UPDATED");
     }
 

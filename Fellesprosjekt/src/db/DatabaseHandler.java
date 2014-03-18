@@ -211,7 +211,7 @@ public class DatabaseHandler {
     public Appointment addAppointment(String name, String start, String end, String description, int priority, String ownerUsername, MeetingRoom mr, String altLoc) throws SQLException{
         int id = getNextAutoIncrement("appointment");
 
-        PreparedStatement query = this.db.prepareStatement("INSERT INTO appointment(AID, AName, Start, End, Description, Priority, DateCreated) VALUES (?,?,?,?,?,?,?)");
+        PreparedStatement query = this.db.prepareStatement("INSERT INTO appointment(AID, AName, Start, End, Description, Priority, DateCreated,AlternativeLocation) VALUES (?,?,?,?,?,?,?,?)");
         query.setInt(1,id);
         query.setString(2, name);
         query.setTimestamp(3, Timestamp.valueOf(start));
@@ -220,6 +220,7 @@ public class DatabaseHandler {
         query.setInt(6,priority);
         java.util.Date currentTime = new java.util.Date();
         query.setTimestamp(7, Timestamp.valueOf(GeneralUtil.dateToString(currentTime)));
+        query.setString(8, altLoc);
         query.executeUpdate();
 
         addLeader(id,ownerUsername);
@@ -272,8 +273,8 @@ public class DatabaseHandler {
      * @param mr
      * @throws java.sql.SQLException
      */
-    public void editAppointment(int aID, String name, String start, String end, String description, int priority, MeetingRoom mr) throws SQLException{
-        PreparedStatement query = this.db.prepareStatement("UPDATE appointment SET AName = ?, Start = ?, End = ?, Description = ?, Priority = ?, DateChanged = ? WHERE AID = ?");
+    public void editAppointment(int aID, String name, String start, String end, String description, int priority, MeetingRoom mr, String altLoc) throws SQLException{
+        PreparedStatement query = this.db.prepareStatement("UPDATE appointment SET AName = ?, Start = ?, End = ?, Description = ?, Priority = ?, DateChanged = ?, AlternativeLocation = ? WHERE AID = ?");
         query.setString(1,name);
         query.setString(2, start);
         query.setString(3, end);
@@ -281,7 +282,8 @@ public class DatabaseHandler {
         query.setInt(5,priority);
         java.util.Date currentTime = new java.util.Date();
         query.setTimestamp(6,Timestamp.valueOf(GeneralUtil.dateToString(currentTime)));
-        query.setInt(7,aID);
+        query.setString(7,altLoc);
+        query.setInt(8,aID);
         query.executeUpdate();
 
         editTakesPlace(aID, mr);
@@ -588,18 +590,36 @@ public class DatabaseHandler {
         return results;
     }
 
-    /**
-     * Set attending status of alarm
-     * @param alarmID
-     * @param attending
-     * @throws java.sql.SQLException
-     */
-    public void updateAttending(int alarmID, int attending) throws SQLException{
-        PreparedStatement query = this.db.prepareStatement("UPDATE invitedto SET Attends = ? WHERE itID = ?");
+    public void updateAttending(int appointmentID, String username, int attending) throws SQLException{
+        PreparedStatement query = this.db.prepareStatement("UPDATE invitedto SET Attends = ? WHERE AID = ? AND Username = ?");
         query.setInt(1,attending);
-        query.setInt(2, alarmID);
+        query.setInt(2, appointmentID);
+        query.setString(3,username);
         query.executeUpdate();
         broadcast(new Packet("INVITED_UPDATED"));
+    }
+
+    /**
+     * Get people who are attending a meeting.
+     * @param appointmentID
+     * @return
+     * @throws SQLException
+     */
+    public ArrayList<Person> getAttending(int appointmentID) throws SQLException{
+        PreparedStatement query = this.db.prepareStatement("SELECT * FROM invitedto WHERE AID = ? AND Attends = 1");
+        query.setInt(1,appointmentID);
+        ResultSet rs = query.executeQuery();
+
+        if (!rs.next()){
+            return null;
+        }
+
+        ArrayList<Person> results = new ArrayList<Person>();
+        results.add(this.getPersonByUsername(rs.getString("Username")));
+        while(rs.next()){
+            results.add(this.getPersonByUsername(rs.getString("Username")));
+        }
+        return results;
     }
 
     private void broadcast(Packet p){
