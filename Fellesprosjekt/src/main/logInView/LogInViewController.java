@@ -58,7 +58,12 @@ public class LogInViewController{
         statusLabel.setVisible(false);
         progressIndicator.setVisible(true);
 
-        RegisterSingleton.sharedInstance().setRegister(new Register(new Client()));
+        if(RegisterSingleton.sharedInstance().getRegister() == null){
+            System.out.println("Setter registerert i log in");
+
+            RegisterSingleton.sharedInstance().setRegister(new Register(new Client()));
+        }
+
         System.out.print(RegisterSingleton.sharedInstance().getRegister());
 
 
@@ -81,7 +86,7 @@ public class LogInViewController{
             System.out.println("Empty username");
             return true;
         }else{
-        	
+
             System.out.println("Not empty username");
             return false;
         }
@@ -103,6 +108,16 @@ public class LogInViewController{
 
     public void passwordFieldTextField(ActionEvent actionEvent) throws Exception{
         logInButtonOnAction(actionEvent);
+
+    }
+
+    public void registerButtonOnAction(ActionEvent actionEvent) throws Exception{
+        if(RegisterSingleton.sharedInstance().getRegister() == null){
+            System.out.println("Setter registerert i ny bruker");
+            RegisterSingleton.sharedInstance().setRegister(new Register(new Client()));
+        }
+
+        GuiUtils.createView("../registerNewUser/registerNewUser.fxml", "Registrer ny bruker", this.getClass());
 
     }
 }

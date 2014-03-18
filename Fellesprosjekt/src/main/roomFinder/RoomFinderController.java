@@ -66,7 +66,6 @@ public class RoomFinderController implements Initializable {
             appointment.setRoom(room);
             selectedRoom = room;
             chosenRoomLabel.setText(appointment.getRoom().getRoomName());
-
         }
 
     }
