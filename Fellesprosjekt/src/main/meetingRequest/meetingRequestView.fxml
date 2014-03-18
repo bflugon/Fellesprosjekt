@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox maxHeight="360.0" maxWidth="380.0" prefHeight="360.0" prefWidth="380.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.meetingRequest.MeetingRequestViewController">
+  <children>
+    <AnchorPane prefHeight="322.0" prefWidth="380.0" VBox.vgrow="ALWAYS">
+      <children>
+        <Label alignment="CENTER" layoutX="116.0" layoutY="14.0" style="&#10;" text="Møteforespørsel" textAlignment="CENTER" wrapText="false">
+          <font>
+            <Font size="18.0" />
+          </font>
+        </Label><Label layoutX="65.0" layoutY="69.0" text="Navn:" /><Label fx:id="nameLabel" layoutX="120.0" layoutY="64.0" prefHeight="26.0" prefWidth="175.0" text="Tittel tekst" /><Label layoutX="67.0" layoutY="106.0" text="Start:" /><Label layoutX="66.0" layoutY="141.0" text="Slutt:" /><Label layoutX="26.0" layoutY="173.0" text="Beskrivelse:" /><Label layoutX="46.0" layoutY="237.0" text="Prioritet:" /><Button layoutX="114.0" layoutY="297.0" mnemonicParsing="false" onAction="#attendMeetingButtonOnAction" prefHeight="26.0" prefWidth="90.0" text="Delta" /><Button layoutX="219.0" layoutY="297.0" mnemonicParsing="false" onAction="#declineMeetingButtonOnAction" prefHeight="26.0" prefWidth="90.0" text="Avslå" /><Label fx:id="startLabel" layoutX="120.0" layoutY="101.0" prefHeight="26.0" prefWidth="141.0" text="Start tid" /><Label fx:id="endLabel" layoutX="120.0" layoutY="136.0" prefHeight="26.0" prefWidth="141.0" text="Start tid" /><Label fx:id="priorityLabel" layoutX="113.0" layoutY="237.0" prefHeight="16.0" prefWidth="96.0" text="Valgt prioritet" /><Label fx:id="descriptionLabel" layoutX="120.0" layoutY="168.0" prefHeight="62.0" prefWidth="182.0" text="Beskrivelse" /><Label fx:id="roomLabel" layoutX="113.0" layoutY="265.0" prefHeight="16.0" prefWidth="96.0" text="valgt møterom" /><Label layoutX="46.0" layoutY="265.0" text="Prioritet:" />
+      </children>
+    </AnchorPane>
+  </children>
+</VBox>

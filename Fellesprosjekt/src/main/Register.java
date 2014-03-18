@@ -120,12 +120,14 @@ public class Register {
      * @param username
      * @param mr
      */
-    public void addAppointment(String name, String start, String end, String description, int priority, String username, MeetingRoom mr, String alternativeLocation){
+    public Appointment addAppointment(String name, String start, String end, String description, int priority, String username, MeetingRoom mr, String alternativeLocation){
         Packet response = this.client.request(new Packet("ADD_APPOINTMENT", name, start, end, description, priority, username, mr, alternativeLocation));
         if (response.getName().equals("APPOINTMENT_ADDED")){
             Appointment a = (Appointment)response.getObjects()[0];
             appointments.add(a);
+            return a;
         }
+        return null;
     }
 
     /**
@@ -392,6 +394,10 @@ public class Register {
         }else if (p.getName().equals("PERSON_UPDATED")){
             getPersons();
         }
+    }
+
+    public String getUsername() {
+        return this.userName;
     }
 
     /**

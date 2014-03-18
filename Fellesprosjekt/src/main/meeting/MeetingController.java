@@ -5,19 +5,22 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
+import main.RegisterSingleton;
 import main.roomFinder.RoomFinderController;
 import model.Appointment;
+import model.Person;
+import util.GeneralUtil;
 import util.GuiUtils;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.ResourceBundle;
 
 public class MeetingController implements Initializable {
+
 
     Appointment appointment;
 
@@ -32,6 +35,7 @@ public class MeetingController implements Initializable {
     public RadioButton mediumPriRadioButton;
     public RadioButton highPriRadioButton;
     public TextArea descriptionTextArea;
+    public ToggleGroup priorityToggleGroup;
 
     private int numberOfInvited;
 
@@ -53,6 +57,10 @@ public class MeetingController implements Initializable {
     }
     public void startDateTextFieldType(){
         startDateTextField.setStyle("-fx-border-width: 0px;");
+        endDateTextField.setText(startDateTextField.getText());
+    }
+    public void startDateTextFieldReleased(){
+        endDateTextField.setText(startDateTextField.getText());
     }
     public void endTimeTextFieldType(){
         endTimeTextField.setStyle("-fx-border-width: 0px;");
@@ -63,6 +71,7 @@ public class MeetingController implements Initializable {
 
     public void chooseRoom(ActionEvent actionEvent) throws Exception{
 
+        meetingRoomButton.setStyle("-fx-border-width: 0px;");
         Stage newStage = new Stage();
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../roomFinder/roomFinder.fxml"));
         Parent root = (Parent)fxmlLoader.load();
@@ -80,9 +89,7 @@ public class MeetingController implements Initializable {
         }
 
         //Sender med antall personer for å finne størrelse på rom
-        System.out.println("Før setting av str");
         roomFinderController.setMinCapacity(getNumberOfInvited());
-        System.out.println("ETTER setting av str");
 
         newStage.setTitle("Velg rom");
         newStage.setScene(new Scene(root));
@@ -96,11 +103,6 @@ public class MeetingController implements Initializable {
     public void exitOnSave(ActionEvent actionEvent) {
         String redBorderStyling = "-fx-border-color: RED; -fx-border-width: 2px;";
 
-//        System.out.println("Valid date:");
-//        System.out.println(isValidDate(startDateTextField.getText()));
-//
-//        System.out.println("Valid time:");
-//        System.out.println(isValidTime(startTimeTextField.getText()));
 
         if (nameTextField.getText().equals("")){
             nameTextField.setPromptText("FYLL INN NAVN!");
@@ -128,13 +130,51 @@ public class MeetingController implements Initializable {
 
             System.out.println("Invalid endDate format: " + endDateTextField.getText());
             endDateTextField.setStyle(redBorderStyling);
+        }else {
+            if (appointment.getRoom() == null) {
+                System.out.println("No room selected");
+                meetingRoomButton.setStyle(redBorderStyling);
 
-        }
 
-        else{
-            String meetingName = nameTextField.getText();
+            } else {
 
-            GuiUtils.closeWindow(actionEvent);
+                appointment.setAppointmentName(nameTextField.getText());
+                appointment.setDescription(descriptionTextArea.getText());
+
+                String startTimeString = startDateTextField.getText() + " " + startTimeTextField.getText() + ":00";
+                String endTimeString = endDateTextField.getText() + " " + endTimeTextField.getText() + ":00";
+
+                Date startTime = GeneralUtil.stringToDate(startTimeString);
+                Date endTime = GeneralUtil.stringToDate(endTimeString);
+
+                appointment.setAppointmentStart(startTime);
+                appointment.setAppointmentEnd(endTime);
+
+                if (priorityToggleGroup.getSelectedToggle().equals(lowPriRadioButton)) {
+                    appointment.setPriority(1);
+                }
+                if (priorityToggleGroup.getSelectedToggle().equals(mediumPriRadioButton)) {
+                    appointment.setPriority(2);
+                }
+                if (priorityToggleGroup.getSelectedToggle().equals(highPriRadioButton)) {
+                    appointment.setPriority(3);
+                }
+
+
+                //Legger til møtet i databasen!
+                appointment = RegisterSingleton.sharedInstance().getRegister().addAppointment(appointment.getAppointmentName(), startTimeString, endTimeString, appointment.getDescription(), appointment.getPriority(), RegisterSingleton.sharedInstance().getRegister().getUsername(), appointment.getRoom(), appointment.getAlternativeRoomName());
+                //Finner aller personer
+                ArrayList<Person> allPersons = RegisterSingleton.sharedInstance().getRegister().getPersons();
+
+                for (Person p : allPersons){
+                    RegisterSingleton.sharedInstance().getRegister().invitePerson(p, appointment);
+                    System.out.println(p.getName() + "\t was invited to meeting: " + appointment.getAppointmentName());
+                }
+
+                String meetingName = nameTextField.getText();
+
+                GuiUtils.closeWindow(actionEvent);
+            }
         }
     }
 
@@ -143,9 +183,9 @@ public class MeetingController implements Initializable {
             return false;
         }
         if ( Character.isDigit(s.charAt(0)) && Character.isDigit(s.charAt(1))
-                && s.charAt(2) == '.' && s.charAt(5) == '.'
-                && Character.isDigit(s.charAt(3)) && Character.isDigit(s.charAt(4))
-                && Character.isDigit(s.charAt(6)) && Character.isDigit(s.charAt(7))
+                && s.charAt(4) == '-' && s.charAt(7) == '-'
+                && Character.isDigit(s.charAt(2)) && Character.isDigit(s.charAt(3))
+                && Character.isDigit(s.charAt(5)) && Character.isDigit(s.charAt(6))
                 && Character.isDigit(s.charAt(8)) && Character.isDigit(s.charAt(9)) ){
             return true;
         }
@@ -177,5 +217,22 @@ public class MeetingController implements Initializable {
 
     public void setNumberOfInvited(int numberOfInvited) {
         this.numberOfInvited = numberOfInvited;
+    }
+
+    public void infoButtonOnAction(ActionEvent actionEvent) {
+        System.out.println();
+        System.out.println("Følgende informasjon ligger i nåværende appointment:");
+        System.out.println();
+        System.out.println("Name:\t\t\t" + appointment.getAppointmentName());
+        //System.out.println("Start tid:\t\t" + appointment.getAppointmentStart());
+        //System.out.println("Slutt tid:\t\t" + appointment.getAppointmentEnd());
+        System.out.println("Beskrivelse:\t" + appointment.getDescription());
+        System.out.println("Prioritet:\t\t" + appointment.getPriority());
+        System.out.println("Valgt rom:\t\t" + appointment.getRoom());
+        System.out.println("Inviterte:\t\t" + RegisterSingleton.sharedInstance().getRegister().getInvitees(appointment.getAppointmentID()));
+    }
+    
+    public void setAppointment(Appointment appointment) {
+        this.appointment = appointment;
     }
 }
