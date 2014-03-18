@@ -142,7 +142,7 @@ public class DatabaseHandler {
      */
     public Person getPersonByUsername(String username) throws SQLException{
         PreparedStatement query = this.db.prepareStatement("SELECT * FROM person WHERE Username = ?");
-        query.setString(1,"username");
+        query.setString(1,username);
         ResultSet rs = query.executeQuery();
 
         if (!rs.next()){

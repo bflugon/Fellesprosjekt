@@ -66,23 +66,60 @@ public class ParticipantsController implements Initializable{
     public void initialize(URL url, ResourceBundle resourceBundle) {
         allPersons = RegisterSingleton.sharedInstance().getRegister().getPersons();
         allGroups = RegisterSingleton.sharedInstance().getRegister().getGroups();
-
-        System.out.println("Alle personer:");
-        for (Person g : allPersons){
-            System.out.println(g.getName());
-        }
-
-        System.out.println("Alle grupper:");
-        for (Group g : allGroups){
-            System.out.println(g.getGroupName());
-        }
-
         updatePersonTable();
-
-
         updateGroupTable();
 
+        //updateTables();
 
+
+    }
+
+    public void updateTables() {
+        if(appointment.getAppointmentName() == null){
+
+        }else{
+            updateInvitedTable();
+            updateAttendingTable();
+            updateNotAttendingTable();
+        }
+    }
+
+    private void updateNotAttendingTable() {
+        //Not yet implemented, needs a way to fetch not attending people.
+    }
+
+    private void updateAttendingTable() {
+        ArrayList<Person> attendingPeople = RegisterSingleton.sharedInstance().getRegister().getAttendingPeople(appointment.getAppointmentID());
+
+        if (attendingPeople != null){
+            System.out.println("alle deltagere:");
+            for (Person p : attendingPeople){
+                System.out.println(p);
+            }
+
+            ObservableList<Person> attendingPersonOL = FXCollections.observableArrayList(attendingPeople);
+            attendingPeopleTableColumn.setCellValueFactory(new PropertyValueFactory<Person, String>("Name"));
+            attendingPeopleTableView.setItems(attendingPersonOL);
+        }else{
+            System.out.println("No attending participants");
+        }
+    }
+
+    private void updateInvitedTable() {
+        ArrayList<Person> invitedPeople = RegisterSingleton.sharedInstance().getRegister().getInvitees(appointment.getAppointmentID());
+
+        if(invitedPeople != null){
+            System.out.println("alle inviterte:");
+            for (Person p : invitedPeople){
+                System.out.println(p);
+            }
+
+            ObservableList<Person> personOL = FXCollections.observableArrayList(invitedPeople);
+            invitedPeopleTableColumn.setCellValueFactory(new PropertyValueFactory<Person, String>("Name"));
+            invitedPeopleTableView.setItems(personOL);
+        }else{
+            System.out.println("No invited people");
+        }
     }
 
     private void updateGroupTable() {
@@ -103,6 +140,8 @@ public class ParticipantsController implements Initializable{
 
     public void setAppointment(Appointment appointment) {
         this.appointment = appointment;
+        System.out.println("Appointment is set:");
+        System.out.println(appointment);
     }
 
     public void addExternalEmailButtonOnAction(ActionEvent actionEvent) {
