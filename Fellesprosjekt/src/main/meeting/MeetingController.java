@@ -8,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import main.RegisterSingleton;
+import main.calendar.CalendarController;
 import main.roomFinder.RoomFinderController;
 import model.Appointment;
 import model.Person;
@@ -15,7 +16,10 @@ import util.GeneralUtil;
 import util.GuiUtils;
 
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.ResourceBundle;
 
@@ -38,7 +42,10 @@ public class MeetingController implements Initializable {
     public ToggleGroup priorityToggleGroup;
 
     private int numberOfInvited;
+    private boolean isEditable;
 
+
+    private CalendarController parent;
 
 
 
@@ -96,9 +103,20 @@ public class MeetingController implements Initializable {
         newStage.show();
     }
 
+
+    public void setParent(CalendarController parent) {
+        this.parent = parent;
+    }
+
+
     public void chooseParticipants(ActionEvent actionEvent) throws Exception{
         GuiUtils.createView("../participants/participants.fxml", "Velg deltaker", this.getClass());
     }
+
+    public void setEditable(boolean isEditable) {
+        this.isEditable = isEditable;
+    }
+
 
     public void exitOnSave(ActionEvent actionEvent) {
         String redBorderStyling = "-fx-border-color: RED; -fx-border-width: 2px;";
@@ -135,7 +153,6 @@ public class MeetingController implements Initializable {
                 System.out.println("No room selected");
                 meetingRoomButton.setStyle(redBorderStyling);
 
-
             } else {
 
                 appointment.setAppointmentName(nameTextField.getText());
@@ -162,16 +179,24 @@ public class MeetingController implements Initializable {
 
 
                 //Legger til møtet i databasen!
-                appointment = RegisterSingleton.sharedInstance().getRegister().addAppointment(appointment.getAppointmentName(), startTimeString, endTimeString, appointment.getDescription(), appointment.getPriority(), RegisterSingleton.sharedInstance().getRegister().getUsername(), appointment.getRoom(), appointment.getAlternativeLocation());
-                //Finner aller personer
-                ArrayList<Person> allPersons = RegisterSingleton.sharedInstance().getRegister().getPersons();
 
-                for (Person p : allPersons){
-                    RegisterSingleton.sharedInstance().getRegister().invitePerson(p, appointment);
-                    System.out.println(p.getName() + "\t was invited to meeting: " + appointment.getAppointmentName());
+
+                if (isEditable){
+                    RegisterSingleton.sharedInstance().getRegister().editAppointment(appointment,appointment.getRoom());
+                }else{
+                    appointment = RegisterSingleton.sharedInstance().getRegister().addAppointment(appointment.getAppointmentName(), startTimeString, endTimeString, appointment.getDescription(), appointment.getPriority(), RegisterSingleton.sharedInstance().getRegister().getUsername(), appointment.getRoom(), appointment.getAlternativeLocation());
+                    //Finner aller personer
+                    ArrayList<Person> allPersons = RegisterSingleton.sharedInstance().getRegister().getPersons();
+
+                    for (Person p : allPersons){
+                        RegisterSingleton.sharedInstance().getRegister().invitePerson(p, appointment);
+                        System.out.println(p.getName() + "\t was invited to meeting: " + appointment.getAppointmentName());
+                    }
+
+                    String meetingName = nameTextField.getText();
                 }
+                parent.updateCalendarView();
 
-                String meetingName = nameTextField.getText();
 
                 GuiUtils.closeWindow(actionEvent);
             }
@@ -236,5 +261,47 @@ public class MeetingController implements Initializable {
 
     public void setAppointment(Appointment appointment) {
         this.appointment = appointment;
+
+        if (this.appointment != null){
+
+
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            java.util.Date date = new java.util.Date();
+            System.out.println("Current Date : " + dateFormat.format(date));
+
+
+            DateFormat timeFormat = new SimpleDateFormat("HH:mm");
+
+            Date startMeeting = GeneralUtil.stringToDate(appointment.getAppointmentStart());
+            Date endMeeting = GeneralUtil.stringToDate(appointment.getAppointmentEnd());
+
+            nameTextField.setText(appointment.getAppointmentName());
+            startDateTextField.setText(dateFormat.format(startMeeting));
+            endDateTextField.setText(dateFormat.format(endMeeting));
+            descriptionTextArea.setText(appointment.getDescription());
+            startTimeTextField.setText(timeFormat.format(startMeeting));
+            endTimeTextField.setText(timeFormat.format(endMeeting));
+
+
+            if (appointment.getPriority() == 0){
+                lowPriRadioButton.setSelected(true);
+            }else if (appointment.getPriority() == 1){
+                mediumPriRadioButton.setSelected(true);
+
+            }else{
+                highPriRadioButton.setSelected(true);
+            }
+
+            if(appointment.getRoom().getRoomID() == 1){
+                System.out.println(appointment.getAlternativeLocation());
+                meetingRoomButton.setText(appointment.getAlternativeLocation());
+            }else{
+                System.out.println("eh");
+
+                meetingRoomButton.setText(appointment.getRoom().getRoomName());
+            }
+        }
+
+
     }
 }
