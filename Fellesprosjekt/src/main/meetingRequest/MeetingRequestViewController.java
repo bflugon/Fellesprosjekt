@@ -5,9 +5,13 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import main.RegisterSingleton;
+import main.calendar.CalendarController;
+import main.meeting.MeetingController;
 import model.Appointment;
+import util.GuiUtils;
 
 import java.net.URL;
+import java.util.Calendar;
 import java.util.ResourceBundle;
 
 /**
@@ -22,24 +26,27 @@ public class MeetingRequestViewController implements Initializable {
     public Label roomLabel;
     public Button attendButton;
     public Button declineButton;
-    public Button okButton;
-    public Button deleteButton;
+    public Label leaderLabel;
+    private CalendarController parentController;
 
 
     private Appointment appointment = null;
 
     public void attendMeetingButtonOnAction(ActionEvent actionEvent) {
-        //Setter status til deltar
-        //lukker deretter vinduet
+        RegisterSingleton.sharedInstance().getRegister().updateAttending(appointment.getAppointmentID(), RegisterSingleton.sharedInstance().getRegister().getUsername(),1);
+        GuiUtils.closeWindow(actionEvent);
+        parentController.updateCalendarView();
     }
 
     public void declineMeetingButtonOnAction(ActionEvent actionEvent) {
-        //setter status til deltar ikke
-        //lukker deretter vinduet
+        RegisterSingleton.sharedInstance().getRegister().updateAttending(appointment.getAppointmentID(), RegisterSingleton.sharedInstance().getRegister().getUsername(),0);
+        GuiUtils.closeWindow(actionEvent);
+        parentController.updateCalendarView();
     }
 
     public void setAppointment(Appointment a){
         this.appointment = a;
+        updateView();
     }
 
     public Appointment getAppointment(){
@@ -48,22 +55,18 @@ public class MeetingRequestViewController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        updateView();
+    }
+
+    public void updateView(){
         if (this.appointment != null){
 
-            if (appointment.getOwnerName().equals(RegisterSingleton.sharedInstance().getRegister().getUsername())){
-                //If creator of meeting
-                declineButton.setVisible(false);
-                attendButton.setVisible(false);
-            }else{
-                //if attendant of meeting
-                okButton.setVisible(false);
-                deleteButton.setVisible(false);
-            }
 
             nameLabel.setText(appointment.getAppointmentName());
             startLabel.setText(appointment.getAppointmentStart());
             endLabel.setText(appointment.getAppointmentEnd());
             descriptionLabel.setText(appointment.getDescription());
+            leaderLabel.setText(RegisterSingleton.sharedInstance().getRegister().getPersonByUsername(appointment.getOwnerName()).getName());
 
             if (appointment.getPriority() == 0){
                 priorityLabel.setText("Lav prioritet");
@@ -74,17 +77,18 @@ public class MeetingRequestViewController implements Initializable {
             }
 
             if(appointment.getRoom().getRoomID() == 1){
-                roomLabel.setText(appointment.getAlternativeRoomName());
+                System.out.println("Rom ID: " + appointment.getRoom().getRoomID());
+                System.out.println("Rom navn: " + appointment.getAlternativeLocation());
+                roomLabel.setText(appointment.getAlternativeLocation());
             }else{
+                System.out.println("eh");
+
                 roomLabel.setText(appointment.getRoom().getRoomName());
             }
         }
     }
 
-    public void deleteButtonOnAction(ActionEvent actionEvent) {
-    }
-
-    public void okButtonOnAction(ActionEvent actionEvent) {
-
+    public void setParentController(CalendarController m){
+        parentController = m;
     }
 }
