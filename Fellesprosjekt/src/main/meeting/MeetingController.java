@@ -82,7 +82,7 @@ public class MeetingController implements Initializable {
         //Sender med riktig rom hvis det eksisterer
         if (appointment.getRoom() != null){
             if (appointment.getRoom().getRoomID() == 1){
-                roomFinderController.setRoom(appointment.getAlternativeRoomName());
+                roomFinderController.setRoom(appointment.getAlternativeLocation());
             }else{
                 roomFinderController.setRoom(appointment.getRoom().getRoomName());
             }
@@ -162,7 +162,7 @@ public class MeetingController implements Initializable {
 
 
                 //Legger til møtet i databasen!
-                appointment = RegisterSingleton.sharedInstance().getRegister().addAppointment(appointment.getAppointmentName(), startTimeString, endTimeString, appointment.getDescription(), appointment.getPriority(), RegisterSingleton.sharedInstance().getRegister().getUsername(), appointment.getRoom(), appointment.getAlternativeRoomName());
+                appointment = RegisterSingleton.sharedInstance().getRegister().addAppointment(appointment.getAppointmentName(), startTimeString, endTimeString, appointment.getDescription(), appointment.getPriority(), RegisterSingleton.sharedInstance().getRegister().getUsername(), appointment.getRoom(), appointment.getAlternativeLocation());
                 //Finner aller personer
                 ArrayList<Person> allPersons = RegisterSingleton.sharedInstance().getRegister().getPersons();
 
@@ -205,10 +205,10 @@ public class MeetingController implements Initializable {
 
 
     public void updateView() {
-        if (appointment.getAlternativeRoomName() == null){
+        if (appointment.getAlternativeLocation() == null){
             meetingRoomButton.setText(appointment.getRoom().getRoomName());
         }else{
-            meetingRoomButton.setText(appointment.getAlternativeRoomName());
+            meetingRoomButton.setText(appointment.getAlternativeLocation());
         }
     }
     public int getNumberOfInvited() {
