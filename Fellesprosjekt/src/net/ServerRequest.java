@@ -99,7 +99,7 @@ public class ServerRequest {
     }
 
     private Packet editAppointment(Appointment a, MeetingRoom mr) throws SQLException{
-        db.editAppointment(a.getAppointmentID(),a.getAppointmentName(),a.getAppointmentStart(),a.getAppointmentEnd(),a.getDescription(),a.getPriority(),mr);
+        db.editAppointment(a.getAppointmentID(),a.getAppointmentName(),a.getAppointmentStart(),a.getAppointmentEnd(),a.getDescription(),a.getPriority(),mr,a.getAlternativeLocation());
         return new Packet("APPOINTMENT_EDITED");
     }
 

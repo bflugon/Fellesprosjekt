@@ -65,8 +65,10 @@ public class Register {
 
         if(response.getName().equals("ACCOUNT_CREATED")){
             Person p = (Person) response.getObjects()[0];
+            if(persons == null){
+                this.getPersons();
+            }
             persons.add(p);
-            p.toString();
         }
     }
 
