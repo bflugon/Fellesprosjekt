@@ -400,16 +400,22 @@ public class Register {
      */
     public void broadcast(Packet p){
         if (p.getName().equals("ALARM_UPDATED")){
+            activeAlarms = null;
             getAllActiveAlarms();
         }else if (p.getName().equals("GROUP_MEMBER_UPDATED")){
+            allGroupMembers = null;
             getAllMembersOfGroup();
         }else if (p.getName().equals("GROUP_UPDATED")){
+            groups = null;
             getGroups();
         }else if (p.getName().equals("ROOM_UPDATED")){
+            rooms = null;
             getRooms();
         }else if (p.getName().equals("APP_UPDATED")){
+            appointments = null;
             getAppointments();
         }else if (p.getName().equals("PERSON_UPDATED")){
+            persons = null;
             getPersons();
         }else if (p.getName().equals("INVITED_UPDATED")){
             //Do what?
