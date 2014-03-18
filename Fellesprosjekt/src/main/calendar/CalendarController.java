@@ -23,6 +23,8 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 import main.Register;
 import main.RegisterSingleton;
+import main.meeting.MeetingController;
+import main.meetingRequest.MeetingRequestViewController;
 import main.roomFinder.RoomFinderController;
 import model.Appointment;
 import sun.security.krb5.internal.APOptions;
@@ -232,50 +234,37 @@ public class CalendarController implements Initializable{
         System.out.println(event.getSource());
         ListView<Appointment> listViewOfSelectedCell = (ListView<Appointment>)event.getSource();
 
+
+
         if (!listViewOfSelectedCell.getSelectionModel().getSelectedItems().isEmpty()){
 
             System.out.println(listViewOfSelectedCell.getSelectionModel().getSelectedItem());
+
             Appointment selectedAppointment = listViewOfSelectedCell.getSelectionModel().getSelectedItem();
             if (selectedAppointment.getOwnerName().equals(RegisterSingleton.sharedInstance().getRegister().getUsername())){
                 System.out.println("User made meeting");
 
-//                Stage newStage = new Stage();
-//                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../meetingRequest/meetingRequestView.fxml"));
-//                Parent root = (Parent)fxmlLoader.load();
-//                MeeetingRequestController meeetingRequestController = fxmlLoader.<RoomFinderController>getController();
-//                roomFinderController.setAppointment(appointment);
-//                roomFinderController.setParentController(this);
-//                newStage.setScene(new Scene(root));
-//                newStage.show();
+                Stage newStage = new Stage();
+                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../meeting/meeting.fxml"));
+                Parent root = (Parent)fxmlLoader.load();
+                MeetingController meetingController = fxmlLoader.<MeetingController>getController();
+                meetingController.setAppointment(selectedAppointment);
+                meetingController.setEditable(true);
+                meetingController.setParent(this);
+                newStage.setScene(new Scene(root));
+                newStage.show();
 
             }else{
 
-//                Stage newStage = new Stage();
-//                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../roomFinder/roomFinder.fxml"));
-//                Parent root = (Parent)fxmlLoader.load();
-//                RoomFinderController roomFinderController = fxmlLoader.<RoomFinderController>getController();
-//                roomFinderController.setAppointment(appointment);
-//                roomFinderController.setParentController(this);
-//
-//                //Sender med riktig rom hvis det eksisterer
-//                if (appointment.getRoom() != null){
-//                    if (appointment.getRoom().getRoomID() == 1){
-//                        roomFinderController.setRoom(appointment.getAlternativeRoomName());
-//                    }else{
-//                        roomFinderController.setRoom(appointment.getRoom().getRoomName());
-//                    }
-//                }
+                Stage newStage = new Stage();
+                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../meetingRequest/meetingRequestView.fxml"));
+                Parent root = (Parent)fxmlLoader.load();
+                MeetingRequestViewController meeetingRequestController = fxmlLoader.<MeetingRequestViewController>getController();
+                meeetingRequestController.setAppointment(selectedAppointment);
+               // meeetingRequestController.setParentController(this);
+                newStage.setScene(new Scene(root));
+                newStage.show();
 
-                //Sender med antall personer for å finne størrelse på rom
-//                System.out.println("Før setting av str");
-//                roomFinderController.setMinCapacity(getNumberOfInvited());
-//                System.out.println("ETTER setting av str");
-//
-//                newStage.setTitle("Velg rom");
-//                newStage.setScene(new Scene(root));
-//                newStage.show();
-
-                System.out.println("User made NOT meeting");
             }
 
         }
@@ -341,9 +330,15 @@ public class CalendarController implements Initializable{
     }
 
     //Button actions
-
     public void makeMeeting(ActionEvent actionEvent) throws Exception{
-        GuiUtils.createView("../meeting/meeting.fxml", "Lag møte", this.getClass());
+
+        Stage newStage = new Stage();
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../meeting/meeting.fxml"));
+        Parent root = (Parent)fxmlLoader.load();
+        MeetingController meetingController = fxmlLoader.<MeetingController>getController();
+        meetingController.setParent(this);
+        newStage.setScene(new Scene(root));
+        newStage.show();
     }
 
     public void importButtonOnAction(ActionEvent actionEvent) throws  Exception{
