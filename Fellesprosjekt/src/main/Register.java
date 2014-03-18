@@ -15,7 +15,7 @@ import java.util.TreeMap;
  * To change this template use File | Settings | File Templates.
  */
 public class Register {
-    private Client client;
+    private final Client client;
 
 
 
@@ -126,7 +126,7 @@ public class Register {
         Packet response = this.client.request(new Packet("ADD_APPOINTMENT", name, start, end, description, priority, username, mr, alternativeLocation));
         if (response.getName().equals("APPOINTMENT_ADDED")){
             Appointment a = (Appointment)response.getObjects()[0];
-            appointments.add(a);
+            //appointments.add(a);
             return a;
         }
         return null;
@@ -400,23 +400,17 @@ public class Register {
      */
     public void broadcast(Packet p){
         if (p.getName().equals("ALARM_UPDATED")){
-            activeAlarms = null;
-            getAllActiveAlarms();
+            activeAlarms = (TreeMap<Integer, ArrayList<Alarm>>)p.getObjects()[0];
         }else if (p.getName().equals("GROUP_MEMBER_UPDATED")){
-            allGroupMembers = null;
-            getAllMembersOfGroup();
+            allGroupMembers = (TreeMap<Integer, ArrayList<String>>)p.getObjects()[0];
         }else if (p.getName().equals("GROUP_UPDATED")){
-            groups = null;
-            getGroups();
+            groups = (ArrayList<Group>)p.getObjects()[0];
         }else if (p.getName().equals("ROOM_UPDATED")){
-            rooms = null;
-            getRooms();
+            rooms = (ArrayList<MeetingRoom>)p.getObjects()[0];
         }else if (p.getName().equals("APP_UPDATED")){
-            appointments = null;
-            getAppointments();
+            appointments = (ArrayList<Appointment>)p.getObjects()[0];
         }else if (p.getName().equals("PERSON_UPDATED")){
-            persons = null;
-            getPersons();
+            persons = (ArrayList<Person>)p.getObjects()[0];
         }else if (p.getName().equals("INVITED_UPDATED")){
             //Do what?
         }
