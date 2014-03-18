@@ -557,9 +557,9 @@ public class DatabaseHandler {
         query.setInt(1, id);
         query.setString(2, p.getUsername());
         query.setInt(3,a.getAppointmentID());
-        query.setInt(4,0);
+        query.setNull(4,Types.INTEGER);
         query.setNull(5, Types.INTEGER);
-        query.setInt(6,0);
+        query.setNull(6,Types.INTEGER);
         query.executeUpdate();
 
         return true;
