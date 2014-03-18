@@ -231,7 +231,9 @@ public class MeetingController implements Initializable {
         System.out.println("Valgt rom:\t\t" + appointment.getRoom());
         System.out.println("Inviterte:\t\t" + RegisterSingleton.sharedInstance().getRegister().getInvitees(appointment.getAppointmentID()));
     }
-    
+
+
+
     public void setAppointment(Appointment appointment) {
         this.appointment = appointment;
     }
