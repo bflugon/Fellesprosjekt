@@ -102,7 +102,7 @@ public class DatabaseHandler {
             query.setString(3,name);
             query.setString(4,email);
             query.executeUpdate();
-            broadcast(new Packet("PERSON_UPDATED"));
+            broadcast(new Packet("PERSON_UPDATED",this.getAllPersons()));
             return (new Person(username, name, email));
 
         }catch (NoSuchAlgorithmException e){
@@ -226,7 +226,7 @@ public class DatabaseHandler {
         addLeader(id,ownerUsername);
         addTakesPlace(id,mr);
 
-        broadcast(new Packet("APP_UPDATED"));
+        broadcast(new Packet("APP_UPDATED",this.getAllAppointments()));
         return (new Appointment(id, ownerUsername,name, GeneralUtil.stringToDate(start), GeneralUtil.stringToDate(end),priority,description,new java.util.Date(),mr, altLoc));
     }
 
@@ -287,7 +287,7 @@ public class DatabaseHandler {
         query.executeUpdate();
 
         editTakesPlace(aID, mr);
-        broadcast(new Packet("APP_UPDATED"));
+        broadcast(new Packet("APP_UPDATED",this.getAllAppointments()));
     }
 
     /**
@@ -326,7 +326,7 @@ public class DatabaseHandler {
         query.setInt(1, aID);
         query.executeUpdate();
 
-        broadcast(new Packet("APP_UPDATED"));
+        broadcast(new Packet("APP_UPDATED",this.getAllAppointments()));
     }
 
     /**
@@ -369,7 +369,7 @@ public class DatabaseHandler {
 
         query.executeUpdate();
 
-        broadcast(new Packet("ROOM_UPDATED"));
+        broadcast(new Packet("ROOM_UPDATED", this.getAllRooms()));
         return (new MeetingRoom(id,roomName,capacity));
     }
 
@@ -386,7 +386,7 @@ public class DatabaseHandler {
         query.setString(2,GName);
         query.executeUpdate();
 
-        broadcast(new Packet("GROUP_UPDATED"));
+        broadcast(new Packet("GROUP_UPDATED",this.getAllGroups()));
         return (new Group(id, GName));
     }
 
@@ -405,7 +405,7 @@ public class DatabaseHandler {
         query.setString(3, p.getUsername());
         query.executeUpdate();
 
-        broadcast(new Packet("GROUP_MEMBER_UPDATED"));
+        broadcast(new Packet("GROUP_MEMBER_UPDATED",this.getAllMembersOfGroups()));
     }
 
     /**
@@ -507,7 +507,7 @@ public class DatabaseHandler {
         query.setInt(2, appointmentID);
         query.setString(3,username);
         query.executeUpdate();
-        broadcast(new Packet("ALARM_UPDATED"));
+        broadcast(new Packet("ALARM_UPDATED",this.getAllAlarms()));
     }
 
     /**
@@ -521,7 +521,7 @@ public class DatabaseHandler {
         query.setInt(1, hasAlarm);
         query.setInt(2, alarmID);
         query.executeUpdate();
-        broadcast(new Packet("ALARM_UPDATED"));
+        broadcast(new Packet("ALARM_UPDATED",this.getAllAlarms()));
     }
 
     /**
@@ -541,7 +541,7 @@ public class DatabaseHandler {
         query.setInt(5,appointmentID);
         query.executeUpdate();
 
-        broadcast(new Packet("ALARM_UPDATED"));
+        broadcast(new Packet("ALARM_UPDATED",this.getAllAlarms()));
         return true;
     }
 
