@@ -2,7 +2,9 @@ package main.meetingRequest;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import main.RegisterSingleton;
 import model.Appointment;
 
 import java.net.URL;
@@ -18,6 +20,11 @@ public class MeetingRequestViewController implements Initializable {
     public Label descriptionLabel;
     public Label priorityLabel;
     public Label roomLabel;
+    public Button attendButton;
+    public Button declineButton;
+    public Button okButton;
+    public Button deleteButton;
+
 
     private Appointment appointment = null;
 
@@ -42,6 +49,17 @@ public class MeetingRequestViewController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         if (this.appointment != null){
+
+            if (appointment.getOwnerName().equals(RegisterSingleton.sharedInstance().getRegister().getUsername())){
+                //If creator of meeting
+                declineButton.setVisible(false);
+                attendButton.setVisible(false);
+            }else{
+                //if attendant of meeting
+                okButton.setVisible(false);
+                deleteButton.setVisible(false);
+            }
+
             nameLabel.setText(appointment.getAppointmentName());
             startLabel.setText(appointment.getAppointmentStart());
             endLabel.setText(appointment.getAppointmentEnd());
@@ -61,5 +79,12 @@ public class MeetingRequestViewController implements Initializable {
                 roomLabel.setText(appointment.getRoom().getRoomName());
             }
         }
+    }
+
+    public void deleteButtonOnAction(ActionEvent actionEvent) {
+    }
+
+    public void okButtonOnAction(ActionEvent actionEvent) {
+
     }
 }
