@@ -18,7 +18,10 @@ public class GuiUtils {
     }
     
     public static void closeWindow(ActionEvent actionEvent) {
-    	((Node) (actionEvent.getSource())).getScene().getWindow().hide();
+//    	((Node) (actionEvent.getSource())).getScene().getWindow().hide();
+        Node  source = (Node)  actionEvent.getSource();
+        Stage stage  = (Stage) source.getScene().getWindow();
+        stage.close();
     }
 
 }
