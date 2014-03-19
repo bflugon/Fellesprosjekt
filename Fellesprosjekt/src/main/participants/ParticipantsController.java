@@ -2,11 +2,9 @@ package main.participants;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import main.Register;
 import main.RegisterSingleton;
@@ -45,6 +43,11 @@ public class ParticipantsController implements Initializable{
     private ArrayList<Person> invitedPeople;
     private ArrayList<Person> attendingPeople;
 
+    private Person selectedPerson;
+    private Group selectedGroup;
+    private Person personToBeRemoved;
+    private TableView listToBeRemovedFrom;
+
 
     private Appointment appointment;
 
@@ -58,16 +61,99 @@ public class ParticipantsController implements Initializable{
     }
 
     public void addSelectedParticipantButtonOnAction(ActionEvent actionEvent) {
+        ObservableList<Person> currentInvitedPeople = invitedPeopleTableView.getItems();
+        ObservableList<Person> currentAllPeople = allPersonsTableView.getItems();
+        currentInvitedPeople.add(selectedPerson);
+        currentAllPeople.remove(selectedPerson);
+        invitedPeopleTableView.setItems(currentInvitedPeople);
+        allPersonsTableView.setItems(currentAllPeople);
     }
 
     public void removeSelectedParticipantButton(ActionEvent actionEvent) {
+        ObservableList<Person> currentList = listToBeRemovedFrom.getItems();
+        ObservableList<Person> currentAllPeople = allPersonsTableView.getItems();
+        currentList.remove(personToBeRemoved);
+        currentAllPeople.add(personToBeRemoved);
+        listToBeRemovedFrom.setItems(currentList);
+        allPersonsTableView.setItems(currentAllPeople);
 
+    }
+
+    public void clickSelection(Event e){
+
+        if (e.getSource() == allPersonsTableView){
+
+            if (!((TableView)(e.getSource())).getSelectionModel().getSelectedCells().isEmpty()){
+                Person p = (Person)((TableView)(e.getSource())).getSelectionModel().getSelectedItem();
+                System.out.println("Selected person: " + p);
+                selectedPerson = p;
+                selectedGroup = null;
+                personToBeRemoved = null;
+                listToBeRemovedFrom = null;
+            }
+
+        }else if (e.getSource() == allGroupsTableView){
+
+            if (!((TableView)(e.getSource())).getSelectionModel().getSelectedCells().isEmpty()){
+                Group g = (Group)((TableView)(e.getSource())).getSelectionModel().getSelectedItem();
+                System.out.println("Selected group: " + g);
+                selectedPerson = null;
+                selectedGroup = g;
+                personToBeRemoved = null;
+                listToBeRemovedFrom = null;
+            }
+
+        }else if(e.getSource() == invitedPeopleTableView){
+
+            if (!((TableView)(e.getSource())).getSelectionModel().getSelectedCells().isEmpty()){
+                Person p = (Person)((TableView)(e.getSource())).getSelectionModel().getSelectedItem();
+                selectedGroup = null;
+                selectedPerson = null;
+                personToBeRemoved = p;
+                listToBeRemovedFrom = ((TableView)(e.getSource()));
+                System.out.println("Person to be removed: " + p);
+            }
+
+        }else if(e.getSource() == attendingPeopleTableView){
+
+            if (!((TableView)(e.getSource())).getSelectionModel().getSelectedCells().isEmpty()){
+                Person p = (Person)((TableView)(e.getSource())).getSelectionModel().getSelectedItem();
+                selectedGroup = null;
+                selectedPerson = null;
+                personToBeRemoved = p;
+                listToBeRemovedFrom = ((TableView)(e.getSource()));
+                System.out.println("Person to be removed: " + p);
+            }
+
+        }else if(e.getSource() == notAttendingPeopleTableView){
+
+            if (!((TableView)(e.getSource())).getSelectionModel().getSelectedCells().isEmpty()){
+                Person p = (Person)((TableView)(e.getSource())).getSelectionModel().getSelectedItem();
+                selectedGroup = null;
+                selectedPerson = null;
+                personToBeRemoved = p;
+                listToBeRemovedFrom = ((TableView)(e.getSource()));
+                System.out.println("Person to be removed: " + p);
+            }
+        }
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
         allPersons = RegisterSingleton.sharedInstance().getRegister().getPersons();
         allGroups = RegisterSingleton.sharedInstance().getRegister().getGroups();
+
+        ObservableList<Person> personOL = FXCollections.observableArrayList(allPersons);
+        allPersonsTableColumn.setCellValueFactory(new PropertyValueFactory<Person, String>("Name"));
+        allPersonsTableView.setItems(personOL);
+
+        ObservableList<Group> groupOL = FXCollections.observableArrayList(allGroups);
+        allGroupsTableColumns.setCellValueFactory(new PropertyValueFactory<Group, String>("GroupName"));
+        allGroupsTableView.setItems(groupOL);
+
+
+        updateGroupTable();
     }
 
     public void updateTables() {
@@ -106,6 +192,15 @@ public class ParticipantsController implements Initializable{
 
     private void updateInvitedTable() {
         ArrayList<Person> allInvitedPeople = RegisterSingleton.sharedInstance().getRegister().getInvitees(appointment.getAppointmentID());
+        invitedPeople = new ArrayList<>();
+        for (Person ap : attendingPeople){
+            for (Person ip : allInvitedPeople){
+                if(!ap.getUsername().equals(ip.getUsername())){
+                    invitedPeople.add(ip);
+                }
+            }
+        }
+
 
         if(invitedPeople != null){
             System.out.println("alle inviterte:");
