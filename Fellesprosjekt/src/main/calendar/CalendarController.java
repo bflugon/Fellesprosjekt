@@ -261,7 +261,7 @@ public class CalendarController implements Initializable{
                 Parent root = (Parent)fxmlLoader.load();
                 MeetingRequestViewController meeetingRequestController = fxmlLoader.<MeetingRequestViewController>getController();
                 meeetingRequestController.setAppointment(selectedAppointment);
-               // meeetingRequestController.setParentController(this);
+                meeetingRequestController.setParentController(this);
                 newStage.setScene(new Scene(root));
                 newStage.show();
 

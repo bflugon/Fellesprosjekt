@@ -9,6 +9,7 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 import main.RegisterSingleton;
 import main.calendar.CalendarController;
+import main.participants.ParticipantsController;
 import main.roomFinder.RoomFinderController;
 import model.Appointment;
 import model.Person;
@@ -19,7 +20,6 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.ResourceBundle;
 
@@ -110,7 +110,18 @@ public class MeetingController implements Initializable {
 
 
     public void chooseParticipants(ActionEvent actionEvent) throws Exception{
-        GuiUtils.createView("../participants/participants.fxml", "Velg deltaker", this.getClass());
+
+
+        Stage newStage = new Stage();
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../participants/participants.fxml"));
+        Parent root = (Parent)fxmlLoader.load();
+        ParticipantsController participantsController = fxmlLoader.<ParticipantsController>getController();
+        participantsController.setAppointment(appointment);
+        participantsController.updateTables();
+
+        newStage.setTitle("Velg deltakere");
+        newStage.setScene(new Scene(root));
+        newStage.show();
     }
 
     public void setEditable(boolean isEditable) {
