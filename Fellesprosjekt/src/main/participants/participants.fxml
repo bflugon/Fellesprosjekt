@@ -5,13 +5,13 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<VBox prefHeight="518.0" prefWidth="330.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.participants.ParticipantsController">
+<VBox prefHeight="607.0" prefWidth="330.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.participants.ParticipantsController">
     <children>
         <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="416.0" prefWidth="300.0" VBox.vgrow="ALWAYS">
             <children><Label layoutX="92.0" layoutY="9.0" text="Velg deltakere">
                 <font>
                     <Font size="21.0" />
-                </font></Label><Button layoutX="109.0" layoutY="477.0" mnemonicParsing="false" onAction="#confirmParticipantsButtonOnAction" prefHeight="26.0" prefWidth="112.0" text="OK" /><GridPane layoutX="22.0" layoutY="38.0" prefHeight="354.0" prefWidth="286.0">
+                </font></Label><Button layoutX="109.0" layoutY="567.0" mnemonicParsing="false" onAction="#confirmParticipantsButtonOnAction" prefHeight="26.0" prefWidth="112.0" text="OK" /><GridPane layoutX="22.0" layoutY="38.0" prefHeight="441.0" prefWidth="286.0">
                 <columnConstraints>
                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -24,9 +24,9 @@
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                     </columnConstraints>
                     <rowConstraints>
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="196.0" minHeight="10.0" prefHeight="187.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="165.0" minHeight="10.0" prefHeight="131.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="190.0" minHeight="10.0" prefHeight="123.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                     <children><TableView fx:id="attendingPeopleTableView" prefHeight="200.0" prefWidth="200.0">
                         <columns>
@@ -62,7 +62,7 @@
                     </children>
                 </GridPane>
                 </children>
-            </GridPane><Button layoutX="35.0" layoutY="400.0" mnemonicParsing="false" onAction="#addSelectedParticipantButtonOnAction" prefHeight="26.0" prefWidth="112.0" text="Legg til" /><Button layoutX="184.0" layoutY="400.0" mnemonicParsing="false" onAction="#removeSelectedParticipantButton" prefHeight="26.0" prefWidth="112.0" text="Fjern" /><Label layoutX="22.0" layoutY="429.0" text="Inviter med e-post:" /><TextField fx:id="externalEmailTextField" layoutX="22.0" layoutY="445.0" prefHeight="26.0" prefWidth="210.0" promptText="Skriv inn e-post" /><Button layoutX="243.0" layoutY="445.0" mnemonicParsing="false" onAction="#addExternalEmailButtonOnAction" text="Legg til" />
+            </GridPane><Button layoutX="35.0" layoutY="490.0" mnemonicParsing="false" onAction="#addSelectedParticipantButtonOnAction" prefHeight="26.0" prefWidth="112.0" text="Legg til" /><Button layoutX="184.0" layoutY="490.0" mnemonicParsing="false" onAction="#removeSelectedParticipantButton" prefHeight="26.0" prefWidth="112.0" text="Fjern" /><Label layoutX="22.0" layoutY="519.0" text="Inviter med e-post:" /><TextField fx:id="externalEmailTextField" layoutX="22.0" layoutY="535.0" prefHeight="26.0" prefWidth="210.0" promptText="Skriv inn e-post" /><Button layoutX="243.0" layoutY="535.0" mnemonicParsing="false" onAction="#addExternalEmailButtonOnAction" text="Legg til" />
             </children>
         </AnchorPane>
     </children>

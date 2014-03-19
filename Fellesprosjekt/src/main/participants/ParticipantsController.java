@@ -42,6 +42,8 @@ public class ParticipantsController implements Initializable{
     public TextField externalEmailTextField;
     private ArrayList<Person> allPersons;
     private ArrayList<Group> allGroups;
+    private ArrayList<Person> invitedPeople;
+    private ArrayList<Person> attendingPeople;
 
 
     private Appointment appointment;
@@ -66,21 +68,18 @@ public class ParticipantsController implements Initializable{
     public void initialize(URL url, ResourceBundle resourceBundle) {
         allPersons = RegisterSingleton.sharedInstance().getRegister().getPersons();
         allGroups = RegisterSingleton.sharedInstance().getRegister().getGroups();
-        updatePersonTable();
-        updateGroupTable();
-
-        //updateTables();
-
-
     }
 
     public void updateTables() {
-        if(appointment.getAppointmentName() == null){
-
-        }else{
-            updateInvitedTable();
+        if(!(appointment.getAppointmentName() == null)){
             updateAttendingTable();
             updateNotAttendingTable();
+            updateInvitedTable();
+            updatePersonTable();
+            updateGroupTable();
+
+        }else{
+            System.out.println("No appointment is set");
         }
     }
 
@@ -89,7 +88,7 @@ public class ParticipantsController implements Initializable{
     }
 
     private void updateAttendingTable() {
-        ArrayList<Person> attendingPeople = RegisterSingleton.sharedInstance().getRegister().getAttendingPeople(appointment.getAppointmentID());
+        attendingPeople = RegisterSingleton.sharedInstance().getRegister().getAttendingPeople(appointment.getAppointmentID());
 
         if (attendingPeople != null){
             System.out.println("alle deltagere:");
@@ -106,7 +105,7 @@ public class ParticipantsController implements Initializable{
     }
 
     private void updateInvitedTable() {
-        ArrayList<Person> invitedPeople = RegisterSingleton.sharedInstance().getRegister().getInvitees(appointment.getAppointmentID());
+        ArrayList<Person> allInvitedPeople = RegisterSingleton.sharedInstance().getRegister().getInvitees(appointment.getAppointmentID());
 
         if(invitedPeople != null){
             System.out.println("alle inviterte:");
@@ -129,7 +128,15 @@ public class ParticipantsController implements Initializable{
     }
 
     private void updatePersonTable() {
-        ObservableList<Person> personOL = FXCollections.observableArrayList(allPersons);
+
+        ArrayList<Person> notInvited = new ArrayList<Person>();
+        for (Person p : allPersons){
+            if(!invitedPeople.contains(p)){
+                notInvited.add(p);
+            }
+        }
+
+        ObservableList<Person> personOL = FXCollections.observableArrayList(notInvited);
         allPersonsTableColumn.setCellValueFactory(new PropertyValueFactory<Person, String>("Name"));
         allPersonsTableView.setItems(personOL);
     }
