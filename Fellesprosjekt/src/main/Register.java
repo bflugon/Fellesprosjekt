@@ -1,5 +1,7 @@
 package main;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import model.*;
 import net.Client;
 
@@ -22,11 +24,24 @@ public class Register {
     private ArrayList<Person> persons;
     private ArrayList<Appointment> appointments;
     private ArrayList<Appointment> userAppointments;
+    private ObservableList<Appointment> alertAppointments;
     private ArrayList<MeetingRoom> rooms;
     private ArrayList<Group> groups;
     private TreeMap<Integer, ArrayList<String>> allGroupMembers;
     private TreeMap<Integer, ArrayList<Alarm>> activeAlarms;
     private String userName;
+
+    public String getEmail() {
+        return email;
+    }
+
+    private String email;
+
+    private Boolean hasAlarm;
+    private int hoursBeforeAlarm;
+
+
+
 
     public Register(Client client){
         this.client = client;
@@ -36,6 +51,27 @@ public class Register {
         this.client.request(new Packet("CONNECTING"));
     }
 
+
+    public ObservableList<Appointment> getAlertAppointments() {
+        if (alertAppointments == null){return  alertAppointments = FXCollections.observableArrayList();}
+        return alertAppointments;
+    }
+
+
+    public Boolean getHasAlarm() {
+        return hasAlarm;
+    }
+    public void setHoursBeforeAlarm(int hoursBeforeAlarm) {
+        this.hoursBeforeAlarm = hoursBeforeAlarm;
+    }
+
+    public void setHasAlarm(Boolean hasAlarm) {
+        this.hasAlarm = hasAlarm;
+    }
+
+    public int getHoursBeforeAlarm() {
+        return hoursBeforeAlarm;
+    }
     /**
      * Authenticates account.
      * @param user

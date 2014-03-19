@@ -1,7 +1,6 @@
 package main.calendar;
 
 //import com.javafx.tools.doclets.formats.html.SourceToHTMLConverter;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -10,7 +9,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.ComboBoxListCell;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -18,18 +16,17 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import main.Register;
 import main.RegisterSingleton;
+import main.importCalendars.ImportCalendarsController;
 import main.meeting.MeetingController;
 import main.meetingRequest.MeetingRequestViewController;
-import main.roomFinder.RoomFinderController;
+import main.settings.SettingsViewController;
 import model.Appointment;
-import sun.security.krb5.internal.APOptions;
+import model.Person;
 import util.GeneralUtil;
-import util.GuiUtils;
 
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -44,6 +41,7 @@ public class CalendarController implements Initializable{
     public ListView<Appointment> listViewFriday;
     public ListView<Appointment> listViewSaturday;
     public ListView<Appointment> listViewSunday;
+    public ComboBox<Appointment> alarmComboBox;
 
     ObservableList<Appointment> appointmentsMonday;
     ObservableList<Appointment> appointmentsTuesday;
@@ -52,6 +50,10 @@ public class CalendarController implements Initializable{
     ObservableList<Appointment> appointmentsFriday;
     ObservableList<Appointment> appointmentsSaturday;
     ObservableList<Appointment> appointmentsSunday;
+
+
+    ObservableList<Person> otherUsersAppointmentsToShow;
+    ObservableList<Person> allCalendarUsers;
 
     ObservableList<ObservableList<Appointment>> weekAppointments;
 
@@ -137,22 +139,136 @@ public class CalendarController implements Initializable{
         }
         );
 
+
+        alarmComboBox.setCellFactory(
+                new Callback<ListView<Appointment>, ListCell<Appointment>>() {
+                    @Override public ListCell<Appointment> call(ListView<Appointment> param) {
+                        final ListCell<Appointment> cell = new ListCell<Appointment>() {
+                            {
+                                super.setPrefWidth(100);
+                            }
+                            @Override public void updateItem(Appointment item,
+                                                             boolean empty) {
+                                super.updateItem(item, empty);
+                                if (item != null) {
+
+                                    Calendar appointmentStart = GeneralUtil.dateToCalendar(GeneralUtil.stringToDate(item.getAppointmentStart()));
+                                    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm dd-MM");
+                                    String startDateText = sdf.format(appointmentStart.getTime());
+
+                                    setText(startDateText + " / " + item.getAppointmentName() );
+
+                                }
+                                else {
+                                    setText(null);
+                                }
+                            }
+                        };
+                        return cell;
+                    }
+                });
+
         dateToday = Calendar.getInstance();
         dateOfMondaySelectedWeek = findCurrentWeekMondayDate();
         dayNumberOfWeek = getDayNumberOfWeek();
         weekMondayDate = findWeekMondayDate();
         weekSundayDate = findWeekSundayDate();
-
+        alarmComboBox.setItems(RegisterSingleton.sharedInstance().getRegister().getAlertAppointments());
         updateCalendarView();
 
     }
 
 
+    public ObservableList<Person> getOtherUsersAppointmentsToShow() {
+        if (otherUsersAppointmentsToShow == null){
+            return otherUsersAppointmentsToShow = FXCollections.observableArrayList();
+        }
+        return otherUsersAppointmentsToShow;
+    }
+
+    public ObservableList<Person> getAllCalendarUsers() {
+        return allCalendarUsers = FXCollections.observableArrayList(RegisterSingleton.sharedInstance().getRegister().getPersons());
+    }
 
     public void updateCalendarView(){
 
         weekNumberLabel.setText(Integer.toString(findWeekNumber()));
+        updateDayListViews();
+        updateAlarms();
 
+
+    }
+
+
+    public void updateAlarms(){
+        if (RegisterSingleton.sharedInstance().getRegister().getHasAlarm() != null &&
+            RegisterSingleton.sharedInstance().getRegister().getHasAlarm() == true){
+
+            for (Appointment appointment : RegisterSingleton.sharedInstance().getRegister().getAppointments()){
+
+                if (appointmentShouldBeAddedToAlertList(appointment)){
+                    System.out.println("Adds appointment to alerts");
+                    if (!RegisterSingleton.sharedInstance().getRegister().getAlertAppointments().contains(appointment)){
+                        RegisterSingleton.sharedInstance().getRegister().getAlertAppointments().add(appointment);
+                    }
+                }
+
+                if (appointmentShouldBeRemovedFromAlertList(appointment)){
+                    System.out.println("Remove appointment from  alerts");
+                    if (RegisterSingleton.sharedInstance().getRegister().getAlertAppointments().contains(appointment)){
+                        RegisterSingleton.sharedInstance().getRegister().getAlertAppointments().remove(appointment);
+                    }
+                }
+            }
+
+            System.out.println("Alert appointments:");
+            System.out.println(RegisterSingleton.sharedInstance().getRegister().getAlertAppointments().size());
+
+        }
+        alarmComboBox.setPromptText("Varsler (" + RegisterSingleton.sharedInstance().getRegister().getAlertAppointments().size() + ")");
+
+
+    }
+
+    public boolean appointmentShouldBeRemovedFromAlertList(Appointment appointment){
+        Calendar dateNow = Calendar.getInstance();
+        if (dateNow.getTime().compareTo(GeneralUtil.stringToDate(appointment.getAppointmentEnd())) == 1){
+            return true;
+        }
+        return false;
+    }
+
+
+    public boolean appointmentShouldBeAddedToAlertList(Appointment appointment){
+        Calendar hoursEarlierDate = Calendar.getInstance();
+        hoursEarlierDate.setTime(GeneralUtil.stringToDate(appointment.getAppointmentStart()));
+        int hoursBefore = RegisterSingleton.sharedInstance().getRegister().getHoursBeforeAlarm() * -1;
+        hoursEarlierDate.add(Calendar.HOUR_OF_DAY, hoursBefore);
+
+
+        Calendar dateNow = Calendar.getInstance();
+
+        System.out.println("Date of hours earlier" + hoursEarlierDate.getTime());
+        System.out.println("Date of dateNow " + dateNow.getTime());
+        System.out.println("Date of appointment end " + GeneralUtil.stringToDate(appointment.getAppointmentEnd()));
+
+        System.out.println("Name " + appointment.getAppointmentName());
+
+
+        System.out.println(dateNow.getTime().compareTo(hoursEarlierDate.getTime()) );
+        System.out.println( dateNow.getTime().compareTo(GeneralUtil.stringToDate(appointment.getAppointmentEnd())));
+
+
+        if (dateNow.getTime().compareTo(hoursEarlierDate.getTime()) > -1 &&
+            dateNow.getTime().compareTo(GeneralUtil.stringToDate(appointment.getAppointmentEnd())) < 1){
+            return true;
+        }
+        return false;
+    }
+
+
+
+    public void updateDayListViews(){
         appointmentsMonday.clear();
         appointmentsTuesday.clear();
         appointmentsWednesday.clear();
@@ -169,7 +285,7 @@ public class CalendarController implements Initializable{
         for (ObservableList<Appointment> dayAppointments : weekAppointments){
             Collections.sort(dayAppointments, new Comparator<Appointment>() {
                 public int compare(Appointment a1, Appointment a2) {
-                    return GeneralUtil.stringToDate(a1.getAppointmentStart()).compareTo(GeneralUtil.stringToDate(a2.getAppointmentStart()));
+                    return  GeneralUtil.stringToDate(a1.getAppointmentStart()).compareTo(GeneralUtil.stringToDate(a2.getAppointmentStart()));
                 }
             });
         }
@@ -202,8 +318,6 @@ public class CalendarController implements Initializable{
                     break;
                 case 7:  appointmentsSaturday.add(appointment);
                     break;
-                case 8:  appointmentsSunday.add(appointment);
-                    break;
                 default:
                     break;
             }
@@ -214,12 +328,14 @@ public class CalendarController implements Initializable{
 
     public boolean appointmentIsThisWeek(Appointment appointment){
         Calendar appointmentDate = GeneralUtil.dateToCalendar(GeneralUtil.stringToDate(appointment.getAppointmentStart()));
+/*
         System.out.println("Date of monday " + weekMondayDate.getTime());
         System.out.println("Date of ****** " + appointmentDate.getTime());
         System.out.println("Date of sunday " + weekSundayDate.getTime());
 
         System.out.println(appointmentDate.compareTo(findWeekMondayDate()));
         System.out.println(appointmentDate.compareTo(findWeekSundayDate()));
+*/
 
 
         if (appointmentDate.compareTo(this.findWeekMondayDate()) > -1
@@ -302,7 +418,7 @@ public class CalendarController implements Initializable{
     public Calendar findWeekMondayDate(){
 
         weekMondayDate = Calendar.getInstance();
-        System.out.println("Date of monday ++ " + dateOfMondaySelectedWeek.getTime());
+       // System.out.println("Date of monday ++ " + dateOfMondaySelectedWeek.getTime());
         weekMondayDate.setTime(dateOfMondaySelectedWeek.getTime());
         weekMondayDate.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
         weekMondayDate.set(Calendar.HOUR_OF_DAY, 0);
@@ -321,7 +437,7 @@ public class CalendarController implements Initializable{
         weekSundayDate.set(Calendar.MINUTE, 0);
         weekSundayDate.set(Calendar.SECOND, 0);
         weekSundayDate.set(Calendar.MILLISECOND, 0);
-        System.out.println("Date of sunday " + weekSundayDate.getTime());
+      //  System.out.println("Date of sunday " + weekSundayDate.getTime());
         return weekSundayDate;
     }
 
@@ -342,7 +458,28 @@ public class CalendarController implements Initializable{
     }
 
     public void importButtonOnAction(ActionEvent actionEvent) throws  Exception{
-        GuiUtils.createView("../importCalendars/importCalendars.fxml", "Importer", this.getClass());
+        Stage newStage = new Stage();
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../importCalendars/importCalendars.fxml"));
+        Parent root = (Parent)fxmlLoader.load();
+        ImportCalendarsController importCalendarsController = fxmlLoader.<ImportCalendarsController>getController();
+        importCalendarsController.setParentController(this);
+        newStage.setScene(new Scene(root));
+        newStage.show();
+        newStage.setTitle("Importer");
+
+    }
+
+    public void settingsButtonPressed(ActionEvent actionEvent) throws  Exception{
+
+        Stage newStage = new Stage();
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../settings/settings.fxml"));
+        Parent root = (Parent)fxmlLoader.load();
+        SettingsViewController settingsViewController = fxmlLoader.<SettingsViewController>getController();
+        settingsViewController.setParentController(this);
+        newStage.setScene(new Scene(root));
+        newStage.show();
+        newStage.setTitle("Settings");
+
     }
 
     public void previousWeekButtonPressed(ActionEvent actionEvent) {
@@ -375,6 +512,7 @@ public class CalendarController implements Initializable{
 
         @Override
         protected void updateItem(Appointment appointment, boolean empty) {
+
             super.updateItem(appointment, empty);
             setText(null);
             if (empty) {
@@ -386,6 +524,29 @@ public class CalendarController implements Initializable{
                 String startDateText = sdf.format(appointmentStart.getTime());
                 clockLabel.setText(startDateText);
                 clockLabel.setTextFill(Color.GRAY);
+
+
+                /*ArrayList<Person> attendingPeople = RegisterSingleton.sharedInstance().getRegister().getAttendingPeople(appointment.getAppointmentID());
+                System.out.println(attendingPeople);*/
+
+                /*if(attendingPeople != null){
+                    for (Person person : attendingPeople){
+                        if (person != null){
+                            System.out.println(person.getName() + RegisterSingleton.sharedInstance().getRegister().getUsername());
+                            if (person.getName().equals(RegisterSingleton.sharedInstance().getRegister().getUsername())){
+                                label.setTextFill(Color.BLACK);
+                            }
+                        }else{
+                            label.setTextFill(Color.RED);
+
+                        }
+
+
+                    }
+                }*/
+
+
+
                 setGraphic(vbox);
             }
         }
