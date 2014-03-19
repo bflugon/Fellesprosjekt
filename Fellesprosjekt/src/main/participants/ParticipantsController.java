@@ -160,21 +160,28 @@ public class ParticipantsController implements Initializable{
         allPersonsTableColumn.setCellValueFactory(new PropertyValueFactory<Person, String>("Name"));
         allPersonsTableView.setItems(personOL);
 
-        //Legger til alel grupper
+        //Legger til alle grupper
         allGroups = RegisterSingleton.sharedInstance().getRegister().getGroups();
         ObservableList<Group> groupOL = FXCollections.observableArrayList(allGroups);
         allGroupsTableColumns.setCellValueFactory(new PropertyValueFactory<Group, String>("GroupName"));
         allGroupsTableView.setItems(groupOL);
+
+
+
+        invitedPeopleTableColumn.setCellValueFactory(new PropertyValueFactory<Person, String>("Name"));
+        notAttendingPeopleTableColumn.setCellFactory(new PropertyValueFactory<Person, String>("Name"));
+        attendingPeopleTableColumn.setCellFactory(new PropertyValueFactory<Person, String>("Name"));
 
 //        updateGroupTable();
     }
 
     public void updateTables() {
         if(appointment.getAppointmentName() != null){
+            System.out.println("updating tables");
             updateAttendingTable();
             updateNotAttendingTable();
-            updateInvitedTable();
             updatePersonTable();
+            updateInvitedTable();
             updateGroupTable();
 
         }else{
@@ -204,6 +211,7 @@ public class ParticipantsController implements Initializable{
     }
 
     private void updateInvitedTable() {
+        System.out.println("Updating invated table");
         attendingPeople = RegisterSingleton.sharedInstance().getRegister().getAttendingPeople(appointment.getAppointmentID());
         ArrayList<Person> allInvitedPeople = RegisterSingleton.sharedInstance().getRegister().getInvitees(appointment.getAppointmentID());
         invitedPeople = new ArrayList<>();
@@ -247,7 +255,6 @@ public class ParticipantsController implements Initializable{
         for (Person ap : allPersons){
             if(!notInvited.contains(ap)){
                 notInvited.add(ap);
-                System.out.println("Added dude: " + ap);
             }
             for (Person ip : allInvitedPeople){
                 if ((ap.getUsername().equals(ip.getUsername()))){
@@ -255,14 +262,13 @@ public class ParticipantsController implements Initializable{
                 }
             }
         }
-        System.out.println("Alle personer som ikke er inviterte!:");
-        for (Person p : notInvited){
-            System.out.println(p);
-        }
+//        System.out.println("Alle personer som ikke er inviterte!:");
+//        for (Person p : notInvited){
+//            System.out.println(p);
+//        }
 
         ObservableList<Person> personOL = FXCollections.observableArrayList(notInvited);
         allPersonsTableColumn.setCellValueFactory(new PropertyValueFactory<Person, String>("Name"));
-        System.out.println("SETTER PERSONEN: " + personOL);
         allPersonsTableView.setItems(personOL);
     }
 
@@ -272,11 +278,13 @@ public class ParticipantsController implements Initializable{
 
     public void setAppointment(Appointment appointment) {
         this.appointment = appointment;
-        System.out.println("Appointment is set:");
-        System.out.println(appointment);
+//        System.out.println("Appointment is set:");
+//        System.out.println(appointment);
     }
 
     public void addExternalEmailButtonOnAction(ActionEvent actionEvent) {
+
+        //Not yet implemented
 
     }
 }
