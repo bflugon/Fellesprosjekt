@@ -235,8 +235,6 @@ public class MeetingController implements Initializable {
 
 
                 parent.updateCalendarView();
-
-
                 GuiUtils.closeWindow(actionEvent);
             }
         }
