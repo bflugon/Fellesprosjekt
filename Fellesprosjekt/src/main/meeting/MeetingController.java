@@ -229,11 +229,16 @@ public class MeetingController implements Initializable {
     }
 
     private boolean isValidTime(String s){
-        if (s.length() > 5 || s.length() < 5){
-            return false;
-        }
-        if (Character.isDigit(s.charAt(0)) && Character.isDigit(s.charAt(1)) && s.charAt(2) == ':' && Character.isDigit(s.charAt(3)) && Character.isDigit(s.charAt(4))){
-            return true;
+        if (s.length() == 5 && s.charAt(2) == ':'){
+            String time = String.valueOf(s.charAt(0) + String.valueOf(s.charAt(1)));
+            int time2 = Integer.parseInt(time);
+            if (time2 < 25 ) {
+                time = String.valueOf(s.charAt(3) + String.valueOf(s.charAt(4)));
+                time2 = Integer.parseInt(time);
+                if (time2 < 60) {
+                    return true;
+                }
+            }
         }
         return false;
     }
