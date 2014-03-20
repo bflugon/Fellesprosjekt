@@ -215,15 +215,42 @@ public class MeetingController implements Initializable {
     }
 
     private boolean isValidDate(String s){
-        if (s.length() > 10 || s.length() < 10){
-            return false;
-        }
-        if ( Character.isDigit(s.charAt(0)) && Character.isDigit(s.charAt(1))
-                && s.charAt(4) == '-' && s.charAt(7) == '-'
-                && Character.isDigit(s.charAt(2)) && Character.isDigit(s.charAt(3))
-                && Character.isDigit(s.charAt(5)) && Character.isDigit(s.charAt(6))
-                && Character.isDigit(s.charAt(8)) && Character.isDigit(s.charAt(9)) ){
-            return true;
+        if (s.length() == 10 && s.charAt(4) == '-' && s.charAt(7) == '-'){
+            if (Character.isDigit(s.charAt(0)) && Character.isDigit(s.charAt(1)) && Character.isDigit(s.charAt(2)) && Character.isDigit(s.charAt(3))) {
+                String dateString = String.valueOf(s.charAt(5)) + String.valueOf(s.charAt(6));
+                int date = Integer.parseInt(dateString);
+                if (date == 1 || date == 3 || date == 5 || date == 6 | date == 8 || date == 10 || date == 12) {
+                    dateString = String.valueOf(s.charAt(8)) + String.valueOf(s.charAt(9));
+                    date = Integer.parseInt(dateString);
+                    if (date > 0 && date < 32) {
+                        return true;
+                    }
+                }
+                else if (date == 2) {
+                    dateString = String.valueOf(s.charAt(8)) + String.valueOf(s.charAt(9));
+                    date = Integer.parseInt(dateString);
+                    if (date > 0) {
+                        if (date < 29) {
+                            return true;
+                        }
+                        else if (date < 30) {
+                            dateString = String.valueOf(s.charAt(0)) + String.valueOf(s.charAt(1)) + String.valueOf(s.charAt(2)) + String.valueOf(s.charAt(3));
+                            date = Integer.parseInt(dateString);
+                            if (date % 4 == 0){
+                                return true;
+                            }
+                        }
+                    }
+                }
+                else {
+                    dateString = String.valueOf(s.charAt(8)) + String.valueOf(s.charAt(9));
+                    date = Integer.parseInt(dateString);
+                    if (date < 31 && date > 0) {
+                        return true;
+                    }
+                }
+            }
+
         }
         return false;
     }
