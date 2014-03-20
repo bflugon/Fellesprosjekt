@@ -207,8 +207,6 @@ public class MeetingController implements Initializable {
                     String meetingName = nameTextField.getText();
                 }
                 parent.updateCalendarView();
-
-
                 GuiUtils.closeWindow(actionEvent);
             }
         }
