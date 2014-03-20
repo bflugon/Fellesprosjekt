@@ -1,5 +1,6 @@
 package main.calendar;
 
+//import com.javafx.tools.doclets.formats.html.SourceToHTMLConverter;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -59,11 +60,14 @@ public class CalendarController implements Initializable{
     private Calendar weekSundayDate;
     private Calendar dateToday;
     private Calendar dateOfMondaySelectedWeek;
+    public Label nameLabel;
     public Label weekNumberLabel;
     private int  dayNumberOfWeek;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
+        nameLabel.setText(RegisterSingleton.sharedInstance().getRegister().getPersonByUsername(RegisterSingleton.sharedInstance().getRegister().getUsername()).getName());
 
         appointmentsMonday = FXCollections.observableArrayList();
         appointmentsTuesday = FXCollections.observableArrayList();
@@ -213,12 +217,12 @@ public class CalendarController implements Initializable{
 
     public boolean appointmentIsThisWeek(Appointment appointment){
         Calendar appointmentDate = GeneralUtil.dateToCalendar(GeneralUtil.stringToDate(appointment.getAppointmentStart()));
-//        System.out.println("Date of monday " + weekMondayDate.getTime());
-//        System.out.println("Date of ****** " + appointmentDate.getTime());
-//        System.out.println("Date of sunday " + weekSundayDate.getTime());
-//
-//        System.out.println(appointmentDate.compareTo(findWeekMondayDate()));
-//        System.out.println(appointmentDate.compareTo(findWeekSundayDate()));
+        System.out.println("Date of monday " + weekMondayDate.getTime());
+        System.out.println("Date of ****** " + appointmentDate.getTime());
+        System.out.println("Date of sunday " + weekSundayDate.getTime());
+
+        System.out.println(appointmentDate.compareTo(findWeekMondayDate()));
+        System.out.println(appointmentDate.compareTo(findWeekSundayDate()));
 
 
         if (appointmentDate.compareTo(this.findWeekMondayDate()) > -1
@@ -230,18 +234,18 @@ public class CalendarController implements Initializable{
     }
 
     public void meetingClicked(MouseEvent event) throws Exception{
-//        System.out.println(event.getSource());
+        System.out.println(event.getSource());
         ListView<Appointment> listViewOfSelectedCell = (ListView<Appointment>)event.getSource();
 
 
 
         if (!listViewOfSelectedCell.getSelectionModel().getSelectedItems().isEmpty()){
 
-//            System.out.println(listViewOfSelectedCell.getSelectionModel().getSelectedItem());
+            System.out.println(listViewOfSelectedCell.getSelectionModel().getSelectedItem());
 
             Appointment selectedAppointment = listViewOfSelectedCell.getSelectionModel().getSelectedItem();
             if (selectedAppointment.getOwnerName().equals(RegisterSingleton.sharedInstance().getRegister().getUsername())){
-//                System.out.println("User made meeting");
+                System.out.println("User made meeting");
 
                 Stage newStage = new Stage();
                 FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../meeting/meeting.fxml"));
@@ -301,7 +305,7 @@ public class CalendarController implements Initializable{
     public Calendar findWeekMondayDate(){
 
         weekMondayDate = Calendar.getInstance();
-//        System.out.println("Date of monday ++ " + dateOfMondaySelectedWeek.getTime());
+        System.out.println("Date of monday ++ " + dateOfMondaySelectedWeek.getTime());
         weekMondayDate.setTime(dateOfMondaySelectedWeek.getTime());
         weekMondayDate.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
         weekMondayDate.set(Calendar.HOUR_OF_DAY, 0);
@@ -320,7 +324,7 @@ public class CalendarController implements Initializable{
         weekSundayDate.set(Calendar.MINUTE, 0);
         weekSundayDate.set(Calendar.SECOND, 0);
         weekSundayDate.set(Calendar.MILLISECOND, 0);
-//        System.out.println("Date of sunday " + weekSundayDate.getTime());
+        System.out.println("Date of sunday " + weekSundayDate.getTime());
         return weekSundayDate;
     }
 
@@ -346,7 +350,7 @@ public class CalendarController implements Initializable{
 
     public void previousWeekButtonPressed(ActionEvent actionEvent) {
         dateOfMondaySelectedWeek.add(Calendar.WEEK_OF_YEAR, -1);
-//        System.out.println("Date of previous monday " + dateOfMondaySelectedWeek.getTime());
+        System.out.println("Date of previous monday " + dateOfMondaySelectedWeek.getTime());
         updateCalendarView();
     }
 
