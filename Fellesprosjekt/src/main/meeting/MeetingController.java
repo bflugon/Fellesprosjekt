@@ -215,7 +215,11 @@ public class MeetingController implements Initializable {
     }
 
     private boolean isValidDate(String s){
-        if (s.length() == 10 && s.charAt(4) == '-' && s.charAt(7) == '-'){
+        if (s.length() == 10 && Character.isDigit(s.charAt(0)) && Character.isDigit(s.charAt(1))
+                && s.charAt(4) == '-' && s.charAt(7) == '-'
+                && Character.isDigit(s.charAt(2)) && Character.isDigit(s.charAt(3))
+                && Character.isDigit(s.charAt(5)) && Character.isDigit(s.charAt(6))
+                && Character.isDigit(s.charAt(8)) && Character.isDigit(s.charAt(9))){
             if (Character.isDigit(s.charAt(0)) && Character.isDigit(s.charAt(1)) && Character.isDigit(s.charAt(2)) && Character.isDigit(s.charAt(3))) {
                 String dateString = String.valueOf(s.charAt(5)) + String.valueOf(s.charAt(6));
                 int date = Integer.parseInt(dateString);
@@ -230,10 +234,10 @@ public class MeetingController implements Initializable {
                     dateString = String.valueOf(s.charAt(8)) + String.valueOf(s.charAt(9));
                     date = Integer.parseInt(dateString);
                     if (date > 0) {
-                        if (date < 29) {
+                        if (date < 29 && date > 0) {
                             return true;
                         }
-                        else if (date < 30) {
+                        else if (date < 30 && date > 0) {
                             dateString = String.valueOf(s.charAt(0)) + String.valueOf(s.charAt(1)) + String.valueOf(s.charAt(2)) + String.valueOf(s.charAt(3));
                             date = Integer.parseInt(dateString);
                             if (date % 4 == 0){
@@ -256,7 +260,7 @@ public class MeetingController implements Initializable {
     }
 
     private boolean isValidTime(String s){
-        if (s.length() == 5 && s.charAt(2) == ':'){
+        if (s.length() == 5 && Character.isDigit(s.charAt(0)) && Character.isDigit(s.charAt(1)) && s.charAt(2) == ':' && Character.isDigit(s.charAt(3)) && Character.isDigit(s.charAt(4))){
             String time = String.valueOf(s.charAt(0) + String.valueOf(s.charAt(1)));
             int time2 = Integer.parseInt(time);
             if (time2 < 25 ) {
