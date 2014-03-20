@@ -5,10 +5,13 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.Initializable;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
+import javafx.util.Callback;
 import main.RegisterSingleton;
 import main.meeting.MeetingController;
 import model.Appointment;
@@ -37,6 +40,8 @@ public class ParticipantsController implements Initializable{
     public TableView notAttendingPeopleTableView;
     public TableView<Person> invitedPeopleTableView;
 
+    public ListView attendingPeopleListView;
+
     public TextField externalEmailTextField;
     private ArrayList<Person> allPersons;
     private ArrayList<Group> allGroups;
@@ -46,7 +51,9 @@ public class ParticipantsController implements Initializable{
     private Person selectedPerson;
     private Group selectedGroup;
     private Person personToBeRemoved;
-    private TableView<Person> listToBeRemovedFrom;
+    private TableView<Person> tableViewToBeRemovedFrom;
+    private ListView<Person> listViewToBeRemovedFrom;
+
 
 
     private Appointment appointment;
@@ -79,17 +86,34 @@ public class ParticipantsController implements Initializable{
     }
 
     public void removeSelectedParticipantButton(ActionEvent actionEvent) {
-        if (personToBeRemoved != null){
-            ObservableList<Person> currentList = listToBeRemovedFrom.getItems();
-            ObservableList<Person> currentAllPeople = allPersonsTableView.getItems();
-            currentList.remove(personToBeRemoved);
-            currentAllPeople.add(personToBeRemoved);
-            listToBeRemovedFrom.setItems(currentList);
-            allPersonsTableView.setItems(currentAllPeople);
-            personToBeRemoved = null;
-            selectedPerson = null;
-            selectedGroup = null;
+        if(listViewToBeRemovedFrom == null){
+            if (personToBeRemoved != null){
+                ObservableList<Person> currentList = tableViewToBeRemovedFrom.getItems();
+                ObservableList<Person> currentAllPeople = allPersonsTableView.getItems();
+                currentList.remove(personToBeRemoved);
+                currentAllPeople.add(personToBeRemoved);
+                tableViewToBeRemovedFrom.setItems(currentList);
+                allPersonsTableView.setItems(currentAllPeople);
+                personToBeRemoved = null;
+                selectedPerson = null;
+                selectedGroup = null;
+            }
+        }else{
+            if (personToBeRemoved != null){
+                ObservableList<Person> currentList = listViewToBeRemovedFrom.getItems();
+                ObservableList<Person> currentAllPeople = allPersonsTableView.getItems();
+                currentList.remove(personToBeRemoved);
+                currentAllPeople.add(personToBeRemoved);
+                listViewToBeRemovedFrom.setItems(currentList);
+                allPersonsTableView.setItems(currentAllPeople);
+                personToBeRemoved = null;
+                selectedPerson = null;
+                selectedGroup = null;
+            }
+
+
         }
+
 
     }
 
@@ -103,7 +127,8 @@ public class ParticipantsController implements Initializable{
                 selectedPerson = p;
                 selectedGroup = null;
                 personToBeRemoved = null;
-                listToBeRemovedFrom = null;
+                tableViewToBeRemovedFrom = null;
+                listViewToBeRemovedFrom = null;
             }
 
         }else if (e.getSource() == allGroupsTableView){
@@ -114,7 +139,8 @@ public class ParticipantsController implements Initializable{
                 selectedPerson = null;
                 selectedGroup = g;
                 personToBeRemoved = null;
-                listToBeRemovedFrom = null;
+                tableViewToBeRemovedFrom = null;
+                listViewToBeRemovedFrom = null;
             }
 
         }else if(e.getSource() == invitedPeopleTableView){
@@ -124,7 +150,8 @@ public class ParticipantsController implements Initializable{
                 selectedGroup = null;
                 selectedPerson = null;
                 personToBeRemoved = p;
-                listToBeRemovedFrom = ((TableView<Person>)(e.getSource()));
+                tableViewToBeRemovedFrom = ((TableView<Person>)(e.getSource()));
+                listViewToBeRemovedFrom = null;
 //                System.out.println("Person to be removed: " + p);
             }
 
@@ -135,7 +162,8 @@ public class ParticipantsController implements Initializable{
                 selectedGroup = null;
                 selectedPerson = null;
                 personToBeRemoved = p;
-                listToBeRemovedFrom = ((TableView<Person>)(e.getSource()));
+                tableViewToBeRemovedFrom = ((TableView<Person>)(e.getSource()));
+                listViewToBeRemovedFrom = null;
 //                System.out.println("Person to be removed: " + p);
             }
 
@@ -146,7 +174,20 @@ public class ParticipantsController implements Initializable{
                 selectedGroup = null;
                 selectedPerson = null;
                 personToBeRemoved = p;
-                listToBeRemovedFrom = ((TableView<Person>)(e.getSource()));
+                tableViewToBeRemovedFrom = ((TableView<Person>)(e.getSource()));
+                listViewToBeRemovedFrom = null;
+//                System.out.println("Person to be removed: " + p);
+            }
+        }else if(e.getSource() == attendingPeopleListView){
+
+            if (((ListView)(e.getSource())).getSelectionModel().getSelectedItem() != null){
+                Person p = (Person)((ListView)(e.getSource())).getSelectionModel().getSelectedItem();
+                selectedGroup = null;
+                selectedPerson = null;
+                personToBeRemoved = p;
+                tableViewToBeRemovedFrom = null;
+                listViewToBeRemovedFrom = ((ListView<Person>)(e.getSource()));
+
 //                System.out.println("Person to be removed: " + p);
             }
         }
@@ -170,7 +211,17 @@ public class ParticipantsController implements Initializable{
 
         invitedPeopleTableColumn.setCellValueFactory(new PropertyValueFactory<Person, String>("Name"));
         notAttendingPeopleTableColumn.setCellFactory(new PropertyValueFactory<Person, String>("Name"));
-        attendingPeopleTableColumn.setCellFactory(new PropertyValueFactory<Person, String>("Name"));
+
+        attendingPeopleListView.setCellFactory(new Callback<ListView<Person>,
+                        ListCell<Person>>() {
+            @Override
+            public ListCell<Person> call(ListView<Person> personListView) {
+                return new PersonCell();
+            }
+        }
+        );
+
+//        attendingPeopleTableColumn.setCellFactory(new PropertyValueFactory<Person, String>("Name"));
 
 //        updateGroupTable();
     }
@@ -217,6 +268,7 @@ public class ParticipantsController implements Initializable{
             ObservableList<Person> attendingPersonOL = FXCollections.observableArrayList(attendingPeople);
 
 //            attendingPeopleTableView.setItems(attendingPersonOL);
+            attendingPeopleListView.setItems(attendingPersonOL);
 
         }else{
             System.out.println("No attending participants");
@@ -305,5 +357,32 @@ public class ParticipantsController implements Initializable{
 
         //Not yet implemented
 
+    }
+
+
+    static class PersonCell extends ListCell<Person> {
+        VBox vbox = new VBox();
+        Label label = new Label("(empty)");
+        Pane pane = new Pane();
+
+
+
+        public PersonCell() {
+            super();
+            vbox.getChildren().addAll(label, pane);
+            HBox.setHgrow(pane, Priority.ALWAYS);
+        }
+
+        @Override
+        protected void updateItem(Person person, boolean empty) {
+            super.updateItem(person, empty);
+            setText(null);
+            if (empty) {
+                setGraphic(null);
+            } else {
+                label.setText(person!=null ? person.getName() : "<null>");
+                setGraphic(vbox);
+            }
+        }
     }
 }
