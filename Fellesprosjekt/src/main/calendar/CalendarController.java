@@ -60,11 +60,14 @@ public class CalendarController implements Initializable{
     private Calendar weekSundayDate;
     private Calendar dateToday;
     private Calendar dateOfMondaySelectedWeek;
+    public Label nameLabel;
     public Label weekNumberLabel;
     private int  dayNumberOfWeek;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
+        nameLabel.setText(RegisterSingleton.sharedInstance().getRegister().getPersonByUsername(RegisterSingleton.sharedInstance().getRegister().getUsername()).getName());
 
         appointmentsMonday = FXCollections.observableArrayList();
         appointmentsTuesday = FXCollections.observableArrayList();

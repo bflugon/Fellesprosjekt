@@ -21,21 +21,21 @@ import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 /**
- * Created by markuslund92 on 06.03.14.
+ * Created by Markus Lund on 06.03.14.
  */
 public class ParticipantsController implements Initializable{
 
-    public TableColumn allPersonsTableColumn;
-    public TableColumn allGroupsTableColumns;
+    public TableColumn<Person, String> allPersonsTableColumn;
+    public TableColumn<Group, String> allGroupsTableColumns;
     public TableColumn attendingPeopleTableColumn;
     public TableColumn notAttendingPeopleTableColumn;
-    public TableColumn invitedPeopleTableColumn;
+    public TableColumn<Person, String> invitedPeopleTableColumn;
 
-    public TableView allPersonsTableView;
-    public TableView allGroupsTableView;
+    public TableView<Person> allPersonsTableView;
+    public TableView<Group> allGroupsTableView;
     public TableView attendingPeopleTableView;
     public TableView notAttendingPeopleTableView;
-    public TableView invitedPeopleTableView;
+    public TableView<Person> invitedPeopleTableView;
 
     public TextField externalEmailTextField;
     private ArrayList<Person> allPersons;
@@ -46,7 +46,7 @@ public class ParticipantsController implements Initializable{
     private Person selectedPerson;
     private Group selectedGroup;
     private Person personToBeRemoved;
-    private TableView listToBeRemovedFrom;
+    private TableView<Person> listToBeRemovedFrom;
 
 
     private Appointment appointment;
@@ -60,7 +60,7 @@ public class ParticipantsController implements Initializable{
 
 
     public void confirmParticipantsButtonOnAction(ActionEvent actionEvent) {
-        parent.setPeopleToInvite(new ArrayList<Person>((invitedPeopleTableView.getItems())));
+        parent.setPeopleToInvite(new ArrayList<>((invitedPeopleTableView.getItems())));
         GuiUtils.closeWindow(actionEvent);
     }
 
@@ -124,7 +124,7 @@ public class ParticipantsController implements Initializable{
                 selectedGroup = null;
                 selectedPerson = null;
                 personToBeRemoved = p;
-                listToBeRemovedFrom = ((TableView)(e.getSource()));
+                listToBeRemovedFrom = ((TableView<Person>)(e.getSource()));
 //                System.out.println("Person to be removed: " + p);
             }
 
@@ -135,7 +135,7 @@ public class ParticipantsController implements Initializable{
                 selectedGroup = null;
                 selectedPerson = null;
                 personToBeRemoved = p;
-                listToBeRemovedFrom = ((TableView)(e.getSource()));
+                listToBeRemovedFrom = ((TableView<Person>)(e.getSource()));
 //                System.out.println("Person to be removed: " + p);
             }
 
@@ -146,7 +146,7 @@ public class ParticipantsController implements Initializable{
                 selectedGroup = null;
                 selectedPerson = null;
                 personToBeRemoved = p;
-                listToBeRemovedFrom = ((TableView)(e.getSource()));
+                listToBeRemovedFrom = ((TableView<Person>)(e.getSource()));
 //                System.out.println("Person to be removed: " + p);
             }
         }
@@ -249,7 +249,6 @@ public class ParticipantsController implements Initializable{
         if(invitedPeople != null){
 
             ObservableList<Person> personOL = FXCollections.observableArrayList(invitedPeople);
-            invitedPeopleTableColumn.setCellValueFactory(new PropertyValueFactory<Person, String>("Name"));
             invitedPeopleTableView.setItems(personOL);
 
         }else{
@@ -273,7 +272,7 @@ public class ParticipantsController implements Initializable{
         allPersons = RegisterSingleton.sharedInstance().getRegister().getPersons();
         ArrayList<Person> notInvited = new ArrayList<Person>();
         for (Person ap : allPersons){
-            if(!notInvited.contains(ap)){
+            if(!notInvited.contains(ap) && !ap.getUsername().equals(RegisterSingleton.sharedInstance().getRegister().getUsername())){
                 notInvited.add(ap);
             }
             for (Person ip : allInvitedPeople){
