@@ -75,6 +75,18 @@ public class ServerRequest {
                 return getInvitees((Integer) objects[0]);
             } else if (name.equals("GET_PEOPLE_ATTENDING_APP")){
                 return getAttending((Integer) objects[0]);
+            } else if (name.equals("GET_APP_A_U")){
+                return getAppointmentsAttendingForUsername((String) objects[0]);
+            } else if (name.equals("GET_APP_NA_U")){
+                return getAppointmentsNotAttendingForUsername((String) objects[0]);
+            } else if (name.equals("GET_APP_C_U")){
+                return getAppointmentsCreatedByUsername((String) objects[0]);
+            } else if (name.equals("GET_DC_A")){
+                return getDateChangedForAppointment((Integer) objects[0]);
+            } else if (name.equals("GET_NAP")){
+                return getNotAttendingPeople((Integer) objects[0]);
+            } else if (name.equals("SET_LOGIN_DATE")){
+                return updateLogin((String) objects[0]);
             }
 
             return new Packet("ERROR");
@@ -83,6 +95,7 @@ public class ServerRequest {
             return new Packet("ERROR", e);
         }
     }
+
 
     /**
      * All of these methods sends the information to the database, and returns
@@ -176,6 +189,31 @@ public class ServerRequest {
 
     private Packet getInvitees(int appointmentID) throws SQLException{
         return new Packet("INVITEES", this.db.getInvitees(appointmentID));
+    }
+
+
+    private Packet updateLogin(String username) throws SQLException{
+        return new Packet("SET_LOGIN_DATE",db.updateLastLogin(username));
+    }
+
+    private Packet getNotAttendingPeople(int aID) throws SQLException{
+        return new Packet("GOT_NAP",db.getNotAttending(aID));
+    }
+
+    private Packet getDateChangedForAppointment(int aID) throws SQLException{
+        return new Packet("GOT_DC_A",db.getDateChangedForAppointment(aID));
+    }
+
+    private Packet getAppointmentsCreatedByUsername(String username) throws SQLException{
+        return new Packet("GOT_APP_C_U",db);
+    }
+
+    private Packet getAppointmentsNotAttendingForUsername(String username) throws SQLException{
+        return new Packet("GOT_APP_NA_U",db.getAppointmentsAttendingByUsername(username,0));
+    }
+
+    private Packet getAppointmentsAttendingForUsername(String username) throws SQLException{
+        return new Packet("GOT_APP_A_U",db.getAppointmentsAttendingByUsername(username,1));
     }
 
     private Packet sendEmail(String recipient, Appointment appointment){

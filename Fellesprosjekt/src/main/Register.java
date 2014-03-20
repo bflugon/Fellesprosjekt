@@ -422,6 +422,54 @@ public class Register {
         return null;
     }
 
+    public ArrayList<Appointment> getAppointmentsAttendingForUsername(String username){
+        Packet response = this.client.request(new Packet("GET_APP_A_U", username));
+        if (response.getName().equals("GOT_APP_A_U")){
+            return (ArrayList<Appointment>) response.getObjects()[0];
+        }
+        return null;
+    }
+
+    public ArrayList<Appointment> getAppointmentsNotAttendingForUsername(String username){
+        Packet response = this.client.request(new Packet("GET_APP_NA_U", username));
+        if (response.getName().equals("GOT_APP_NA_U")){
+            return (ArrayList<Appointment>) response.getObjects()[0];
+        }
+        return null;
+    }
+
+    public ArrayList<Appointment> getAppointmentsCreatedByUsername(String username){
+        Packet response = this.client.request(new Packet("GET_APP_C_U", username));
+        if (response.getName().equals("GOT_APP_C_U")){
+            return (ArrayList<Appointment>) response.getObjects()[0];
+        }
+        return null;
+    }
+
+    public String getDateChangedForAppointment(int aID){
+        Packet response = this.client.request(new Packet("GET_DC_A", aID));
+        if (response.getName().equals("GOT_DC_A")){
+            return (String) response.getObjects()[0];
+        }
+        return null;
+    }
+
+    public ArrayList<Person> getNotAttendingPeople(int aID){
+        Packet response = this.client.request(new Packet("GET_NAP", aID));
+        if (response.getName().equals("GOT_NAP")){
+            return (ArrayList<Person>) response.getObjects()[0];
+        }
+        return null;
+    }
+
+    public String setUserLastLoggedIn(String username){
+        Packet response = this.client.request(new Packet("SET_LOGIN_DATE", username));
+        if (response.getName().equals("SET_LOGIN_DATE")){
+            return (String) response.getObjects()[0];
+        }
+        return null;
+    }
+
     public boolean updateAttending(int appointmentID, String username, int attends){
         Packet response = this.client.request(new Packet("UPDATE_ATTENDING", appointmentID, username, attends));
         if (response.getName().equals("ATTENDING_UPDATED")){
