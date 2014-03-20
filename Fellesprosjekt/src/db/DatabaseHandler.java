@@ -174,6 +174,20 @@ public class DatabaseHandler {
        return results;
     }
 
+    public Appointment getAppointment(int aID) throws SQLException{
+        PreparedStatement query = this.db.prepareStatement("select appointment.AID, appointment.AName, appointment.Description, appointment.Start, appointment.End, appointment.Priority, appointment.DateCreated, appointment.AlternativeLocation, isleader.Username, room.RName, room.RID, room.Capacity FROM appointment INNER JOIN isleader ON appointment.AID = isleader.AID AND appointment.AID = ? INNER JOIN takesplace ON appointment.AID = takesplace.AID INNER JOIN room ON takesplace.RID = room.RID ORDER BY appointment.AID");
+        query.setInt(1,aID);
+        ResultSet rs = query.executeQuery();
+
+        if (!rs.next()){
+            return null;
+        }
+
+        Appointment result = new Appointment(rs.getInt("AID"),rs.getString("Username"),rs.getString("AName"), rs.getTimestamp("Start"), rs.getTimestamp("End"), rs.getInt("Priority"), rs.getString("Description"), rs.getTimestamp("DateCreated"), new MeetingRoom(rs.getInt("RID"),rs.getString("RName"), rs.getInt("Capacity")),rs.getString("AlternativeLocation"));
+
+        return result;
+    }
+
     /**
      * Returns an arraylist containing all the appoints of a user.
      * @param username
@@ -618,6 +632,85 @@ public class DatabaseHandler {
         results.add(this.getPersonByUsername(rs.getString("Username")));
         while(rs.next()){
             results.add(this.getPersonByUsername(rs.getString("Username")));
+        }
+        return results;
+    }
+
+    /**
+     * Get people who are not attending an appointment
+     * @param appointmentID
+     * @return
+     * @throws SQLException
+     */
+    public ArrayList<Person> getNotAttending(int appointmentID) throws SQLException{
+        PreparedStatement query = this.db.prepareStatement("SELECT * FROM invitedto WHERE AID = ? AND Attends = 0");
+        query.setInt(1,appointmentID);
+        ResultSet rs = query.executeQuery();
+
+        if (!rs.next()){
+            return null;
+        }
+
+        ArrayList<Person> results = new ArrayList<Person>();
+        results.add(this.getPersonByUsername(rs.getString("Username")));
+        while(rs.next()){
+            results.add(this.getPersonByUsername(rs.getString("Username")));
+        }
+        return results;
+    }
+
+    public String updateLastLogin(String username) throws SQLException{
+        PreparedStatement query = this.db.prepareStatement("UPDATE person SET LastLoggedIn = ? WHERE Username = ?");
+        String currentTime = GeneralUtil.dateToString(new java.util.Date());
+        query.setTimestamp(1, Timestamp.valueOf(currentTime));
+        query.setString(2,username);
+        query.executeUpdate();
+        return currentTime;
+    }
+
+    public String getDateChangedForAppointment(int aID) throws SQLException{
+        PreparedStatement query = this.db.prepareStatement("SELECT DateChanged FROM person WHERE AID = ?");
+        query.setInt(1,aID);
+        ResultSet rs = query.executeQuery();
+
+        if (!rs.next()){
+            return null;
+        }
+        String result = GeneralUtil.dateToString(rs.getTimestamp("DateChanged"));
+
+        return result;
+    }
+
+    public ArrayList<Appointment> getAppointmentsAttendingByUsername(String username, int attending) throws SQLException{
+        PreparedStatement query = this.db.prepareStatement("SELECT * FROM invitedto WHERE Username = ? AND Attends = ?");
+        query.setString(1,username);
+        query.setInt(2,attending);
+        ResultSet rs = query.executeQuery();
+
+        if (!rs.next()){
+            return null;
+        }
+
+        ArrayList<Appointment> results = new ArrayList<Appointment>();
+        results.add(this.getAppointment(rs.getInt("AID")));
+        while(rs.next()){
+            results.add(this.getAppointment(rs.getInt("AID")));
+        }
+        return results;
+    }
+
+    public ArrayList<Appointment> getAppointmentsCreatedByUser(String username)throws SQLException{
+        PreparedStatement query = this.db.prepareStatement("select appointment.AID, appointment.AName, appointment.Description, appointment.Start, appointment.End, appointment.Priority, appointment.DateCreated, appointment.AlternativeLocation, isleader.Username, room.RName, room.RID, room.Capacity FROM appointment INNER JOIN isleader ON appointment.AID = isleader.AID AND isleader.Username = ? INNER JOIN takesplace ON appointment.AID = takesplace.AID INNER JOIN room ON takesplace.RID = room.RID ORDER BY appointment.AID");
+        query.setString(1,username);
+        ResultSet rs = query.executeQuery();
+
+        if (!rs.next()){
+            return null;
+        }
+        ArrayList<Appointment> results = new ArrayList<Appointment>();
+        results.add(new Appointment(rs.getInt("AID"),rs.getString("Username"),rs.getString("AName"), rs.getTimestamp("Start"), rs.getTimestamp("End"), rs.getInt("Priority"), rs.getString("Description"), rs.getTimestamp("DateCreated"), new MeetingRoom(rs.getInt("RID"),rs.getString("RName"), rs.getInt("Capacity")),rs.getString("AlternativeLocation")));
+        while(rs.next()){
+            results.add(new Appointment(rs.getInt("AID"),rs.getString("Username"),rs.getString("AName"), rs.getTimestamp("Start"), rs.getTimestamp("End"), rs.getInt("Priority"), rs.getString("Description"), rs.getTimestamp("DateCreated"), new MeetingRoom(rs.getInt("RID"),rs.getString("RName"), rs.getInt("Capacity")),rs.getString("AlternativeLocation")));
         }
         return results;
     }
