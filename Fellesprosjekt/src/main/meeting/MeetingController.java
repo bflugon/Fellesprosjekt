@@ -36,14 +36,15 @@ public class MeetingController implements Initializable {
     public TextField endTimeTextField;
     public TextField endDateTextField;
     public TextField nameTextField;
+    public TextField minSizeTextField;
     public RadioButton lowPriRadioButton;
     public RadioButton mediumPriRadioButton;
     public RadioButton highPriRadioButton;
     public TextArea descriptionTextArea;
     public ToggleGroup priorityToggleGroup;
 
-    private int numberOfInvited;
     private boolean isEditable;
+    private int minSize;
 
     private ArrayList<Person> peopleToInvite;
     private CalendarController parent;
@@ -52,6 +53,10 @@ public class MeetingController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
         appointment = new Appointment(0, null, null, null, null, 0, null, null,null, null);
+    }
+
+    public void setMinSizeTextField(int i){
+        minSizeTextField.setText(Integer.toString(i));
     }
 
     public void nameTextFieldType(){
@@ -84,6 +89,16 @@ public class MeetingController implements Initializable {
         roomFinderController.setAppointment(appointment);
         roomFinderController.setParentController(this);
 
+        try{
+            minSize = Integer.parseInt(minSizeTextField.getText());
+
+        }catch (Exception e){
+//            e.printStackTrace();
+            System.out.println("not an int");
+            minSize = 0;
+        }
+        roomFinderController.setMinCapacity(minSize);
+
         //Sender med riktig rom hvis det eksisterer
         if (appointment.getRoom() != null){
             if (appointment.getRoom().getRoomID() == 1){
@@ -94,7 +109,6 @@ public class MeetingController implements Initializable {
         }
 
         //Sender med antall personer for å finne størrelse på rom
-        roomFinderController.setMinCapacity(getNumberOfInvited());
 
         newStage.setTitle("Velg rom");
         newStage.setScene(new Scene(root));
@@ -272,13 +286,6 @@ public class MeetingController implements Initializable {
         }else{
             meetingRoomButton.setText(appointment.getAlternativeLocation());
         }
-    }
-    public int getNumberOfInvited() {
-        return numberOfInvited;
-    }
-
-    public void setNumberOfInvited(int numberOfInvited) {
-        this.numberOfInvited = numberOfInvited;
     }
 
     public void deleteButtonOnAction(ActionEvent actionEvent) {
