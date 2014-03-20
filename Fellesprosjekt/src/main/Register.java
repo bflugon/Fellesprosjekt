@@ -478,6 +478,14 @@ public class Register {
         return false;
     }
 
+    public ArrayList<Appointment> getRoomAppointments(int roomID){
+        Packet response = this.client.request(new Packet("GET_ROOM_APP",roomID));
+        if (response.getName().equals("ROOM_APPOINTMENTS")){
+            return (ArrayList<Appointment>) response.getObjects()[0];
+        }
+        return null;
+    }
+
     /**
      * Updates register based on broadcast recieved by server
      * @param p
