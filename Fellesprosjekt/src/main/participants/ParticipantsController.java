@@ -176,7 +176,24 @@ public class ParticipantsController implements Initializable{
     }
 
     public void updateTables() {
+
         if(appointment.getAppointmentName() != null){
+            if(appointment.getAppointmentID() != 0){
+                int i = appointment.getAppointmentID();
+                System.out.println("Using old attendingPoeple List");
+                System.out.println("Appointment ID: " + i);
+                attendingPeople = RegisterSingleton.sharedInstance().getRegister().getAttendingPeople(appointment.getAppointmentID());
+                System.out.println("Attending people: " + attendingPeople);
+                if(attendingPeople == null){
+                    attendingPeople = new ArrayList<>();
+                }
+            }else{
+                System.out.println("Createing new attendingPoeple List");
+                attendingPeople = new ArrayList<>();
+
+            }
+
+
             System.out.println("updating tables");
             updateAttendingTable();
             updateNotAttendingTable();
@@ -194,28 +211,28 @@ public class ParticipantsController implements Initializable{
     }
 
     private void updateAttendingTable() {
-        attendingPeople = RegisterSingleton.sharedInstance().getRegister().getAttendingPeople(appointment.getAppointmentID());
 
-        if (attendingPeople != null){
-//            System.out.println("alle deltagere:");
-//            for (Person p : attendingPeople){
-//                System.out.println(p);
-//            }
-
+        if (attendingPeople.size() > 0){
+            System.out.println("There exists attending dudes");
             ObservableList<Person> attendingPersonOL = FXCollections.observableArrayList(attendingPeople);
-            attendingPeopleTableColumn.setCellValueFactory(new PropertyValueFactory<Person, String>("Name"));
-            attendingPeopleTableView.setItems(attendingPersonOL);
+
+//            attendingPeopleTableView.setItems(attendingPersonOL);
+
         }else{
             System.out.println("No attending participants");
         }
     }
 
     private void updateInvitedTable() {
-        System.out.println("Updating invated table");
-        attendingPeople = RegisterSingleton.sharedInstance().getRegister().getAttendingPeople(appointment.getAppointmentID());
+        System.out.println("Updating invited table");
         ArrayList<Person> allInvitedPeople = RegisterSingleton.sharedInstance().getRegister().getInvitees(appointment.getAppointmentID());
+        if (allInvitedPeople == null){
+            allInvitedPeople = new ArrayList<>();
+        }
+        System.out.println("Alle inivterte: " + allInvitedPeople);
         invitedPeople = new ArrayList<>();
-        if (attendingPeople != null  && allInvitedPeople!=null){
+        if (attendingPeople.size() > 0){
+            System.out.println("Finner inviterte som ikke deltar");
             for (Person ap : attendingPeople){
                 for (Person ip : allInvitedPeople){
                     if(!ap.getUsername().equals(ip.getUsername())){
@@ -223,7 +240,10 @@ public class ParticipantsController implements Initializable{
                     }
                 }
             }
-
+        }else{
+            for (Person ip : allInvitedPeople){
+                invitedPeople.add(ip);
+            }
         }
 
         if(invitedPeople != null){
