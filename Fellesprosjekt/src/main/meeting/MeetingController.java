@@ -281,17 +281,11 @@ public class MeetingController implements Initializable {
         this.numberOfInvited = numberOfInvited;
     }
 
-    public void infoButtonOnAction(ActionEvent actionEvent) {
-        System.out.println();
-        System.out.println("Følgende informasjon ligger i nåværende appointment:");
-        System.out.println();
-        System.out.println("Name:\t\t\t" + appointment.getAppointmentName());
-        //System.out.println("Start tid:\t\t" + appointment.getAppointmentStart());
-        //System.out.println("Slutt tid:\t\t" + appointment.getAppointmentEnd());
-        System.out.println("Beskrivelse:\t" + appointment.getDescription());
-        System.out.println("Prioritet:\t\t" + appointment.getPriority());
-        System.out.println("Valgt rom:\t\t" + appointment.getRoom());
-        System.out.println("Inviterte:\t\t" + RegisterSingleton.sharedInstance().getRegister().getInvitees(appointment.getAppointmentID()));
+    public void deleteButtonOnAction(ActionEvent actionEvent) {
+        GuiUtils.closeWindow(actionEvent);
+        RegisterSingleton.sharedInstance().getRegister().deleteAppointment(appointment);
+        System.out.println("Appointment deleted");
+        parent.updateCalendarView();
     }
 
 
