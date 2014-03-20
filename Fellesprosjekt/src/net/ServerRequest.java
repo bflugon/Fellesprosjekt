@@ -87,6 +87,8 @@ public class ServerRequest {
                 return getNotAttendingPeople((Integer) objects[0]);
             } else if (name.equals("SET_LOGIN_DATE")){
                 return updateLogin((String) objects[0]);
+            } else if (name.equals("GET_ROOM_APP")){
+                return getRoomAppointments((Integer) objects[0]);
             }
 
             return new Packet("ERROR");
@@ -95,6 +97,7 @@ public class ServerRequest {
             return new Packet("ERROR", e);
         }
     }
+
 
 
     /**
@@ -214,6 +217,10 @@ public class ServerRequest {
 
     private Packet getAppointmentsAttendingForUsername(String username) throws SQLException{
         return new Packet("GOT_APP_A_U",db.getAppointmentsAttendingByUsername(username,1));
+    }
+
+    private Packet getRoomAppointments(int roomID) throws SQLException{
+        return new Packet("ROOM_APPOINTMENTS", db.getRoomAppointments(roomID));
     }
 
     private Packet sendEmail(String recipient, Appointment appointment){
