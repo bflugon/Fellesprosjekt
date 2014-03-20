@@ -6,12 +6,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import main.RegisterSingleton;
 import main.calendar.CalendarController;
-import main.meeting.MeetingController;
 import model.Appointment;
 import util.GuiUtils;
 
 import java.net.URL;
-import java.util.Calendar;
 import java.util.ResourceBundle;
 
 /**

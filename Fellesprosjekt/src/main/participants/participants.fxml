@@ -28,15 +28,15 @@
                         <RowConstraints maxHeight="165.0" minHeight="10.0" prefHeight="131.0" vgrow="SOMETIMES" />
                         <RowConstraints maxHeight="190.0" minHeight="10.0" prefHeight="123.0" vgrow="SOMETIMES" />
                     </rowConstraints>
-                    <children><TableView fx:id="attendingPeopleTableView" prefHeight="200.0" prefWidth="200.0">
+                    <children><TableView fx:id="attendingPeopleTableView" onMouseClicked="#clickSelection" prefHeight="200.0" prefWidth="200.0">
                         <columns>
                             <TableColumn fx:id="attendingPeopleTableColumn" prefWidth="135.0" text="Deltar" />
                         </columns>
-                    </TableView><TableView fx:id="notAttendingPeopleTableView" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">
+                    </TableView><TableView fx:id="notAttendingPeopleTableView" onMouseClicked="#clickSelection" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">
                         <columns>
                             <TableColumn fx:id="notAttendingPeopleTableColumn" prefWidth="136.0" text="Deltar ikke" />
                         </columns>
-                    </TableView><TableView fx:id="invitedPeopleTableView" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="2">
+                    </TableView><TableView fx:id="invitedPeopleTableView" onMouseClicked="#clickSelection" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="2">
                         <columns>
                             <TableColumn fx:id="invitedPeopleTableColumn" prefWidth="136.0" text="Inviterte" />
                         </columns>
@@ -50,11 +50,11 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
-                    <children><TableView fx:id="allPersonsTableView" prefHeight="200.0" prefWidth="200.0">
+                    <children><TableView fx:id="allPersonsTableView" onMouseClicked="#clickSelection" prefHeight="200.0" prefWidth="200.0">
                         <columns>
                             <TableColumn fx:id="allPersonsTableColumn" prefWidth="133.0" text="Personer" />
                         </columns>
-                    </TableView><TableView fx:id="allGroupsTableView" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">
+                    </TableView><TableView fx:id="allGroupsTableView" onMouseClicked="#clickSelection" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">
                         <columns>
                             <TableColumn fx:id="allGroupsTableColumns" prefWidth="134.0" text="Grupper" />
                         </columns>

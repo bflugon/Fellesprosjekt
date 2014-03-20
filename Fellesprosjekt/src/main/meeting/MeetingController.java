@@ -30,6 +30,7 @@ public class MeetingController implements Initializable {
 
     //Deklarerer GUIelementer
     public Button meetingRoomButton;
+    public Button chooseParticipantsButton;
     public TextField startTimeTextField;
     public TextField startDateTextField;
     public TextField endTimeTextField;
@@ -44,14 +45,11 @@ public class MeetingController implements Initializable {
     private int numberOfInvited;
     private boolean isEditable;
 
-
+    private ArrayList<Person> peopleToInvite;
     private CalendarController parent;
-
-
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
 
         appointment = new Appointment(0, null, null, null, null, 0, null, null,null, null);
     }
@@ -111,11 +109,12 @@ public class MeetingController implements Initializable {
 
     public void chooseParticipants(ActionEvent actionEvent) throws Exception{
 
-
+        chooseParticipantsButton.setStyle("-fx-border-width: 0px;");
         Stage newStage = new Stage();
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../participants/participants.fxml"));
         Parent root = (Parent)fxmlLoader.load();
         ParticipantsController participantsController = fxmlLoader.<ParticipantsController>getController();
+        participantsController.setParent(this);
         participantsController.setAppointment(appointment);
         participantsController.updateTables();
 
@@ -159,7 +158,10 @@ public class MeetingController implements Initializable {
 
             System.out.println("Invalid endDate format: " + endDateTextField.getText());
             endDateTextField.setStyle(redBorderStyling);
-        }else {
+        }else if (peopleToInvite == null){
+            chooseParticipantsButton.setStyle(redBorderStyling);
+        }
+        else {
             if (appointment.getRoom() == null) {
                 System.out.println("No room selected");
                 meetingRoomButton.setStyle(redBorderStyling);
@@ -196,16 +198,42 @@ public class MeetingController implements Initializable {
                     RegisterSingleton.sharedInstance().getRegister().editAppointment(appointment,appointment.getRoom());
                 }else{
                     appointment = RegisterSingleton.sharedInstance().getRegister().addAppointment(appointment.getAppointmentName(), startTimeString, endTimeString, appointment.getDescription(), appointment.getPriority(), RegisterSingleton.sharedInstance().getRegister().getUsername(), appointment.getRoom(), appointment.getAlternativeLocation());
-                    //Finner aller personer
-                    ArrayList<Person> allPersons = RegisterSingleton.sharedInstance().getRegister().getPersons();
 
-                    for (Person p : allPersons){
+                    //Finner aller personer
+//                    ArrayList<Person> allPersons = RegisterSingleton.sharedInstance().getRegister().getPersons();
+//                    for (Person p : allPersons){
+//                        RegisterSingleton.sharedInstance().getRegister().invitePerson(p, appointment);
+//                    }
+
+                    String meetingName = nameTextField.getText();
+                }
+
+                //Inviterer alle personer
+                ArrayList<Person> alreadyInvited = RegisterSingleton.sharedInstance().getRegister().getInvitees(appointment.getAppointmentID());
+                if (alreadyInvited != null){
+                    ArrayList<Person> finalInviteList = new ArrayList<>();
+                    for (Person pti : peopleToInvite){
+                        finalInviteList.add(pti);
+                        for (Person ai : alreadyInvited){
+                            if(ai.getUsername().equals(pti.getUsername())){
+                                finalInviteList.remove(pti);
+                            }
+                        }
+                    }
+                    for (Person p : finalInviteList){
                         RegisterSingleton.sharedInstance().getRegister().invitePerson(p, appointment);
                         System.out.println(p.getName() + "\t was invited to meeting: " + appointment.getAppointmentName());
                     }
 
-                    String meetingName = nameTextField.getText();
+
+                }else{
+                    for (Person p : peopleToInvite){
+                        RegisterSingleton.sharedInstance().getRegister().invitePerson(p, appointment);
+                        System.out.println(p.getName() + "\t was invited to meeting: " + appointment.getAppointmentName());
+                    }
                 }
+
+
                 parent.updateCalendarView();
                 GuiUtils.closeWindow(actionEvent);
             }
@@ -312,5 +340,9 @@ public class MeetingController implements Initializable {
         }
 
 
+    }
+
+    public void setPeopleToInvite(ArrayList<Person> peopleToInvite) {
+        this.peopleToInvite = peopleToInvite;
     }
 }
