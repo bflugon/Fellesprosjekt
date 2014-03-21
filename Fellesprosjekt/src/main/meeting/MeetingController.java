@@ -45,6 +45,8 @@ public class MeetingController implements Initializable {
 
     private boolean isEditable;
     private int minSize;
+    private ArrayList<String> externalEmails;
+
 
     private ArrayList<Person> peopleToInvite;
     private CalendarController parent;
@@ -131,6 +133,7 @@ public class MeetingController implements Initializable {
         participantsController.setParent(this);
         participantsController.setAppointment(appointment);
         participantsController.updateTables();
+        participantsController.setExternalEmails(externalEmails);
 
         newStage.setTitle("Velg deltakere");
         newStage.setScene(new Scene(root));
@@ -284,6 +287,16 @@ public class MeetingController implements Initializable {
                             System.out.println(p.getName() + "\t was invited to meeting: " + appointment.getAppointmentName());
                         }
                     }
+                for (String email : externalEmails){
+
+                    System.out.println("Inviterte epost: " + email);
+                    System.out.println("Appointment: " + this.appointment);
+
+                    GeneralUtil.sendEmail(email, this.appointment);
+
+                }
+
+
 
 
                     parent.updateCalendarView();
@@ -445,5 +458,9 @@ public class MeetingController implements Initializable {
 
     public void setPeopleToInvite(ArrayList<Person> peopleToInvite) {
         this.peopleToInvite = peopleToInvite;
+    }
+
+    public void setExternalEmails(ArrayList<String> ex) {
+        this.externalEmails = ex;
     }
 }

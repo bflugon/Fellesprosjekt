@@ -19,6 +19,7 @@ import model.Group;
 import model.Person;
 import util.GuiUtils;
 
+import java.lang.reflect.Array;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
@@ -30,7 +31,7 @@ public class ParticipantsController implements Initializable{
 
     public TableColumn<Person, String> allPersonsTableColumn;
     public TableColumn<Group, String> allGroupsTableColumns;
-    public TableColumn attendingPeopleTableColumn;
+    //public TableColumn attendingPeopleTableColumn;
     public TableColumn notAttendingPeopleTableColumn;
     public TableColumn<Person, String> invitedPeopleTableColumn;
 
@@ -53,6 +54,7 @@ public class ParticipantsController implements Initializable{
     private Person personToBeRemoved;
     private TableView<Person> tableViewToBeRemovedFrom;
     private ListView<Person> listViewToBeRemovedFrom;
+    private ArrayList<String> externalEmails;
 
 
 
@@ -68,6 +70,7 @@ public class ParticipantsController implements Initializable{
 
     public void confirmParticipantsButtonOnAction(ActionEvent actionEvent) {
         parent.setPeopleToInvite(new ArrayList<>((invitedPeopleTableView.getItems())));
+        parent.setExternalEmails(externalEmails);
         GuiUtils.closeWindow(actionEvent);
     }
 
@@ -221,9 +224,7 @@ public class ParticipantsController implements Initializable{
         }
         );
 
-//        attendingPeopleTableColumn.setCellFactory(new PropertyValueFactory<Person, String>("Name"));
 
-//        updateGroupTable();
     }
 
     public void updateTables() {
@@ -354,9 +355,27 @@ public class ParticipantsController implements Initializable{
     }
 
     public void addExternalEmailButtonOnAction(ActionEvent actionEvent) {
+        if(!externalEmailTextField.getText().equals("")){
 
-        //Not yet implemented
+            if (externalEmails == null){
+                externalEmails = new ArrayList<>();
+                externalEmails.add(externalEmailTextField.getText());
+            }else{
+                externalEmails.add(externalEmailTextField.getText());
+            }
 
+            System.out.println("All emails:");
+            for (String email : externalEmails){
+                System.out.println(email);
+            }
+
+        }
+
+
+    }
+
+    public void setExternalEmails(ArrayList<String> ex) {
+        this.externalEmails = ex;
     }
 
 
