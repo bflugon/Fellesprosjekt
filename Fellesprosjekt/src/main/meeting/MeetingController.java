@@ -292,7 +292,7 @@ public class MeetingController implements Initializable {
                     System.out.println("Inviterte epost: " + email);
                     System.out.println("Appointment: " + this.appointment);
 
-                    GeneralUtil.sendEmail(email, this.appointment);
+                    RegisterSingleton.sharedInstance().getRegister().sendEmail(email, this.appointment);
 
                 }
 
