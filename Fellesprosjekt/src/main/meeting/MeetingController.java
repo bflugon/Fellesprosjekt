@@ -174,6 +174,10 @@ public class MeetingController implements Initializable {
 
             System.out.println("Invalid endDate format: " + endDateTextField.getText());
             endDateTextField.setStyle(redBorderStyling);
+        }else if (EndBeforeStartCheck()){
+            System.out.println("EndBeforeStartCheck is true");
+            endDateTextField.setStyle(redBorderStyling);
+            endTimeTextField.setStyle(redBorderStyling);
         }
         else {
             if (appointment.getRoom() == null) {
@@ -184,6 +188,9 @@ public class MeetingController implements Initializable {
             else {
                 boolean opptatt = false;
                 ArrayList<Appointment> avtaler = RegisterSingleton.sharedInstance().getRegister().getRoomAppointments(appointment.getRoom().getRoomID());
+                if (avtaler == null){
+                    avtaler = new ArrayList<>();
+                }
                 for (Appointment avtale : avtaler) {
                     int sjekk1 = GeneralUtil.stringToDate(avtale.getAppointmentStart()).compareTo(GeneralUtil.stringToDate(appointment.getAppointmentStart()));
                     int sjekk2 = GeneralUtil.stringToDate(avtale.getAppointmentStart()).compareTo(GeneralUtil.stringToDate(appointment.getAppointmentEnd()));
@@ -280,6 +287,44 @@ public class MeetingController implements Initializable {
                     GuiUtils.closeWindow(actionEvent);
             }
         }
+    }
+
+    private boolean EndBeforeStartCheck() {
+        String[] endDate = endDateTextField.getText().split("-");
+        String[] endTime = endTimeTextField.getText().split(":");
+        String[] startDate = startDateTextField.getText().split("-");
+        String[] startTime = startTimeTextField.getText().split(":");
+
+        if (Integer.parseInt(endDate[0]) < Integer.parseInt(startDate[0])){
+            System.out.println("Feil med år");
+            return true;
+        }else if(Integer.parseInt(endDate[1]) < Integer.parseInt(startDate[1])){
+            System.out.println("Feil med måned");
+            return true;
+        }else if(Integer.parseInt(endDate[2]) < Integer.parseInt(startDate[2])){
+            System.out.println("Feil med dag");
+            return true;
+        }else if(Integer.parseInt(endTime[0]) < Integer.parseInt(startTime[0])){
+            System.out.println("Feil med time");
+            return true;
+        }else if(Integer.parseInt(endTime[1]) < Integer.parseInt(startTime[1])){
+            System.out.println("Feil med minutter");
+            return true;
+        }
+        return false;
+//
+//        System.out.println("TIDER:");
+//        for (String s : endDate){
+//            System.out.println(s);;
+//        }
+//        for (String s : endTime){
+//            System.out.println(s);
+//        }
+//        System.out.println(endDate);
+//        System.out.println(endTime);
+//        System.out.println(startDate);
+//        System.out.println(startTime);
+
     }
 
     private boolean isValidDate(String s){
