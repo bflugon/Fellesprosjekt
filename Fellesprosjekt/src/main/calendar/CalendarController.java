@@ -303,6 +303,9 @@ public class CalendarController implements Initializable{
             System.out.println("Appointments not attending: " + appointmentsNotAttending);
         };
 
+        appointmentsNotAttending = RegisterSingleton.sharedInstance().getRegister().getAppointmentsNotAttendingForUsername(username);
+
+
 
         if(appointmentsNotAttending == null){
             appointmentsAttending = new ArrayList<Appointment>();
@@ -336,7 +339,7 @@ public class CalendarController implements Initializable{
 
         System.out.println(RegisterSingleton.sharedInstance().getRegister().getAppointmentsCreated());
         System.out.println(RegisterSingleton.sharedInstance().getRegister().getAppointmentsAttending());
-        System.out.println(RegisterSingleton.sharedInstance().getRegister().getAppointmentsNotAttending());
+        System.out.println("Not attending:" + RegisterSingleton.sharedInstance().getRegister().getAppointmentsNotAttending());
 
 
 
@@ -426,11 +429,15 @@ public class CalendarController implements Initializable{
 
     public boolean shouldHideAppointment(Appointment appointment){
 
-        for(Appointment a : appointmentsNotAttending){
-            if (a.getAppointmentID() == appointment.getAppointmentID()){
-                return true;
+        if (RegisterSingleton.sharedInstance().getRegister().getHidesNotAttendingMeetings() != null &&
+            RegisterSingleton.sharedInstance().getRegister().getHidesNotAttendingMeetings() == true ){
+            for(Appointment a : appointmentsNotAttending){
+                if (a.getAppointmentID() == appointment.getAppointmentID()){
+                    return true;
+                }
             }
         }
+
         return false;
     }
 
@@ -491,7 +498,10 @@ public class CalendarController implements Initializable{
                 Parent root = (Parent)fxmlLoader.load();
                 MeetingController meetingController = fxmlLoader.<MeetingController>getController();
                 meetingController.setAppointment(selectedAppointment);
-                meetingController.setMinSizeTextField(RegisterSingleton.sharedInstance().getRegister().getInvitees(selectedAppointment.getAppointmentID()).size());
+                if(RegisterSingleton.sharedInstance().getRegister().getInvitees(selectedAppointment.getAppointmentID()) != null){
+                    meetingController.setMinSizeTextField(RegisterSingleton.sharedInstance().getRegister().getInvitees(selectedAppointment.getAppointmentID()).size());
+
+                }
                 meetingController.setEditable(true);
                 meetingController.setParent(this);
                 newStage.setScene(new Scene(root));
@@ -629,7 +639,6 @@ public class CalendarController implements Initializable{
     static class CalenderCell extends ListCell<Appointment> {
         public boolean userIsNotAttendingAppointment(Appointment appointment){
 
-
             for(Appointment a :  RegisterSingleton.sharedInstance().getRegister().getAppointmentsNotAttending()){
                 if (a.getAppointmentID() == appointment.getAppointmentID()){
                     return true;
@@ -663,12 +672,14 @@ public class CalendarController implements Initializable{
         Label label = new Label("(empty)");
         Pane pane = new Pane();
         Label clockLabel = new Label("(empty)");
+        Label adminLabel = new Label("");
+
 
         String lastItem;
 
         public CalenderCell() {
             super();
-            vbox.getChildren().addAll(label, pane, clockLabel);
+            vbox.getChildren().addAll(label, pane, clockLabel,adminLabel);
             HBox.setHgrow(pane, Priority.ALWAYS);
         }
 
@@ -686,7 +697,9 @@ public class CalendarController implements Initializable{
                     label.setTextFill(Color.GREEN);
                 }else if (userIsNotAttendingAppointment(appointment)){
                     label.setTextFill(Color.LIGHTGRAY);
-                }else {
+                }else if (userCreatedAppointment(appointment)){
+                    adminLabel.setText("Du er admin");
+                }else{
                     label.setTextFill(Color.RED);
                 }
 
