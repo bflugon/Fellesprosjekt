@@ -49,7 +49,6 @@ public class SettingsViewController implements Initializable {
         this.parentController = parentController;
     }
 
-
     public void okButtonPressed(ActionEvent event) {
         RegisterSingleton.sharedInstance().getRegister().getAlertAppointments().clear();
         if (alarmCheckBox.isSelected() == true){
