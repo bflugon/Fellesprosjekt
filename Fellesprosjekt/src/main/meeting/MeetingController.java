@@ -196,6 +196,7 @@ public class MeetingController implements Initializable {
                     //if sjekk2 < 0 = avtalen slutter etter starten på andre
                     //if sjekk3 < 0 = avtalen starter etter slutten på andre
                     //if sjekk4 < 0 = avtalen slutter etter slutten på andre
+                    //Testcommit
                     if ( (sjekk1 < 0 && sjekk3 > 0) || (sjekk2 < 0 && sjekk4 > 0)) {
                         opptatt = true;
                         break;
