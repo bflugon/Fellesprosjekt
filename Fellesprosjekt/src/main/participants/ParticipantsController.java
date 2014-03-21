@@ -92,11 +92,10 @@ public class ParticipantsController implements Initializable{
             ObservableList<Group> currentAllGroups = allGroupsTableView.getItems();
             ArrayList<Person> peopleToAdd = new ArrayList<>();
 
-            boolean funnet = false;
 
             try{
                 for (Person potensialPerson : RegisterSingleton.sharedInstance().getRegister().getMembersOfGroup(selectedGroup.getGroupID())){
-                    funnet = false;
+                    boolean funnet = false;
                     for (Person gammelperson : currentInvitedPeople){
                         if (potensialPerson.getUsername().equals(gammelperson.getUsername())){
                             funnet = true;
