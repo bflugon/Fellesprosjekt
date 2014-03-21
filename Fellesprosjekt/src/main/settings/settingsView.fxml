@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="172.0" prefWidth="286.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.settings.SettingsViewController">
+    <children><Button layoutX="125.0" layoutY="136.0" mnemonicParsing="false" onAction="#okButtonPressed" text="Ok" /><CheckBox fx:id="alarmCheckBox" layoutX="221.0" layoutY="22.0" mnemonicParsing="false" /><TextField fx:id="hoursBeforeLabel" layoutX="221.0" layoutY="50.0" prefHeight="26.0" prefWidth="33.0" promptText="0" /><Label layoutX="25.0" layoutY="55.0" prefHeight="16.0" prefWidth="182.0" text="Alarm antall timer før møte" /><Label layoutX="25.0" layoutY="23.0" prefHeight="16.0" prefWidth="131.0" text="Alarm for møter" /><Label layoutX="25.0" layoutY="98.0" prefHeight="16.0" prefWidth="131.0" text="Skjul avslåtte møter" /><CheckBox fx:id="hideMeetingsCheckBox" layoutX="221.0" layoutY="97.0" mnemonicParsing="false" />
+    </children></Pane>
