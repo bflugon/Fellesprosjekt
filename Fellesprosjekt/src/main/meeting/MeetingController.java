@@ -12,6 +12,7 @@ import main.calendar.CalendarController;
 import main.participants.ParticipantsController;
 import main.roomFinder.RoomFinderController;
 import model.Appointment;
+import model.MeetingRoom;
 import model.Person;
 import util.GeneralUtil;
 import util.GuiUtils;
@@ -202,62 +203,44 @@ public class MeetingController implements Initializable {
                 appointment.setAppointmentStart(startTime);
                 appointment.setAppointmentEnd(endTime);
 
-                boolean opptatt = false;
                 ArrayList<Appointment> avtaler = RegisterSingleton.sharedInstance().getRegister().getRoomAppointments(appointment.getRoom().getRoomID());
                 if (avtaler == null || appointment.getRoom().getRoomID() == 1){
                     avtaler = new ArrayList<>();
                 }
-                for (Appointment avtale : avtaler) {
-                    int sjekk1 = GeneralUtil.stringToDate(avtale.getAppointmentStart()).compareTo(GeneralUtil.stringToDate(appointment.getAppointmentStart()));
-                    int sjekk2 = GeneralUtil.stringToDate(avtale.getAppointmentStart()).compareTo(GeneralUtil.stringToDate(appointment.getAppointmentEnd()));
-                    int sjekk3 = GeneralUtil.stringToDate(avtale.getAppointmentEnd()).compareTo(GeneralUtil.stringToDate(appointment.getAppointmentStart()));
-                    int sjekk4 = GeneralUtil.stringToDate(avtale.getAppointmentEnd()).compareTo(GeneralUtil.stringToDate(appointment.getAppointmentEnd()));
-                    //if sjekk1 < 0 = avtalen starter etter starten på andre
-                    //if sjekk2 < 0 = avtalen slutter etter starten på andre
-                    //if sjekk3 < 0 = avtalen starter etter slutten på andre
-                    //if sjekk4 < 0 = avtalen slutter etter slutten på andre
-                    //Testcommit
-                    if ( (sjekk1 < 0 && sjekk3 > 0) || (sjekk2 < 0 && sjekk4 > 0)) {
-                        opptatt = true;
-                        break;
-                    }}
-                if (opptatt) {
-                        System.out.println("Rommet er opptatt");
-                    }
+
+                //isRoomAvailable(room, appointment)
+
+                if (priorityToggleGroup.getSelectedToggle().equals(lowPriRadioButton)) {
+                    appointment.setPriority(1);
+                }
+                if (priorityToggleGroup.getSelectedToggle().equals(mediumPriRadioButton)) {
+                    appointment.setPriority(2);
+                }
+                if (priorityToggleGroup.getSelectedToggle().equals(highPriRadioButton)) {
+                    appointment.setPriority(3);
+                }
+
+
+                //Legger til møtet i databasen!
+
+
+                if (isEditable) {
+                    RegisterSingleton.sharedInstance().getRegister().editAppointment(appointment, appointment.getRoom());
+                }
                 else {
+                    appointment = RegisterSingleton.sharedInstance().getRegister().addAppointment(appointment.getAppointmentName(), startTimeString, endTimeString, appointment.getDescription(), appointment.getPriority(), RegisterSingleton.sharedInstance().getRegister().getUsername(), appointment.getRoom(), appointment.getAlternativeLocation());
 
-
-                    if (priorityToggleGroup.getSelectedToggle().equals(lowPriRadioButton)) {
-                        appointment.setPriority(1);
-                    }
-                    if (priorityToggleGroup.getSelectedToggle().equals(mediumPriRadioButton)) {
-                        appointment.setPriority(2);
-                    }
-                    if (priorityToggleGroup.getSelectedToggle().equals(highPriRadioButton)) {
-                        appointment.setPriority(3);
-                    }
-
-
-                    //Legger til møtet i databasen!
-
-
-                    if (isEditable) {
-                        RegisterSingleton.sharedInstance().getRegister().editAppointment(appointment, appointment.getRoom());
-                    }
-                    else {
-                        appointment = RegisterSingleton.sharedInstance().getRegister().addAppointment(appointment.getAppointmentName(), startTimeString, endTimeString, appointment.getDescription(), appointment.getPriority(), RegisterSingleton.sharedInstance().getRegister().getUsername(), appointment.getRoom(), appointment.getAlternativeLocation());
-
-                        //Finner aller personer
-                        //                    ArrayList<Person> allPersons = RegisterSingleton.sharedInstance().getRegister().getPersons();
-                        //                    for (Person p : allPersons){
-                        //                        RegisterSingleton.sharedInstance().getRegister().invitePerson(p, appointment);
-                        //                    }
-
-                        String meetingName = nameTextField.getText();
-                    }
+                    //Finner aller personer
+                    //                    ArrayList<Person> allPersons = RegisterSingleton.sharedInstance().getRegister().getPersons();
+                    //                    for (Person p : allPersons){
+                    //                        RegisterSingleton.sharedInstance().getRegister().invitePerson(p, appointment);
+                    //                    }
 
                     String meetingName = nameTextField.getText();
                 }
+
+                String meetingName = nameTextField.getText();
+
 
                 //Inviterer alle personer
                 ArrayList<Person> alreadyInvited = RegisterSingleton.sharedInstance().getRegister().getInvitees(appointment.getAppointmentID());
@@ -457,6 +440,24 @@ public class MeetingController implements Initializable {
         }
 
 
+    }
+
+    private boolean isRoomAvailable(MeetingRoom room, Appointment appointment) {
+        ArrayList<Appointment> avtaler = RegisterSingleton.sharedInstance().getRegister().getRoomAppointments(room.getRoomID());
+        for (Appointment avtale : avtaler) {
+            int sjekk1 = GeneralUtil.stringToDate(avtale.getAppointmentStart()).compareTo(GeneralUtil.stringToDate(appointment.getAppointmentStart()));
+            int sjekk2 = GeneralUtil.stringToDate(avtale.getAppointmentStart()).compareTo(GeneralUtil.stringToDate(appointment.getAppointmentEnd()));
+            int sjekk3 = GeneralUtil.stringToDate(avtale.getAppointmentEnd()).compareTo(GeneralUtil.stringToDate(appointment.getAppointmentStart()));
+            int sjekk4 = GeneralUtil.stringToDate(avtale.getAppointmentEnd()).compareTo(GeneralUtil.stringToDate(appointment.getAppointmentEnd()));
+            //if sjekk1 < 0 = avtalen starter etter starten på andre
+            //if sjekk2 < 0 = avtalen slutter etter starten på andre
+            //if sjekk3 < 0 = avtalen starter etter slutten på andre
+            //if sjekk4 < 0 = avtalen slutter etter slutten på andre
+            //Testcommit
+            if ( (sjekk1 < 0 && sjekk3 > 0) || (sjekk2 < 0 && sjekk4 > 0)) {
+                return false;
+            }}
+        return true;
     }
 
     public void setPeopleToInvite(ArrayList<Person> peopleToInvite) {
