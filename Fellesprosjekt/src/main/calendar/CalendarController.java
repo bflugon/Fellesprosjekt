@@ -372,6 +372,7 @@ public class CalendarController implements Initializable{
         //Skal
         //komme
         //til
+        //100
 
         listViewMonday.setItems(appointmentsMonday);
         listViewTuesday.setItems(appointmentsTuesday);
@@ -386,46 +387,46 @@ public class CalendarController implements Initializable{
         if (appointmentIsThisWeek(appointment)){
             switch (GeneralUtil.dateToCalendar(GeneralUtil.stringToDate(appointment.getAppointmentStart())).get(Calendar.DAY_OF_WEEK)) {
                 case 1:{
-                    if (!appointmentsSunday.contains(appointment) && !shouldHideAppointment(appointment)){
+                    if (!listContainsAppointment(appointmentsSunday,appointment) && !shouldHideAppointment(appointment)){
                         appointmentsSunday.add(appointment);
                     }
                 }
                     break;
                 case 2: {
-                    if (!appointmentsMonday.contains(appointment) && !shouldHideAppointment(appointment)){
+                    if (!listContainsAppointment(appointmentsMonday, appointment)&& !shouldHideAppointment(appointment)){
                         appointmentsMonday.add(appointment);
                     }
                 }
                     break;
                 case 3:  {
 
-                    if (!appointmentsTuesday.contains(appointment) && !shouldHideAppointment(appointment)){
+                    if (!listContainsAppointment(appointmentsTuesday, appointment) && !shouldHideAppointment(appointment)){
                         appointmentsTuesday.add(appointment);
                     }
                 }
                     break;
                 case 4: {
-                    if (!appointmentsWednesday.contains(appointment) && !shouldHideAppointment(appointment)){
+                    if (!listContainsAppointment(appointmentsWednesday, appointment) && !shouldHideAppointment(appointment)){
                         appointmentsWednesday.add(appointment);
                     }
 
                 }
                     break;
                 case 5: {
-                    if (!appointmentsThursday.contains(appointment) && !shouldHideAppointment(appointment)){
+                    if (!listContainsAppointment(appointmentsThursday, appointment) && !shouldHideAppointment(appointment)){
                         appointmentsThursday.add(appointment);
                     }
                 }
                     break;
                 case 6: {
 
-                    if (!appointmentsFriday.contains(appointment) && !shouldHideAppointment(appointment)){
+                    if (!listContainsAppointment(appointmentsFriday, appointment) && !shouldHideAppointment(appointment)){
                         appointmentsFriday.add(appointment);
                     }
                 }
                     break;
                 case 7: {
-                    if (!appointmentsSaturday.contains(appointment) && !shouldHideAppointment(appointment)){
+                    if (!listContainsAppointment(appointmentsSaturday,appointment)&& !shouldHideAppointment(appointment)){
                         appointmentsSaturday.add(appointment);
                     }
                 }
@@ -433,10 +434,20 @@ public class CalendarController implements Initializable{
                 default:
                     break;
             }
-
-
         }
     }
+ 
+    
+
+    public boolean listContainsAppointment(ObservableList<Appointment> appointments ,Appointment appointment){
+        for (Appointment a : appointments){
+            if (a.getAppointmentID() == appointment.getAppointmentID()){
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     public boolean shouldHideAppointment(Appointment appointment){
         if (RegisterSingleton.sharedInstance().getRegister().getHidesNotAttendingMeetings() != null &&
