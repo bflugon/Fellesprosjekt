@@ -287,13 +287,16 @@ public class MeetingController implements Initializable {
                             System.out.println(p.getName() + "\t was invited to meeting: " + appointment.getAppointmentName());
                         }
                     }
-                for (String email : externalEmails){
 
-                    System.out.println("Inviterte epost: " + email);
-                    System.out.println("Appointment: " + this.appointment);
+                if (externalEmails != null){
+                    for (String email : externalEmails){
 
-                    RegisterSingleton.sharedInstance().getRegister().sendEmail(email, this.appointment);
+                        System.out.println("Inviterte epost: " + email);
+                        System.out.println("Appointment: " + this.appointment);
 
+                        RegisterSingleton.sharedInstance().getRegister().sendEmail(email, this.appointment);
+
+                    }
                 }
 
 
