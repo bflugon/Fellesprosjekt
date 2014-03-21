@@ -33,6 +33,35 @@ public class Register {
     private ObservableList<Person> availableAdditionalPersonCalendars;
     private ObservableList<Person> selectedAdditionalPersonCalendars;
 
+    public ArrayList<Appointment> getAppointmentsCreated() {
+        return appointmentsCreated;
+    }
+
+    public ArrayList<Appointment> getAppointmentsNotAttending() {
+        return appointmentsNotAttending;
+    }
+
+    public ArrayList<Appointment> getAppointmentsAttending() {
+        return appointmentsAttending;
+    }
+
+
+    public void setAppointmentsNotAttending(ArrayList<Appointment> appointmentsNotAttending) {
+        this.appointmentsNotAttending = appointmentsNotAttending;
+    }
+
+    public void setAppointmentsAttending(ArrayList<Appointment> appointmentsAttending) {
+        this.appointmentsAttending = appointmentsAttending;
+    }
+
+    public void setAppointmentsCreated(ArrayList<Appointment> appointmentsCreated) {
+        this.appointmentsCreated = appointmentsCreated;
+    }
+
+    private ArrayList<Appointment> appointmentsAttending;
+    private ArrayList<Appointment> appointmentsCreated;
+    private ArrayList<Appointment> appointmentsNotAttending;
+
     private String userName;
 
     public String getEmail() {
