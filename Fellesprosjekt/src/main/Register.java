@@ -178,15 +178,15 @@ public class Register {
         System.out.println(username);
         Packet response = this.client.request(new Packet("GET_USER_APPOINTMENT",username));
         System.out.println(response.getName());
-        if (response.getName().equals(username)){
-            System.out.println("Halla" + (ArrayList<Appointment>)response.getObjects()[0]);
+        if (response.getName().equals("USER_APPOINTMENT")){
+            //System.out.println("Halla" + (ArrayList<Appointment>)response.getObjects()[0]);
 
             for (Appointment a :(ArrayList<Appointment>)response.getObjects()[0] ){
-                System.out.println("Appointment name: "+ a.getAppointmentName());
+                //System.out.println("Appointment name: "+ a.getAppointmentName());
             }
             return  (ArrayList<Appointment>) response.getObjects()[0];
         }else{
-            System.out.println("Returns empty array");
+            //System.out.println("Returns empty array");
             return new ArrayList<Appointment>();
         }
     }
