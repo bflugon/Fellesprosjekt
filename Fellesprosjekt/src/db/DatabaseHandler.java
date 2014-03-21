@@ -681,7 +681,7 @@ public class DatabaseHandler {
      * @throws SQLException
      */
     public String getDateChangedForAppointment(int aID) throws SQLException{
-        PreparedStatement query = this.db.prepareStatement("SELECT DateChanged FROM person WHERE AID = ?");
+        PreparedStatement query = this.db.prepareStatement("SELECT DateChanged FROM appointment WHERE AID = ?");
         query.setInt(1,aID);
         ResultSet rs = query.executeQuery();
 

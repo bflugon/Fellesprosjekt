@@ -172,8 +172,6 @@ public class MeetingController implements Initializable {
 
             System.out.println("Invalid endDate format: " + endDateTextField.getText());
             endDateTextField.setStyle(redBorderStyling);
-        }else if (peopleToInvite == null){
-            chooseParticipantsButton.setStyle(redBorderStyling);
         }
         else {
             if (appointment.getRoom() == null) {
@@ -226,6 +224,9 @@ public class MeetingController implements Initializable {
                 ArrayList<Person> alreadyInvited = RegisterSingleton.sharedInstance().getRegister().getInvitees(appointment.getAppointmentID());
                 if (alreadyInvited != null){
                     ArrayList<Person> finalInviteList = new ArrayList<>();
+                    if (peopleToInvite == null){
+                        peopleToInvite = new ArrayList<>();
+                    }
                     for (Person pti : peopleToInvite){
                         finalInviteList.add(pti);
                         for (Person ai : alreadyInvited){
