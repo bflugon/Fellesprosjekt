@@ -146,29 +146,31 @@ public class MeetingController implements Initializable {
         String redBorderStyling = "-fx-border-color: RED; -fx-border-width: 2px;";
 
 
-        if (nameTextField.getText().equals("")){
+        if (nameTextField.getText().equals("")) {
             nameTextField.setPromptText("FYLL INN NAVN!");
             //nameTextField.setEffect(redDropShadow);
             nameTextField.setStyle(redBorderStyling);
         }
-
-        else if(!isValidTime(startTimeTextField.getText())){
+        else if (!isValidTime(startTimeTextField.getText())) {
 
             System.out.println("Invalid startTime format: " + startTimeTextField.getText());
             startTimeTextField.setStyle(redBorderStyling);
 
-        }else if(!isValidDate(startDateTextField.getText())){
+        }
+        else if (!isValidDate(startDateTextField.getText())) {
 
             System.out.println("Invalid startDate format: " + startDateTextField.getText());
             startDateTextField.setStyle(redBorderStyling);
 
-        }else if(!isValidTime(endTimeTextField.getText())){
+        }
+        else if (!isValidTime(endTimeTextField.getText())) {
 
             System.out.println("Invalid endTime format: " + endTimeTextField.getText());
             endTimeTextField.setStyle(redBorderStyling);
 
 
-        }else if(!isValidDate(endDateTextField.getText())){
+        }
+        else if (!isValidDate(endDateTextField.getText())) {
 
             System.out.println("Invalid endDate format: " + endDateTextField.getText());
             endDateTextField.setStyle(redBorderStyling);
@@ -178,44 +180,68 @@ public class MeetingController implements Initializable {
                 System.out.println("No room selected");
                 meetingRoomButton.setStyle(redBorderStyling);
 
-            } else {
+            }
+            else {
+                boolean opptatt = false;
+                ArrayList<Appointment> avtaler = RegisterSingleton.sharedInstance().getRegister().getRoomAppointments(appointment.getRoom().getRoomID());
+                for (Appointment avtale : avtaler) {
+                    int sjekk1 = GeneralUtil.stringToDate(avtale.getAppointmentStart()).compareTo(GeneralUtil.stringToDate(appointment.getAppointmentStart()));
+                    int sjekk2 = GeneralUtil.stringToDate(avtale.getAppointmentStart()).compareTo(GeneralUtil.stringToDate(appointment.getAppointmentEnd()));
+                    int sjekk3 = GeneralUtil.stringToDate(avtale.getAppointmentEnd()).compareTo(GeneralUtil.stringToDate(appointment.getAppointmentStart()));
+                    int sjekk4 = GeneralUtil.stringToDate(avtale.getAppointmentEnd()).compareTo(GeneralUtil.stringToDate(appointment.getAppointmentEnd()));
+                    //if sjekk1 < 0 = avtalen starter etter starten på andre
+                    //if sjekk2 < 0 = avtalen slutter etter starten på andre
+                    //if sjekk3 < 0 = avtalen starter etter slutten på andre
+                    //if sjekk4 < 0 = avtalen slutter etter slutten på andre
+                    //Testcommit
+                    if ( (sjekk1 < 0 && sjekk3 > 0) || (sjekk2 < 0 && sjekk4 > 0)) {
+                        opptatt = true;
+                        break;
+                    }}
+                if (opptatt) {
+                        System.out.println("Rommet er opptatt");
+                    }
+                else {
+                    appointment.setAppointmentName(nameTextField.getText());
+                    appointment.setDescription(descriptionTextArea.getText());
 
-                appointment.setAppointmentName(nameTextField.getText());
-                appointment.setDescription(descriptionTextArea.getText());
+                    String startTimeString = startDateTextField.getText() + " " + startTimeTextField.getText() + ":00";
+                    String endTimeString = endDateTextField.getText() + " " + endTimeTextField.getText() + ":00";
 
-                String startTimeString = startDateTextField.getText() + " " + startTimeTextField.getText() + ":00";
-                String endTimeString = endDateTextField.getText() + " " + endTimeTextField.getText() + ":00";
+                    Date startTime = GeneralUtil.stringToDate(startTimeString);
+                    Date endTime = GeneralUtil.stringToDate(endTimeString);
 
-                Date startTime = GeneralUtil.stringToDate(startTimeString);
-                Date endTime = GeneralUtil.stringToDate(endTimeString);
+                    appointment.setAppointmentStart(startTime);
+                    appointment.setAppointmentEnd(endTime);
 
-                appointment.setAppointmentStart(startTime);
-                appointment.setAppointmentEnd(endTime);
-
-                if (priorityToggleGroup.getSelectedToggle().equals(lowPriRadioButton)) {
-                    appointment.setPriority(1);
-                }
-                if (priorityToggleGroup.getSelectedToggle().equals(mediumPriRadioButton)) {
-                    appointment.setPriority(2);
-                }
-                if (priorityToggleGroup.getSelectedToggle().equals(highPriRadioButton)) {
-                    appointment.setPriority(3);
-                }
+                    if (priorityToggleGroup.getSelectedToggle().equals(lowPriRadioButton)) {
+                        appointment.setPriority(1);
+                    }
+                    if (priorityToggleGroup.getSelectedToggle().equals(mediumPriRadioButton)) {
+                        appointment.setPriority(2);
+                    }
+                    if (priorityToggleGroup.getSelectedToggle().equals(highPriRadioButton)) {
+                        appointment.setPriority(3);
+                    }
 
 
-                //Legger til møtet i databasen!
+                    //Legger til møtet i databasen!
 
 
-                if (isEditable){
-                    RegisterSingleton.sharedInstance().getRegister().editAppointment(appointment,appointment.getRoom());
-                }else{
-                    appointment = RegisterSingleton.sharedInstance().getRegister().addAppointment(appointment.getAppointmentName(), startTimeString, endTimeString, appointment.getDescription(), appointment.getPriority(), RegisterSingleton.sharedInstance().getRegister().getUsername(), appointment.getRoom(), appointment.getAlternativeLocation());
+                    if (isEditable) {
+                        RegisterSingleton.sharedInstance().getRegister().editAppointment(appointment, appointment.getRoom());
+                    }
+                    else {
+                        appointment = RegisterSingleton.sharedInstance().getRegister().addAppointment(appointment.getAppointmentName(), startTimeString, endTimeString, appointment.getDescription(), appointment.getPriority(), RegisterSingleton.sharedInstance().getRegister().getUsername(), appointment.getRoom(), appointment.getAlternativeLocation());
 
-                    //Finner aller personer
-//                    ArrayList<Person> allPersons = RegisterSingleton.sharedInstance().getRegister().getPersons();
-//                    for (Person p : allPersons){
-//                        RegisterSingleton.sharedInstance().getRegister().invitePerson(p, appointment);
-//                    }
+                        //Finner aller personer
+                        //                    ArrayList<Person> allPersons = RegisterSingleton.sharedInstance().getRegister().getPersons();
+                        //                    for (Person p : allPersons){
+                        //                        RegisterSingleton.sharedInstance().getRegister().invitePerson(p, appointment);
+                        //                    }
+
+                        String meetingName = nameTextField.getText();
+                    }
 
                     String meetingName = nameTextField.getText();
                 }
@@ -234,47 +260,84 @@ public class MeetingController implements Initializable {
                                 finalInviteList.remove(pti);
                             }
                         }
+                        for (Person p : finalInviteList) {
+                            RegisterSingleton.sharedInstance().getRegister().invitePerson(p, appointment);
+                            System.out.println(p.getName() + "\t was invited to meeting: " + appointment.getAppointmentName());
+                        }
+
+
                     }
-                    for (Person p : finalInviteList){
-                        RegisterSingleton.sharedInstance().getRegister().invitePerson(p, appointment);
-                        System.out.println(p.getName() + "\t was invited to meeting: " + appointment.getAppointmentName());
+                    else {
+                        for (Person p : peopleToInvite) {
+                            RegisterSingleton.sharedInstance().getRegister().invitePerson(p, appointment);
+                            System.out.println(p.getName() + "\t was invited to meeting: " + appointment.getAppointmentName());
+                        }
                     }
 
 
-                }else{
-                    for (Person p : peopleToInvite){
-                        RegisterSingleton.sharedInstance().getRegister().invitePerson(p, appointment);
-                        System.out.println(p.getName() + "\t was invited to meeting: " + appointment.getAppointmentName());
-                    }
+                    parent.updateCalendarView();
+                    GuiUtils.closeWindow(actionEvent);
                 }
-
-
-                parent.updateCalendarView();
-                GuiUtils.closeWindow(actionEvent);
             }
         }
     }
 
     private boolean isValidDate(String s){
-        if (s.length() > 10 || s.length() < 10){
-            return false;
-        }
-        if ( Character.isDigit(s.charAt(0)) && Character.isDigit(s.charAt(1))
+        if (s.length() == 10 && Character.isDigit(s.charAt(0)) && Character.isDigit(s.charAt(1))
                 && s.charAt(4) == '-' && s.charAt(7) == '-'
                 && Character.isDigit(s.charAt(2)) && Character.isDigit(s.charAt(3))
                 && Character.isDigit(s.charAt(5)) && Character.isDigit(s.charAt(6))
-                && Character.isDigit(s.charAt(8)) && Character.isDigit(s.charAt(9)) ){
-            return true;
+                && Character.isDigit(s.charAt(8)) && Character.isDigit(s.charAt(9))){
+            if (Character.isDigit(s.charAt(0)) && Character.isDigit(s.charAt(1)) && Character.isDigit(s.charAt(2)) && Character.isDigit(s.charAt(3))) {
+                String dateString = String.valueOf(s.charAt(5)) + String.valueOf(s.charAt(6));
+                int date = Integer.parseInt(dateString);
+                if (date < 13) {
+                    if (date == 1 || date == 3 || date == 5 || date == 6 | date == 8 || date == 10 || date == 12) {
+                        dateString = String.valueOf(s.charAt(8)) + String.valueOf(s.charAt(9));
+                        date = Integer.parseInt(dateString);
+                        if (date > 0 && date < 32) {
+                            return true;
+                        }
+                    } else if (date == 2) {
+                        dateString = String.valueOf(s.charAt(8)) + String.valueOf(s.charAt(9));
+                        date = Integer.parseInt(dateString);
+                        if (date > 0) {
+                            if (date < 29 && date > 0) {
+                                return true;
+                            } else if (date < 30 && date > 0) {
+                                dateString = String.valueOf(s.charAt(0)) + String.valueOf(s.charAt(1)) + String.valueOf(s.charAt(2)) + String.valueOf(s.charAt(3));
+                                date = Integer.parseInt(dateString);
+                                if (date % 4 == 0) {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                }
+                else {
+                    dateString = String.valueOf(s.charAt(8)) + String.valueOf(s.charAt(9));
+                    date = Integer.parseInt(dateString);
+                    if (date < 31 && date > 0) {
+                        return true;
+                    }
+                }
+            }
+
         }
         return false;
     }
 
     private boolean isValidTime(String s){
-        if (s.length() > 5 || s.length() < 5){
-            return false;
-        }
-        if (Character.isDigit(s.charAt(0)) && Character.isDigit(s.charAt(1)) && s.charAt(2) == ':' && Character.isDigit(s.charAt(3)) && Character.isDigit(s.charAt(4))){
-            return true;
+        if (s.length() == 5 && Character.isDigit(s.charAt(0)) && Character.isDigit(s.charAt(1)) && s.charAt(2) == ':' && Character.isDigit(s.charAt(3)) && Character.isDigit(s.charAt(4))){
+            String time = String.valueOf(s.charAt(0) + String.valueOf(s.charAt(1)));
+            int time2 = Integer.parseInt(time);
+            if (time2 < 25 && time2 > 0 ) {
+                time = String.valueOf(s.charAt(3) + String.valueOf(s.charAt(4)));
+                time2 = Integer.parseInt(time);
+                if (time2 < 60 && time2 > 0) {
+                    return true;
+                }
+            }
         }
         return false;
     }
