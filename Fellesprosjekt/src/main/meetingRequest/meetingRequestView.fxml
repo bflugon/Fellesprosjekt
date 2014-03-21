@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
-<VBox maxHeight="360.0" maxWidth="380.0" prefHeight="360.0" prefWidth="380.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.meetingRequest.MeetingRequestViewController">
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox maxHeight="391.0" maxWidth="380.0" prefHeight="391.0" prefWidth="380.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.meetingRequest.MeetingRequestViewController">
   <children>
     <AnchorPane prefHeight="322.0" prefWidth="380.0" VBox.vgrow="ALWAYS">
       <children>
@@ -15,7 +16,7 @@
         </Label><Label fx:id="nameLabel" alignment="BASELINE_CENTER" layoutX="52.0" layoutY="32.0" prefHeight="31.0" prefWidth="270.0" text="Tittel tekst" textAlignment="CENTER">
 <font>
 <Font name="System Bold" size="26.0" />
-</font></Label><Label layoutX="67.0" layoutY="75.0" text="Start:" /><Label layoutX="66.0" layoutY="110.0" text="Slutt:" /><Label layoutX="26.0" layoutY="142.0" text="Beskrivelse:" /><Label layoutX="46.0" layoutY="206.0" text="Prioritet:" /><Button fx:id="attendButton" layoutX="114.0" layoutY="283.0" mnemonicParsing="false" onAction="#attendMeetingButtonOnAction" prefHeight="26.0" prefWidth="90.0" text="Delta" /><Button fx:id="declineButton" layoutX="219.0" layoutY="283.0" mnemonicParsing="false" onAction="#declineMeetingButtonOnAction" prefHeight="26.0" prefWidth="90.0" text="Avslå" /><Label fx:id="startLabel" layoutX="120.0" layoutY="70.0" prefHeight="26.0" prefWidth="189.0" text="Start tid" /><Label fx:id="endLabel" layoutX="120.0" layoutY="105.0" prefHeight="26.0" prefWidth="182.0" text="Start tid" /><Label fx:id="priorityLabel" layoutX="113.0" layoutY="206.0" prefHeight="16.0" prefWidth="189.0" text="Valgt prioritet" /><Label fx:id="descriptionLabel" alignment="TOP_LEFT" layoutX="120.0" layoutY="137.0" prefHeight="62.0" prefWidth="182.0" text="Dette er en test av hvordan ting blir seende ut!" wrapText="true" /><Label fx:id="roomLabel" layoutX="113.0" layoutY="234.0" prefHeight="16.0" prefWidth="189.0" text="valgt møterom" /><Label layoutX="66.0" layoutY="234.0" text="Rom:" /><Label layoutX="32.0" layoutY="259.0" text="Møteleder:" /><Label fx:id="leaderLabel" layoutX="113.0" layoutY="259.0" prefHeight="16.0" prefWidth="189.0" text="møteleder" />
+</font></Label><Label layoutX="93.0" layoutY="73.0" text="Start:" /><Label layoutX="92.0" layoutY="108.0" text="Slutt:" /><Label layoutX="52.0" layoutY="140.0" text="Beskrivelse:" /><Label layoutX="72.0" layoutY="204.0" text="Prioritet:" /><Button fx:id="attendButton" layoutX="107.0" layoutY="344.0" mnemonicParsing="false" onAction="#attendMeetingButtonOnAction" prefHeight="26.0" prefWidth="90.0" text="Delta" /><Button fx:id="declineButton" layoutX="212.0" layoutY="344.0" mnemonicParsing="false" onAction="#declineMeetingButtonOnAction" prefHeight="26.0" prefWidth="90.0" text="Avslå" /><Label fx:id="startLabel" layoutX="156.0" layoutY="68.0" prefHeight="26.0" prefWidth="189.0" text="Start tid" /><Label fx:id="endLabel" layoutX="156.0" layoutY="103.0" prefHeight="26.0" prefWidth="182.0" text="Start tid" /><Label fx:id="priorityLabel" layoutX="152.0" layoutY="204.0" prefHeight="16.0" prefWidth="189.0" text="Valgt prioritet" /><Label fx:id="descriptionLabel" alignment="TOP_LEFT" layoutX="156.0" layoutY="140.0" prefHeight="62.0" prefWidth="182.0" text="Dette er en test av hvordan ting blir seende ut!" wrapText="true" /><Label fx:id="roomLabel" layoutX="153.0" layoutY="232.0" prefHeight="16.0" prefWidth="189.0" text="valgt møterom" /><Label layoutX="92.0" layoutY="232.0" text="Rom:" /><Label layoutX="58.0" layoutY="257.0" text="Møteleder:" /><Label fx:id="leaderLabel" layoutX="154.0" layoutY="258.0" prefHeight="16.0" prefWidth="189.0" text="møteleder" /><Label layoutX="8.0" layoutY="282.0" text="Din deltakerstatus:" /><Label fx:id="participantsStatusLabel" layoutX="152.0" layoutY="283.0" prefHeight="16.0" prefWidth="213.0" text="Label" /><Label fx:id="changedLabel" layoutX="152.0" layoutY="306.0" prefHeight="16.0" prefWidth="189.0" text="Label" /><Label layoutX="19.0" layoutY="306.0" text="Møte sist endret:" />
       </children>
     </AnchorPane>
   </children>

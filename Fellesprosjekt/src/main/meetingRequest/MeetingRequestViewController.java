@@ -7,9 +7,11 @@ import javafx.scene.control.Label;
 import main.RegisterSingleton;
 import main.calendar.CalendarController;
 import model.Appointment;
+import model.Person;
 import util.GuiUtils;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 /**
@@ -25,6 +27,9 @@ public class MeetingRequestViewController implements Initializable {
     public Button attendButton;
     public Button declineButton;
     public Label leaderLabel;
+    public Label changedLabel;
+    public Label participantsStatusLabel;
+
     private CalendarController parentController;
 
 
@@ -64,7 +69,49 @@ public class MeetingRequestViewController implements Initializable {
             startLabel.setText(appointment.getAppointmentStart());
             endLabel.setText(appointment.getAppointmentEnd());
             descriptionLabel.setText(appointment.getDescription());
+
+            int AID = appointment.getAppointmentID();
             leaderLabel.setText(RegisterSingleton.sharedInstance().getRegister().getPersonByUsername(appointment.getOwnerName()).getName());
+            String dateChanged = RegisterSingleton.sharedInstance().getRegister().getDateChangedForAppointment(AID);
+            System.out.println("Date changed: " + dateChanged + ", for AID: " + AID);
+            changedLabel.setText(dateChanged);
+
+            String username = RegisterSingleton.sharedInstance().getRegister().getUsername();
+            Person user = RegisterSingleton.sharedInstance().getRegister().getPersonByUsername(username);
+
+            ArrayList<Person> attendingList = RegisterSingleton.sharedInstance().getRegister().getAttendingPeople(AID);
+            ArrayList<Person> notAttendingList = RegisterSingleton.sharedInstance().getRegister().getNotAttendingPeople(AID);
+            ArrayList<Person> invitedList = RegisterSingleton.sharedInstance().getRegister().getInvitees(AID);
+            if (attendingList == null){
+                attendingList = new ArrayList<>();
+            }
+            if (notAttendingList == null){
+                notAttendingList = new ArrayList<>();
+            }
+            if (invitedList == null){
+                invitedList = new ArrayList<>();
+            }
+
+            for (Person invitedPerson : invitedList){
+                if (invitedPerson.getUsername().equals(user.getUsername())){
+                    participantsStatusLabel.setText("Du er invitert, men har ikke varslet om du deltar");
+                }
+            }
+
+            for (Person attendingPerson : attendingList){
+                if (attendingPerson.getUsername().equals(user.getUsername())){
+                    participantsStatusLabel.setText("Du deltar");
+                }
+            }
+            for (Person notAttendingPerson : notAttendingList){
+                if (notAttendingPerson.getUsername().equals(user.getUsername())){
+                    participantsStatusLabel.setText("Du deltar ikke");
+                }
+            }
+
+
+
+
 
             if (appointment.getPriority() == 0){
                 priorityLabel.setText("Lav prioritet");
