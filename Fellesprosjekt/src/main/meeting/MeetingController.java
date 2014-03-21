@@ -223,25 +223,25 @@ public class MeetingController implements Initializable {
             if (Character.isDigit(s.charAt(0)) && Character.isDigit(s.charAt(1)) && Character.isDigit(s.charAt(2)) && Character.isDigit(s.charAt(3))) {
                 String dateString = String.valueOf(s.charAt(5)) + String.valueOf(s.charAt(6));
                 int date = Integer.parseInt(dateString);
-                if (date == 1 || date == 3 || date == 5 || date == 6 | date == 8 || date == 10 || date == 12) {
-                    dateString = String.valueOf(s.charAt(8)) + String.valueOf(s.charAt(9));
-                    date = Integer.parseInt(dateString);
-                    if (date > 0 && date < 32) {
-                        return true;
-                    }
-                }
-                else if (date == 2) {
-                    dateString = String.valueOf(s.charAt(8)) + String.valueOf(s.charAt(9));
-                    date = Integer.parseInt(dateString);
-                    if (date > 0) {
-                        if (date < 29 && date > 0) {
+                if (date < 13) {
+                    if (date == 1 || date == 3 || date == 5 || date == 6 | date == 8 || date == 10 || date == 12) {
+                        dateString = String.valueOf(s.charAt(8)) + String.valueOf(s.charAt(9));
+                        date = Integer.parseInt(dateString);
+                        if (date > 0 && date < 32) {
                             return true;
                         }
-                        else if (date < 30 && date > 0) {
-                            dateString = String.valueOf(s.charAt(0)) + String.valueOf(s.charAt(1)) + String.valueOf(s.charAt(2)) + String.valueOf(s.charAt(3));
-                            date = Integer.parseInt(dateString);
-                            if (date % 4 == 0){
+                    } else if (date == 2) {
+                        dateString = String.valueOf(s.charAt(8)) + String.valueOf(s.charAt(9));
+                        date = Integer.parseInt(dateString);
+                        if (date > 0) {
+                            if (date < 29 && date > 0) {
                                 return true;
+                            } else if (date < 30 && date > 0) {
+                                dateString = String.valueOf(s.charAt(0)) + String.valueOf(s.charAt(1)) + String.valueOf(s.charAt(2)) + String.valueOf(s.charAt(3));
+                                date = Integer.parseInt(dateString);
+                                if (date % 4 == 0) {
+                                    return true;
+                                }
                             }
                         }
                     }
@@ -263,10 +263,10 @@ public class MeetingController implements Initializable {
         if (s.length() == 5 && Character.isDigit(s.charAt(0)) && Character.isDigit(s.charAt(1)) && s.charAt(2) == ':' && Character.isDigit(s.charAt(3)) && Character.isDigit(s.charAt(4))){
             String time = String.valueOf(s.charAt(0) + String.valueOf(s.charAt(1)));
             int time2 = Integer.parseInt(time);
-            if (time2 < 25 ) {
+            if (time2 < 25 && time2 > 0 ) {
                 time = String.valueOf(s.charAt(3) + String.valueOf(s.charAt(4)));
                 time2 = Integer.parseInt(time);
-                if (time2 < 60) {
+                if (time2 < 60 && time2 > 0) {
                     return true;
                 }
             }
