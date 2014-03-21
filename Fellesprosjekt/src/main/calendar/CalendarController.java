@@ -52,6 +52,10 @@ public class CalendarController implements Initializable{
     ObservableList<Appointment> appointmentsSunday;
 
     private ArrayList<Appointment> appointmentsNotAttending;
+    private ArrayList<Appointment> appointmentsAttending;
+    private ArrayList<Appointment> appointmentsCreated;
+
+
 
 
     ObservableList<Person> otherUsersAppointmentsToShow;
@@ -82,6 +86,8 @@ public class CalendarController implements Initializable{
         appointmentsSunday = FXCollections.observableArrayList();
 
         appointmentsNotAttending = new ArrayList<Appointment>();
+        appointmentsAttending = new ArrayList<Appointment>();
+        appointmentsCreated = new ArrayList<Appointment>();
 
         weekAppointments = FXCollections.observableArrayList();
         weekAppointments.addAll(appointmentsMonday,appointmentsTuesday,appointmentsWednesday,appointmentsThursday,appointmentsFriday,appointmentsSaturday,appointmentsSunday);
@@ -284,14 +290,24 @@ public class CalendarController implements Initializable{
         appointmentsSaturday.clear();
         appointmentsSunday.clear();
         appointmentsNotAttending.clear();
+        appointmentsAttending.clear();
+        appointmentsCreated.clear();
+
+
+        String username = RegisterSingleton.sharedInstance().getRegister().getUsername();
 
         if (RegisterSingleton.sharedInstance().getRegister().getHidesNotAttendingMeetings() != null &&
                 RegisterSingleton.sharedInstance().getRegister().getHidesNotAttendingMeetings() ){
 
-            appointmentsNotAttending = RegisterSingleton.sharedInstance().getRegister().getAppointmentsNotAttendingForUsername(RegisterSingleton.sharedInstance().getRegister().getUsername());
+            appointmentsNotAttending = RegisterSingleton.sharedInstance().getRegister().getAppointmentsNotAttendingForUsername(username);
             System.out.println("Appointments not attending: " + appointmentsNotAttending);
         };
 
+        appointmentsCreated = RegisterSingleton.sharedInstance().getRegister().getAppointmentsCreatedByUsername(username);
+        appointmentsAttending = RegisterSingleton.sharedInstance().getRegister().getAppointmentsAttendingForUsername(username);
+        RegisterSingleton.sharedInstance().getRegister().setAppointmentsAttending(appointmentsAttending);
+        RegisterSingleton.sharedInstance().getRegister().setAppointmentsCreated(appointmentsCreated);
+        RegisterSingleton.sharedInstance().getRegister().setAppointmentsNotAttending(appointmentsNotAttending);
 
 
 
@@ -389,6 +405,26 @@ public class CalendarController implements Initializable{
         return false;
     }
 
+    public boolean userIsAttendingAppointment(Appointment appointment){
+
+        for(Appointment a : appointmentsAttending){
+            if (a.getAppointmentID() == appointment.getAppointmentID()){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean userCreatedAppointment(Appointment appointment){
+
+        for(Appointment a : appointmentsCreated){
+            if (a.getAppointmentID() == appointment.getAppointmentID()){
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean appointmentIsThisWeek(Appointment appointment){
         Calendar appointmentDate = GeneralUtil.dateToCalendar(GeneralUtil.stringToDate(appointment.getAppointmentStart()));
 /*
@@ -412,8 +448,6 @@ public class CalendarController implements Initializable{
     public void meetingClicked(MouseEvent event) throws Exception{
         System.out.println(event.getSource());
         ListView<Appointment> listViewOfSelectedCell = (ListView<Appointment>)event.getSource();
-
-
 
         if (!listViewOfSelectedCell.getSelectionModel().getSelectedItems().isEmpty()){
 
@@ -561,6 +595,37 @@ public class CalendarController implements Initializable{
     //Calendar cell class
 
     static class CalenderCell extends ListCell<Appointment> {
+        public boolean userIsNotAttendingAppointment(Appointment appointment){
+
+            for(Appointment a :  RegisterSingleton.sharedInstance().getRegister().getAppointmentsNotAttending()){
+                if (a.getAppointmentID() == appointment.getAppointmentID()){
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public boolean userIsAttendingAppointment(Appointment appointment){
+
+            for(Appointment a :  RegisterSingleton.sharedInstance().getRegister().getAppointmentsAttending()){
+                if (a.getAppointmentID() == appointment.getAppointmentID()){
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public boolean userCreatedAppointment(Appointment appointment){
+
+            for(Appointment a : RegisterSingleton.sharedInstance().getRegister().getAppointmentsCreated()){
+                if (a.getAppointmentID() == appointment.getAppointmentID()){
+                    return true;
+                }
+            }
+            return false;
+        }
+
+
         VBox vbox = new VBox();
         Label label = new Label("(empty)");
         Pane pane = new Pane();
@@ -582,7 +647,18 @@ public class CalendarController implements Initializable{
             if (empty) {
                 setGraphic(null);
             } else {
+
                 label.setText(appointment!=null ? appointment.getAppointmentName() : "<null>");
+                if(userIsAttendingAppointment(appointment)){
+                    setTextFill(Color.GREEN);
+                }else if (userIsNotAttendingAppointment(appointment)){
+                    setTextFill(Color.LIGHTGRAY);
+                }else {
+                    setTextFill(Color.RED);
+
+                }
+
+
                 Calendar appointmentStart = GeneralUtil.dateToCalendar(GeneralUtil.stringToDate(appointment.getAppointmentStart()));
                 SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
                 String startDateText = sdf.format(appointmentStart.getTime());
