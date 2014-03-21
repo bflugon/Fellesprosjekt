@@ -60,6 +60,7 @@ public class ParticipantsController implements Initializable{
 
     private Appointment appointment;
     private MeetingController parent;
+    private ArrayList<Person> removeList;
 
 
 
@@ -73,13 +74,27 @@ public class ParticipantsController implements Initializable{
     public void confirmParticipantsButtonOnAction(ActionEvent actionEvent) {
         parent.setPeopleToInvite(new ArrayList<>((invitedPeopleTableView.getItems())));
         parent.setExternalEmails(externalEmails);
+        parent.setRemoveList(removeList);
         GuiUtils.closeWindow(actionEvent);
+    }
+
+    public void setRemoveList(ArrayList<Person> list){
+        this.removeList =list;
     }
 
     public void addSelectedParticipantButtonOnAction(ActionEvent actionEvent) {
         if (selectedPerson!=null){
             ObservableList<Person> currentInvitedPeople = invitedPeopleTableView.getItems();
             ObservableList<Person> currentAllPeople = allPersonsTableView.getItems();
+
+            ArrayList<Person> tempRemoveList = new ArrayList<>();
+            for (Person p : removeList){
+                if (selectedPerson.getUsername().equals(p.getUsername())){
+                    tempRemoveList.add(p);
+                }
+            }
+
+            currentInvitedPeople.addAll(tempRemoveList);
             currentInvitedPeople.add(selectedPerson);
             currentAllPeople.remove(selectedPerson);
             invitedPeopleTableView.setItems(currentInvitedPeople);
@@ -87,6 +102,8 @@ public class ParticipantsController implements Initializable{
             selectedPerson = null;
             selectedGroup = null;
             personToBeRemoved = null;
+
+
         }else if(selectedGroup != null){
             ObservableList<Person> currentInvitedPeople = invitedPeopleTableView.getItems();
             ObservableList<Group> currentAllGroups = allGroupsTableView.getItems();
@@ -130,6 +147,9 @@ public class ParticipantsController implements Initializable{
                 ObservableList<Person> currentList = tableViewToBeRemovedFrom.getItems();
                 ObservableList<Person> currentAllPeople = allPersonsTableView.getItems();
                 currentList.remove(personToBeRemoved);
+
+                removeList.add(personToBeRemoved);
+
                 currentAllPeople.add(personToBeRemoved);
                 tableViewToBeRemovedFrom.setItems(currentList);
                 allPersonsTableView.setItems(currentAllPeople);
@@ -142,6 +162,9 @@ public class ParticipantsController implements Initializable{
                 ObservableList<Person> currentList = listViewToBeRemovedFrom.getItems();
                 ObservableList<Person> currentAllPeople = allPersonsTableView.getItems();
                 currentList.remove(personToBeRemoved);
+
+                removeList.add(personToBeRemoved);
+
                 currentAllPeople.add(personToBeRemoved);
                 listViewToBeRemovedFrom.setItems(currentList);
                 allPersonsTableView.setItems(currentAllPeople);
