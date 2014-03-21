@@ -293,9 +293,13 @@ public class CalendarController implements Initializable{
         appointmentsSaturday.clear();
         appointmentsSunday.clear();
 
-        appointmentsAttending.clear();
-        appointmentsNotAttending.clear();
-        appointmentsCreated.clear();
+        if(appointmentsAttending != null){
+            appointmentsAttending.clear();
+        }if (appointmentsNotAttending != null){
+            appointmentsNotAttending.clear();
+        }if (appointmentsCreated != null){
+            appointmentsCreated.clear();
+        }
 
         RegisterSingleton.sharedInstance().getRegister().clearAllNoitificationsArrays();
         String username = RegisterSingleton.sharedInstance().getRegister().getUsername();

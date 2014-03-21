@@ -31,17 +31,32 @@ public class Register {
     private ObservableList<Person> selectedAdditionalPersonCalendars;
 
     public ArrayList<Appointment> getAppointmentsCreated() {
-        return appointmentsCreated;
+        if (appointmentsCreated == null){
+            return new ArrayList<>();
+        }else{
+
+            return appointmentsCreated;
+        }
     }
 
     public ArrayList<Appointment> getAppointmentsNotAttending() {
+        if (appointmentsNotAttending == null){
+            return new ArrayList<>();
+        }else{
+
+            return appointmentsNotAttending;
+        }
 
 
-        return appointmentsNotAttending;
     }
 
     public ArrayList<Appointment> getAppointmentsAttending() {
+        if (appointmentsAttending == null){
+            return new ArrayList<>();
+        }else{
+
         return appointmentsAttending;
+        }
     }
 
 
@@ -69,9 +84,9 @@ public class Register {
         this.appointmentsCreated = appointmentsCreated;
     }
 
-    private ArrayList<Appointment> appointmentsAttending;
-    private ArrayList<Appointment> appointmentsCreated;
-    private ArrayList<Appointment> appointmentsNotAttending;
+    private ArrayList<Appointment> appointmentsAttending = new ArrayList<>();
+    private ArrayList<Appointment> appointmentsCreated = new ArrayList<>();;
+    private ArrayList<Appointment> appointmentsNotAttending = new ArrayList<>();;
 
     public ArrayList<Integer> getEditedAIDS() {
 
