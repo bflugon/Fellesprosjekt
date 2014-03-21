@@ -442,6 +442,19 @@ public class MeetingController implements Initializable {
 
     }
 
+    private ArrayList<MeetingRoom> getAvailableRooms(Appointment appointment) {
+        ArrayList<MeetingRoom> available = new ArrayList<MeetingRoom>();
+        ArrayList<MeetingRoom> rooms = RegisterSingleton.sharedInstance().getRegister().getRooms();
+        for (MeetingRoom room : rooms) {
+            if (isRoomAvailable(room,appointment)){
+                available.add(room);
+            }
+        }
+        return available;
+    }
+
+
+
     private boolean isRoomAvailable(MeetingRoom room, Appointment appointment) {
         ArrayList<Appointment> avtaler = RegisterSingleton.sharedInstance().getRegister().getRoomAppointments(room.getRoomID());
         for (Appointment avtale : avtaler) {
