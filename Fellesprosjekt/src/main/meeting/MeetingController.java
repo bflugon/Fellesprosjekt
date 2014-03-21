@@ -164,8 +164,16 @@ public class MeetingController implements Initializable {
                 System.out.println("No room selected");
                 meetingRoomButton.setStyle(redBorderStyling);
 
-            } else {
+            }
+            else {
 
+                ArrayList<Appointment> avtaler = RegisterSingleton.sharedInstance().getRegister().getAppointments(appointment.getRoom().getRoomID());
+                for (Appointment avtale : avtaler) {
+                    if (false){
+                        System.out.println("Rommet er opptatt");
+                        break;
+                    }
+                }
                 appointment.setAppointmentName(nameTextField.getText());
                 appointment.setDescription(descriptionTextArea.getText());
 
