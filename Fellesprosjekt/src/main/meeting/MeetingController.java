@@ -51,6 +51,7 @@ public class MeetingController implements Initializable {
 
     private ArrayList<Person> peopleToInvite;
     private CalendarController parent;
+    private ArrayList<Person> removeList;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -91,6 +92,7 @@ public class MeetingController implements Initializable {
         RoomFinderController roomFinderController = fxmlLoader.<RoomFinderController>getController();
         roomFinderController.setAppointment(appointment);
         roomFinderController.setParentController(this);
+        roomFinderController.setAvailibleRooms(getAvailableRooms(appointment));
 
         try{
             minSize = Integer.parseInt(minSizeTextField.getText());
@@ -281,6 +283,15 @@ public class MeetingController implements Initializable {
 
                     }
                 }
+
+
+//                Slett fjernede personer, ikke implementert i register.
+//                if(removeList != null){
+//                    for (Person p : removeList){
+//                        RegisterSingleton.sharedInstance().getRegister().
+//                    }
+//
+//                }
 
 
 
@@ -479,5 +490,9 @@ public class MeetingController implements Initializable {
 
     public void setExternalEmails(ArrayList<String> ex) {
         this.externalEmails = ex;
+    }
+
+    public void setRemoveList(ArrayList<Person> removeList) {
+        this.removeList = removeList;
     }
 }

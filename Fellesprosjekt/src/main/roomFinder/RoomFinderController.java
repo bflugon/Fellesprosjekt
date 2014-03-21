@@ -37,14 +37,19 @@ public class RoomFinderController implements Initializable {
 
     //Denne må hentes fra register.
     public MeetingRoom defaultMeetingRoom;
-
+    private ArrayList<MeetingRoom> availibleRooms;
 
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
         defaultMeetingRoom = RegisterSingleton.sharedInstance().getRegister().getRoom(1);
-        romData = fetchRoomData();
+
+        if(appointment.getAppointmentID() != 0){
+            romData = FXCollections.observableArrayList(availibleRooms);
+        }else{
+            romData = fetchRoomData();
+        }
 
         capacityTableColumn.setSortType(TableColumn.SortType.ASCENDING);
         roomTableColumn.setCellValueFactory(new PropertyValueFactory<MeetingRoom, String>("roomName"));
@@ -98,19 +103,6 @@ public class RoomFinderController implements Initializable {
         ObservableList<MeetingRoom> approvedRooms = FXCollections.observableArrayList();
         ArrayList<MeetingRoom> allRooms = RegisterSingleton.sharedInstance().getRegister().getRooms();
 
-//        ObservableList<MeetingRoom> allRooms = FXCollections.observableArrayList(
-//                new MeetingRoom(12,"Rom 1", 12),
-//                new MeetingRoom(2,"Rom 2", 5),
-//                new MeetingRoom(3,"Rom 3", 4),
-//                new MeetingRoom(4,"Rom 4", 4),
-//                new MeetingRoom(5,"Rom 5", 7),
-//                new MeetingRoom(6,"Rom 6", 10),
-//                new MeetingRoom(7,"Rom 7", 10),
-//                new MeetingRoom(8,"Rom 8", 10),
-//                new MeetingRoom(9,"Rom 9", 10),
-//                new MeetingRoom(10,"Rom 10", 20),
-//                new MeetingRoom(11,"Rom 17", 7)
-//        );
 
         for (MeetingRoom r : allRooms){
             if (r.getCapacity() > this.minCapacity){
@@ -145,5 +137,10 @@ public class RoomFinderController implements Initializable {
 
     public void alternativeRoomOnAction(ActionEvent actionEvent) {
         closeOnOk(actionEvent);
+    }
+
+    public void setAvailibleRooms(ArrayList<MeetingRoom> availableRooms) {
+        this.availibleRooms = availableRooms;
+
     }
 }
