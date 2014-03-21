@@ -52,6 +52,7 @@ public class MeetingController implements Initializable {
     private ArrayList<Person> peopleToInvite;
     private CalendarController parent;
     private ArrayList<Person> removeList;
+    private String redBorderStyling = "-fx-border-color: RED; -fx-border-width: 2px;";
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -85,39 +86,82 @@ public class MeetingController implements Initializable {
 
     public void chooseRoom(ActionEvent actionEvent) throws Exception{
 
-        meetingRoomButton.setStyle("-fx-border-width: 0px;");
-        Stage newStage = new Stage();
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../roomFinder/roomFinder.fxml"));
-        Parent root = (Parent)fxmlLoader.load();
-        RoomFinderController roomFinderController = fxmlLoader.<RoomFinderController>getController();
-        roomFinderController.setAppointment(appointment);
-        roomFinderController.setParentController(this);
-        roomFinderController.setAvailibleRooms(getAvailableRooms(appointment));
 
-        try{
-            minSize = Integer.parseInt(minSizeTextField.getText());
+        if (!isValidTime(startTimeTextField.getText())) {
 
-        }catch (Exception e){
+            System.out.println("Invalid startTime format: " + startTimeTextField.getText());
+            startTimeTextField.setStyle(redBorderStyling);
+
+        }
+        else if (!isValidDate(startDateTextField.getText())) {
+
+            System.out.println("Invalid startDate format: " + startDateTextField.getText());
+            startDateTextField.setStyle(redBorderStyling);
+
+        }
+        else if (!isValidTime(endTimeTextField.getText())) {
+
+            System.out.println("Invalid endTime format: " + endTimeTextField.getText());
+            endTimeTextField.setStyle(redBorderStyling);
+
+
+        }
+        else if (!isValidDate(endDateTextField.getText())) {
+
+            System.out.println("Invalid endDate format: " + endDateTextField.getText());
+            endDateTextField.setStyle(redBorderStyling);
+        }else if (EndBeforeStartCheck()){
+            System.out.println("EndBeforeStartCheck is true");
+            endDateTextField.setStyle(redBorderStyling);
+            endTimeTextField.setStyle(redBorderStyling);
+        }else{
+
+            String startTimeString = startDateTextField.getText() + " " + startTimeTextField.getText() + ":00";
+            String endTimeString = endDateTextField.getText() + " " + endTimeTextField.getText() + ":00";
+
+            Date startTime = GeneralUtil.stringToDate(startTimeString);
+            Date endTime = GeneralUtil.stringToDate(endTimeString);
+
+            appointment.setAppointmentStart(startTime);
+            appointment.setAppointmentEnd(endTime);
+
+            meetingRoomButton.setStyle("-fx-border-width: 0px;");
+            Stage newStage = new Stage();
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../roomFinder/roomFinder.fxml"));
+            Parent root = (Parent)fxmlLoader.load();
+            RoomFinderController roomFinderController = fxmlLoader.<RoomFinderController>getController();
+            roomFinderController.setAppointment(appointment);
+            roomFinderController.setAvailibleRooms(getAvailableRooms(appointment));
+            roomFinderController.setParentController(this);
+
+            try{
+                minSize = Integer.parseInt(minSizeTextField.getText());
+
+            }catch (Exception e){
 //            e.printStackTrace();
-            System.out.println("not an int");
-            minSize = 0;
-        }
-        roomFinderController.setMinCapacity(minSize);
-
-        //Sender med riktig rom hvis det eksisterer
-        if (appointment.getRoom() != null){
-            if (appointment.getRoom().getRoomID() == 1){
-                roomFinderController.setRoom(appointment.getAlternativeLocation());
-            }else{
-                roomFinderController.setRoom(appointment.getRoom().getRoomName());
+                System.out.println("not an int");
+                minSize = 0;
             }
+            roomFinderController.setMinCapacity(minSize);
+
+            //Sender med riktig rom hvis det eksisterer
+            if (appointment.getRoom() != null){
+                if (appointment.getRoom().getRoomID() == 1){
+                    roomFinderController.setRoom(appointment.getAlternativeLocation());
+                }else{
+                    roomFinderController.setRoom(appointment.getRoom().getRoomName());
+                }
+            }
+
+            //Sender med antall personer for å finne størrelse på rom
+
+            newStage.setTitle("Velg rom");
+            newStage.setScene(new Scene(root));
+            newStage.show();
+
         }
 
-        //Sender med antall personer for å finne størrelse på rom
 
-        newStage.setTitle("Velg rom");
-        newStage.setScene(new Scene(root));
-        newStage.show();
     }
 
 
@@ -149,7 +193,7 @@ public class MeetingController implements Initializable {
 
 
     public void exitOnSave(ActionEvent actionEvent) {
-        String redBorderStyling = "-fx-border-color: RED; -fx-border-width: 2px;";
+
 
 
         if (nameTextField.getText().equals("")) {
@@ -456,18 +500,27 @@ public class MeetingController implements Initializable {
     private ArrayList<MeetingRoom> getAvailableRooms(Appointment appointment) {
         ArrayList<MeetingRoom> available = new ArrayList<MeetingRoom>();
         ArrayList<MeetingRoom> rooms = RegisterSingleton.sharedInstance().getRegister().getRooms();
-        for (MeetingRoom room : rooms) {
-            if (isRoomAvailable(room,appointment)){
-                available.add(room);
+        if (appointment == null){
+            return rooms;
+        }else{
+            for (MeetingRoom room : rooms) {
+                if (isRoomAvailable(room,appointment)){
+                    available.add(room);
+                }
             }
+            return available;
+
         }
-        return available;
+
     }
 
 
 
     private boolean isRoomAvailable(MeetingRoom room, Appointment appointment) {
         ArrayList<Appointment> avtaler = RegisterSingleton.sharedInstance().getRegister().getRoomAppointments(room.getRoomID());
+        if (avtaler == null){
+            avtaler = new ArrayList<>();
+        }
         for (Appointment avtale : avtaler) {
             int sjekk1 = GeneralUtil.stringToDate(avtale.getAppointmentStart()).compareTo(GeneralUtil.stringToDate(appointment.getAppointmentStart()));
             int sjekk2 = GeneralUtil.stringToDate(avtale.getAppointmentStart()).compareTo(GeneralUtil.stringToDate(appointment.getAppointmentEnd()));
@@ -478,9 +531,10 @@ public class MeetingController implements Initializable {
             //if sjekk3 < 0 = avtalen starter etter slutten på andre
             //if sjekk4 < 0 = avtalen slutter etter slutten på andre
             //Testcommit
-            if ( (sjekk1 < 0 && sjekk3 > 0) || (sjekk2 < 0 && sjekk4 > 0)) {
+            if ( (sjekk1 <= 0 && sjekk3 >= 0) || (sjekk2 <= 0 && sjekk4 >= 0)) {
                 return false;
-            }}
+            }
+        }
         return true;
     }
 

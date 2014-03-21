@@ -617,7 +617,7 @@ public class Register {
         if (response.getName().equals("ROOM_APPOINTMENTS")){
             return (ArrayList<Appointment>) response.getObjects()[0];
         }
-        return null;
+        return new ArrayList<>();
     }
 
     /**
