@@ -428,7 +428,6 @@ public class CalendarController implements Initializable{
     }
 
     public boolean shouldHideAppointment(Appointment appointment){
-
         if (RegisterSingleton.sharedInstance().getRegister().getHidesNotAttendingMeetings() != null &&
             RegisterSingleton.sharedInstance().getRegister().getHidesNotAttendingMeetings() == true ){
             for(Appointment a : appointmentsNotAttending){
@@ -437,7 +436,6 @@ public class CalendarController implements Initializable{
                 }
             }
         }
-
         return false;
     }
 
@@ -631,7 +629,11 @@ public class CalendarController implements Initializable{
 
     }
 
-    public void editedAppointmentNotification(int appointmentID){
+
+    //Gjør det du vil her!!!
+    public void editedAppointmentNotificationRecieved(int appointmentID){
+        RegisterSingleton.sharedInstance().getRegister().getEditedAIDS().add(appointmentID);
+        updateCalendarView();
     }
 
     //Calendar cell class
@@ -667,19 +669,33 @@ public class CalendarController implements Initializable{
             return false;
         }
 
+        public boolean isAppointmentEdited(Appointment appointment){
+
+
+            for(Integer integer : RegisterSingleton.sharedInstance().getRegister().getEditedAIDS()){
+                if(integer.intValue() == appointment.getAppointmentID()){
+                    return true;
+                }
+            }
+            return false;
+
+        }
+
 
         VBox vbox = new VBox();
         Label label = new Label("(empty)");
         Pane pane = new Pane();
         Label clockLabel = new Label("(empty)");
         Label adminLabel = new Label("");
+        Label editLabel = new Label("");
+
 
 
         String lastItem;
 
         public CalenderCell() {
             super();
-            vbox.getChildren().addAll(label, pane, clockLabel,adminLabel);
+            vbox.getChildren().addAll(label, pane, clockLabel,adminLabel,editLabel);
             HBox.setHgrow(pane, Priority.ALWAYS);
         }
 
@@ -701,6 +717,12 @@ public class CalendarController implements Initializable{
                     adminLabel.setText("Du er admin");
                 }else{
                     label.setTextFill(Color.RED);
+                }
+
+                if (isAppointmentEdited(appointment)){
+                    editLabel.setText("Møte er endret");
+                    editLabel.setTextFill(Color.PURPLE);
+
                 }
 
                 Calendar appointmentStart = GeneralUtil.dateToCalendar(GeneralUtil.stringToDate(appointment.getAppointmentStart()));
