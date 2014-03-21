@@ -150,34 +150,41 @@ public class MeetingController implements Initializable {
             nameTextField.setPromptText("FYLL INN NAVN!");
             //nameTextField.setEffect(redDropShadow);
             nameTextField.setStyle(redBorderStyling);
-        } else if (!isValidTime(startTimeTextField.getText())) {
+        }
+        else if (!isValidTime(startTimeTextField.getText())) {
 
             System.out.println("Invalid startTime format: " + startTimeTextField.getText());
             startTimeTextField.setStyle(redBorderStyling);
 
-        } else if (!isValidDate(startDateTextField.getText())) {
+        }
+        else if (!isValidDate(startDateTextField.getText())) {
 
             System.out.println("Invalid startDate format: " + startDateTextField.getText());
             startDateTextField.setStyle(redBorderStyling);
 
-        } else if (!isValidTime(endTimeTextField.getText())) {
+        }
+        else if (!isValidTime(endTimeTextField.getText())) {
 
             System.out.println("Invalid endTime format: " + endTimeTextField.getText());
             endTimeTextField.setStyle(redBorderStyling);
 
 
-        } else if (!isValidDate(endDateTextField.getText())) {
+        }
+        else if (!isValidDate(endDateTextField.getText())) {
 
             System.out.println("Invalid endDate format: " + endDateTextField.getText());
             endDateTextField.setStyle(redBorderStyling);
-        } else if (peopleToInvite == null) {
+        }
+        else if (peopleToInvite == null) {
             chooseParticipantsButton.setStyle(redBorderStyling);
-        } else {
+        }
+        else {
             if (appointment.getRoom() == null) {
                 System.out.println("No room selected");
                 meetingRoomButton.setStyle(redBorderStyling);
 
-            } else {
+            }
+            else {
                 boolean opptatt = false;
                 ArrayList<Appointment> avtaler = RegisterSingleton.sharedInstance().getRegister().getRoomAppointments(appointment.getRoom().getRoomID());
                 for (Appointment avtale : avtaler) {
@@ -189,6 +196,7 @@ public class MeetingController implements Initializable {
                     //if sjekk2 < 0 = avtalen slutter etter starten på andre
                     //if sjekk3 < 0 = avtalen starter etter slutten på andre
                     //if sjekk4 < 0 = avtalen slutter etter slutten på andre
+                    //Testcommit
                     if ( (sjekk1 < 0 && sjekk3 > 0) || (sjekk2 < 0 && sjekk4 > 0)) {
                         opptatt = true;
                         break;
@@ -225,7 +233,8 @@ public class MeetingController implements Initializable {
 
                     if (isEditable) {
                         RegisterSingleton.sharedInstance().getRegister().editAppointment(appointment, appointment.getRoom());
-                    } else {
+                    }
+                    else {
                         appointment = RegisterSingleton.sharedInstance().getRegister().addAppointment(appointment.getAppointmentName(), startTimeString, endTimeString, appointment.getDescription(), appointment.getPriority(), RegisterSingleton.sharedInstance().getRegister().getUsername(), appointment.getRoom(), appointment.getAlternativeLocation());
 
                         //Finner aller personer
@@ -255,7 +264,8 @@ public class MeetingController implements Initializable {
                         }
 
 
-                    } else {
+                    }
+                    else {
                         for (Person p : peopleToInvite) {
                             RegisterSingleton.sharedInstance().getRegister().invitePerson(p, appointment);
                             System.out.println(p.getName() + "\t was invited to meeting: " + appointment.getAppointmentName());
