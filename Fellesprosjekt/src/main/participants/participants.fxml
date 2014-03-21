@@ -24,23 +24,23 @@
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                     </columnConstraints>
                     <rowConstraints>
-<RowConstraints maxHeight="196.0" minHeight="10.0" prefHeight="29.0" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="237.0" minHeight="10.0" prefHeight="154.0" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="165.0" minHeight="10.0" prefHeight="146.0" vgrow="SOMETIMES" />
+<RowConstraints maxHeight="196.0" minHeight="10.0" prefHeight="28.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="237.0" minHeight="10.0" prefHeight="145.0" vgrow="SOMETIMES" />
+<RowConstraints maxHeight="165.0" minHeight="0.0" prefHeight="29.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="170.0" minHeight="10.0" prefHeight="118.0" vgrow="SOMETIMES" />
                         <RowConstraints maxHeight="190.0" minHeight="10.0" prefHeight="123.0" vgrow="SOMETIMES" />
                     </rowConstraints>
-                    <children><TableView fx:id="notAttendingPeopleTableView" onMouseClicked="#clickSelection" prefHeight="132.0" prefWidth="143.0" GridPane.rowIndex="2">
-                        <columns>
-                            <TableColumn fx:id="notAttendingPeopleTableColumn" prefWidth="136.0" text="Deltar ikke" />
-                        </columns>
-                    </TableView><TableView fx:id="invitedPeopleTableView" onMouseClicked="#clickSelection" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="3">
+                    <children><TableView fx:id="invitedPeopleTableView" onMouseClicked="#clickSelection" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="4">
                         <columns>
                             <TableColumn fx:id="invitedPeopleTableColumn" prefWidth="136.0" text="Inviterte" />
                         </columns>
                     </TableView><ListView fx:id="attendingPeopleListView" onMouseClicked="#clickSelection" prefHeight="182.0" prefWidth="143.0" GridPane.rowIndex="1" /><Label text="Deltar" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
 <font>
 <Font name="System Bold" size="13.0" />
-</font></Label>
+</font></Label><Label text="Deltar ikke" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+<font>
+<Font name="System Bold" size="13.0" />
+</font></Label><ListView fx:id="notAttendingPeopleListView" onMouseClicked="#clickSelection" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="3" />
                     </children>
                 </GridPane><GridPane>
                     <columnConstraints>
