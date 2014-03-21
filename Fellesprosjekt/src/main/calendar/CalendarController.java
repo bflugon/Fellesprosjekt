@@ -213,7 +213,6 @@ public class CalendarController implements Initializable{
         updateDayListViews();
         updateAlarms();
 
-
     }
 
 
@@ -370,6 +369,7 @@ public class CalendarController implements Initializable{
             });
         }
 
+        //Skal
 
         listViewMonday.setItems(appointmentsMonday);
         listViewTuesday.setItems(appointmentsTuesday);
