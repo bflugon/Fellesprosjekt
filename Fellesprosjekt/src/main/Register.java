@@ -1,5 +1,6 @@
 package main;
 
+import com.javafx.tools.doclets.formats.html.SourceToHTMLConverter;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import model.*;
@@ -29,6 +30,9 @@ public class Register {
     private ArrayList<Group> groups;
     private TreeMap<Integer, ArrayList<String>> allGroupMembers;
     private TreeMap<Integer, ArrayList<Alarm>> activeAlarms;
+    private ObservableList<Person> availableAdditionalPersonCalendars;
+    private ObservableList<Person> selectedAdditionalPersonCalendars;
+
     private String userName;
 
     public String getEmail() {
@@ -38,9 +42,54 @@ public class Register {
     private String email;
 
     private Boolean hasAlarm;
+
+    public Boolean getHidesNotAttendingMeetings() {
+        return hidesNotAttendingMeetings;
+    }
+
+    public void setHidesNotAttendingMeetings(Boolean hidesNotAttendingMeetings) {
+        this.hidesNotAttendingMeetings = hidesNotAttendingMeetings;
+    }
+
+    private Boolean hidesNotAttendingMeetings;
+
     private int hoursBeforeAlarm;
 
 
+
+    public ObservableList<Person> getAvailableAdditionalPersonCalendars() {
+
+
+        if (availableAdditionalPersonCalendars == null){
+            Packet response = this.client.request(new Packet("GET_ALL_PEOPLE"));
+            if(response.getName().equals("ALL_PERSONS")){
+                availableAdditionalPersonCalendars = FXCollections.observableArrayList();
+
+                for (Person person : (ArrayList<Person>)response.getObjects()[0]){
+
+                    System.out.println("peron username: " + person.getUsername());
+                    System.out.println("** username: " + userName);
+
+                    if (!person.getUsername().equals(userName)){
+                        availableAdditionalPersonCalendars.add(person);
+
+                    }
+                }
+
+
+            }
+        }
+
+        return availableAdditionalPersonCalendars;
+    }
+
+    public ObservableList<Person> getSelectedAdditionalPersonCalendars() {
+
+        if (selectedAdditionalPersonCalendars == null){
+            selectedAdditionalPersonCalendars = FXCollections.observableArrayList();
+        }
+        return selectedAdditionalPersonCalendars;
+    }
 
 
     public Register(Client client){
@@ -126,11 +175,20 @@ public class Register {
      * @return
      */
     public ArrayList<Appointment> getUserAppointments(String username){
-        if(this.userAppointments == null){
-            Packet response = this.client.request(new Packet("GET_USER_APPOINTMENT",username));
-            this.userAppointments = (ArrayList<Appointment>) response.getObjects()[0];
+        System.out.println(username);
+        Packet response = this.client.request(new Packet("GET_USER_APPOINTMENT",username));
+        System.out.println(response.getName());
+        if (response.getName().equals("USER_APPOINTMENT")){
+            //System.out.println("Halla" + (ArrayList<Appointment>)response.getObjects()[0]);
+
+            for (Appointment a :(ArrayList<Appointment>)response.getObjects()[0] ){
+              //System.out.println("Appointment name: "+ a.getAppointmentName());
+            }
+            return  (ArrayList<Appointment>) response.getObjects()[0];
+        }else{
+            //System.out.println("Returns empty array");
+            return new ArrayList<Appointment>();
         }
-        return userAppointments;
     }
 
     /**

@@ -22,6 +22,8 @@ import java.util.ResourceBundle;
 public class SettingsViewController implements Initializable {
 
     public CheckBox alarmCheckBox;
+    public CheckBox hideMeetingsCheckBox;
+
     public TextField hoursBeforeLabel;
 
 
@@ -31,6 +33,10 @@ public class SettingsViewController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         if (RegisterSingleton.sharedInstance().getRegister().getHasAlarm() != null){
             alarmCheckBox.setSelected(RegisterSingleton.sharedInstance().getRegister().getHasAlarm() );
+        }
+
+        if (RegisterSingleton.sharedInstance().getRegister().getHidesNotAttendingMeetings()  != null){
+            hideMeetingsCheckBox.setSelected(RegisterSingleton.sharedInstance().getRegister().getHidesNotAttendingMeetings());
         }
 
         if (RegisterSingleton.sharedInstance().getRegister().getHoursBeforeAlarm() > 0 ){
@@ -50,6 +56,12 @@ public class SettingsViewController implements Initializable {
             RegisterSingleton.sharedInstance().getRegister().setHasAlarm(true);
         }else{
             RegisterSingleton.sharedInstance().getRegister().setHasAlarm(false);
+        }
+
+        if (hideMeetingsCheckBox.isSelected() == true){
+            RegisterSingleton.sharedInstance().getRegister().setHidesNotAttendingMeetings(true);
+        }else{
+            RegisterSingleton.sharedInstance().getRegister().setHidesNotAttendingMeetings(false);
         }
 
         if (hoursBeforeLabel.getText().length() > 0 &&
