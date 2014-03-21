@@ -45,6 +45,8 @@ public class MeetingController implements Initializable {
 
     private boolean isEditable;
     private int minSize;
+    private ArrayList<String> externalEmails;
+
 
     private ArrayList<Person> peopleToInvite;
     private CalendarController parent;
@@ -131,6 +133,7 @@ public class MeetingController implements Initializable {
         participantsController.setParent(this);
         participantsController.setAppointment(appointment);
         participantsController.updateTables();
+        participantsController.setExternalEmails(externalEmails);
 
         newStage.setTitle("Velg deltakere");
         newStage.setScene(new Scene(root));
@@ -174,6 +177,10 @@ public class MeetingController implements Initializable {
 
             System.out.println("Invalid endDate format: " + endDateTextField.getText());
             endDateTextField.setStyle(redBorderStyling);
+        }else if (EndBeforeStartCheck()){
+            System.out.println("EndBeforeStartCheck is true");
+            endDateTextField.setStyle(redBorderStyling);
+            endTimeTextField.setStyle(redBorderStyling);
         }
         else {
             if (appointment.getRoom() == null) {
@@ -182,8 +189,24 @@ public class MeetingController implements Initializable {
 
             }
             else {
+
+                appointment.setAppointmentName(nameTextField.getText());
+                appointment.setDescription(descriptionTextArea.getText());
+
+                String startTimeString = startDateTextField.getText() + " " + startTimeTextField.getText() + ":00";
+                String endTimeString = endDateTextField.getText() + " " + endTimeTextField.getText() + ":00";
+
+                Date startTime = GeneralUtil.stringToDate(startTimeString);
+                Date endTime = GeneralUtil.stringToDate(endTimeString);
+
+                appointment.setAppointmentStart(startTime);
+                appointment.setAppointmentEnd(endTime);
+
                 boolean opptatt = false;
                 ArrayList<Appointment> avtaler = RegisterSingleton.sharedInstance().getRegister().getRoomAppointments(appointment.getRoom().getRoomID());
+                if (avtaler == null || appointment.getRoom().getRoomID() == 1){
+                    avtaler = new ArrayList<>();
+                }
                 for (Appointment avtale : avtaler) {
                     int sjekk1 = GeneralUtil.stringToDate(avtale.getAppointmentStart()).compareTo(GeneralUtil.stringToDate(appointment.getAppointmentStart()));
                     int sjekk2 = GeneralUtil.stringToDate(avtale.getAppointmentStart()).compareTo(GeneralUtil.stringToDate(appointment.getAppointmentEnd()));
@@ -202,17 +225,7 @@ public class MeetingController implements Initializable {
                         System.out.println("Rommet er opptatt");
                     }
                 else {
-                    appointment.setAppointmentName(nameTextField.getText());
-                    appointment.setDescription(descriptionTextArea.getText());
 
-                    String startTimeString = startDateTextField.getText() + " " + startTimeTextField.getText() + ":00";
-                    String endTimeString = endDateTextField.getText() + " " + endTimeTextField.getText() + ":00";
-
-                    Date startTime = GeneralUtil.stringToDate(startTimeString);
-                    Date endTime = GeneralUtil.stringToDate(endTimeString);
-
-                    appointment.setAppointmentStart(startTime);
-                    appointment.setAppointmentEnd(endTime);
 
                     if (priorityToggleGroup.getSelectedToggle().equals(lowPriRadioButton)) {
                         appointment.setPriority(1);
@@ -274,12 +287,48 @@ public class MeetingController implements Initializable {
                             System.out.println(p.getName() + "\t was invited to meeting: " + appointment.getAppointmentName());
                         }
                     }
+                for (String email : externalEmails){
+
+                    System.out.println("Inviterte epost: " + email);
+                    System.out.println("Appointment: " + this.appointment);
+
+                    RegisterSingleton.sharedInstance().getRegister().sendEmail(email, this.appointment);
+
+                }
+
+
 
 
                     parent.updateCalendarView();
                     GuiUtils.closeWindow(actionEvent);
             }
         }
+    }
+
+    private boolean EndBeforeStartCheck() {
+        String[] endDate = endDateTextField.getText().split("-");
+        String[] endTime = endTimeTextField.getText().split(":");
+        String[] startDate = startDateTextField.getText().split("-");
+        String[] startTime = startTimeTextField.getText().split(":");
+
+        if (Integer.parseInt(endDate[0]) < Integer.parseInt(startDate[0])){
+            System.out.println("Feil med år");
+            return true;
+        }else if(Integer.parseInt(endDate[1]) < Integer.parseInt(startDate[1])){
+            System.out.println("Feil med måned");
+            return true;
+        }else if(Integer.parseInt(endDate[2]) < Integer.parseInt(startDate[2])){
+            System.out.println("Feil med dag");
+            return true;
+        }else if(Integer.parseInt(endTime[0]) < Integer.parseInt(startTime[0])){
+            System.out.println("Feil med time");
+            return true;
+        }else if(Integer.parseInt(endTime[1]) < Integer.parseInt(startTime[1])){
+            System.out.println("Feil med minutter");
+            return true;
+        }
+        return false;
+
     }
 
     private boolean isValidDate(String s){
@@ -409,5 +458,9 @@ public class MeetingController implements Initializable {
 
     public void setPeopleToInvite(ArrayList<Person> peopleToInvite) {
         this.peopleToInvite = peopleToInvite;
+    }
+
+    public void setExternalEmails(ArrayList<String> ex) {
+        this.externalEmails = ex;
     }
 }
