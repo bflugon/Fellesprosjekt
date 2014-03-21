@@ -195,7 +195,7 @@ public class DatabaseHandler {
      * @throws SQLException
      */
     public ArrayList<Appointment> getUserAppointments(String username) throws SQLException{
-        PreparedStatement query = this.db.prepareStatement("select appointment.AID, appointment.AName, appointment.Description, appointment.Start, appointment.End, appointment.Priority, appointment.DateCreated, appointment.AlternativeLocation, isleader.Username, room.RName, room.RID, room.Capacity FROM appointment INNER JOIN isleader ON appointment.AID = isleader.AID INNER JOIN takesplace ON appointment.AID = takesplace.AID INNER JOIN room ON takesplace.RID = room.RID ORDER BY appointment.AID WHERE isleader.Username = ?");
+        PreparedStatement query = this.db.prepareStatement("select appointment.AID, appointment.AName, appointment.Description, appointment.Start, appointment.End, appointment.Priority, appointment.DateCreated, appointment.AlternativeLocation, isleader.Username, room.RName, room.RID, room.Capacity FROM appointment INNER JOIN isleader ON appointment.AID = isleader.AID AND isleader.Username = ? INNER JOIN takesplace ON appointment.AID = takesplace.AID INNER JOIN room ON takesplace.RID = room.RID ORDER BY appointment.AID WHERE isleader.Username = ?");
         query.setString(1,username);
         ResultSet rs = query.executeQuery();
 
@@ -515,8 +515,8 @@ public class DatabaseHandler {
      * @param hasAlarm
      * @throws java.sql.SQLException
      */
-    public void activateAlarm(int appointmentID, String username, int hasAlarm) throws SQLException{
-        PreparedStatement query = this.db.prepareStatement("UPDATE invitedto SET hasAlarm = ? WHERE AID = ?, Username = ?");
+    public void activateAlarm(int appointmentID, String username, int hasAlarm, String alarmDate) throws SQLException{
+        PreparedStatement query = this.db.prepareStatement("UPDATE invitedto SET hasAlarm = ? WHERE AID = ? AND Username = ?");
         query.setInt(1, hasAlarm);
         query.setInt(2, appointmentID);
         query.setString(3,username);
@@ -681,7 +681,7 @@ public class DatabaseHandler {
      * @throws SQLException
      */
     public String getDateChangedForAppointment(int aID) throws SQLException{
-        PreparedStatement query = this.db.prepareStatement("SELECT DateChanged FROM person WHERE AID = ?");
+        PreparedStatement query = this.db.prepareStatement("SELECT DateChanged FROM appointment WHERE AID = ?");
         query.setInt(1,aID);
         ResultSet rs = query.executeQuery();
 
