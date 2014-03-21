@@ -42,12 +42,14 @@ public class ParticipantsController implements Initializable{
     public TableView<Person> invitedPeopleTableView;
 
     public ListView attendingPeopleListView;
+    public ListView notAttendingPeopleListView;
 
     public TextField externalEmailTextField;
     private ArrayList<Person> allPersons;
     private ArrayList<Group> allGroups;
     private ArrayList<Person> invitedPeople;
     private ArrayList<Person> attendingPeople;
+    private ArrayList<Person> notAttendingPeople;
 
     private Person selectedPerson;
     private Group selectedGroup;
@@ -56,15 +58,15 @@ public class ParticipantsController implements Initializable{
     private ListView<Person> listViewToBeRemovedFrom;
     private ArrayList<String> externalEmails;
 
-
-
     private Appointment appointment;
+    private MeetingController parent;
+
+
 
     public void setParent(MeetingController parent) {
         this.parent = parent;
     }
 
-    private MeetingController parent;
 
 
 
@@ -85,6 +87,40 @@ public class ParticipantsController implements Initializable{
             selectedPerson = null;
             selectedGroup = null;
             personToBeRemoved = null;
+        }else if(selectedGroup != null){
+            ObservableList<Person> currentInvitedPeople = invitedPeopleTableView.getItems();
+            ObservableList<Group> currentAllGroups = allGroupsTableView.getItems();
+            ArrayList<Person> peopleToAdd = new ArrayList<>();
+
+            boolean funnet = false;
+
+            try{
+                for (Person potensialPerson : RegisterSingleton.sharedInstance().getRegister().getMembersOfGroup(selectedGroup.getGroupID())){
+                    funnet = false;
+                    for (Person gammelperson : currentInvitedPeople){
+                        if (potensialPerson.getUsername().equals(gammelperson.getUsername())){
+                            funnet = true;
+                        }
+                    }
+                    if(!funnet){
+                        peopleToAdd.add(potensialPerson);
+                    }
+                }
+                currentAllGroups.remove(selectedGroup);
+
+                currentInvitedPeople.addAll(peopleToAdd);
+
+                invitedPeopleTableView.setItems(currentInvitedPeople);
+                allGroupsTableView.setItems(currentAllGroups);
+                selectedPerson = null;
+                personToBeRemoved = null;
+                selectedGroup = null;
+
+            }catch(Exception e) {
+                System.out.println("Tom gruppe");
+            }
+
+
         }
     }
 
@@ -126,7 +162,7 @@ public class ParticipantsController implements Initializable{
 
             if (!((TableView)(e.getSource())).getSelectionModel().getSelectedCells().isEmpty()){
                 Person p = (Person)((TableView)(e.getSource())).getSelectionModel().getSelectedItem();
-//                System.out.println("Selected person: " + p);
+                System.out.println("Selected person: " + p);
                 selectedPerson = p;
                 selectedGroup = null;
                 personToBeRemoved = null;
@@ -138,7 +174,7 @@ public class ParticipantsController implements Initializable{
 
             if (!((TableView)(e.getSource())).getSelectionModel().getSelectedCells().isEmpty()){
                 Group g = (Group)((TableView)(e.getSource())).getSelectionModel().getSelectedItem();
-//                System.out.println("Selected group: " + g);
+                System.out.println("Selected group: " + RegisterSingleton.sharedInstance().getRegister().getMembersOfGroup(g.getGroupID()));
                 selectedPerson = null;
                 selectedGroup = g;
                 personToBeRemoved = null;
@@ -193,6 +229,15 @@ public class ParticipantsController implements Initializable{
 
 //                System.out.println("Person to be removed: " + p);
             }
+        }else if (e.getSource() == notAttendingPeopleListView){
+            if (((ListView)(e.getSource())).getSelectionModel().getSelectedItem() != null){
+                Person p = (Person)((ListView)(e.getSource())).getSelectionModel().getSelectedItem();
+                selectedGroup = null;
+                selectedPerson = null;
+                personToBeRemoved = p;
+                tableViewToBeRemovedFrom = null;
+                listViewToBeRemovedFrom = ((ListView<Person>)(e.getSource()));
+        }
         }
     }
 
@@ -213,7 +258,7 @@ public class ParticipantsController implements Initializable{
 
 
         invitedPeopleTableColumn.setCellValueFactory(new PropertyValueFactory<Person, String>("Name"));
-        notAttendingPeopleTableColumn.setCellFactory(new PropertyValueFactory<Person, String>("Name"));
+//        notAttendingPeopleTableColumn.setCellFactory(new PropertyValueFactory<Person, String>("Name"));
 
         attendingPeopleListView.setCellFactory(new Callback<ListView<Person>,
                         ListCell<Person>>() {
@@ -223,6 +268,16 @@ public class ParticipantsController implements Initializable{
             }
         }
         );
+
+        notAttendingPeopleListView.setCellFactory(new Callback<ListView<Person>,
+                ListCell<Person>>() {
+            @Override
+            public ListCell<Person> call(ListView<Person> personListView) {
+                return new PersonCell();
+            }
+        }
+        );
+
 
 
     }
@@ -234,14 +289,24 @@ public class ParticipantsController implements Initializable{
                 int i = appointment.getAppointmentID();
                 System.out.println("Using old attendingPoeple List");
                 System.out.println("Appointment ID: " + i);
+
+                //Henter attending people
                 attendingPeople = RegisterSingleton.sharedInstance().getRegister().getAttendingPeople(appointment.getAppointmentID());
                 System.out.println("Attending people: " + attendingPeople);
                 if(attendingPeople == null){
                     attendingPeople = new ArrayList<>();
                 }
+
+                //henter not attending people
+                notAttendingPeople = RegisterSingleton.sharedInstance().getRegister().getNotAttendingPeople(appointment.getAppointmentID());
+                System.out.println("Not attending people: " + notAttendingPeople);
+                if(notAttendingPeople == null){
+                    notAttendingPeople = new ArrayList<>();
+                }
             }else{
                 System.out.println("Createing new attendingPoeple List");
                 attendingPeople = new ArrayList<>();
+                notAttendingPeople = new ArrayList<>();
 
             }
 
@@ -259,7 +324,17 @@ public class ParticipantsController implements Initializable{
     }
 
     private void updateNotAttendingTable() {
-        //Not yet implemented, needs a way to fetch not attending people.
+
+        if (notAttendingPeople.size() > 0){
+            System.out.println("There exists not attending dudes");
+            ObservableList<Person> notAttendingPersonOL = FXCollections.observableArrayList(notAttendingPeople);
+
+//            attendingPeopleTableView.setItems(attendingPersonOL);
+            notAttendingPeopleListView.setItems(notAttendingPersonOL);
+
+        }else{
+            System.out.println("No not attending participants");
+        }
     }
 
     private void updateAttendingTable() {
@@ -377,7 +452,6 @@ public class ParticipantsController implements Initializable{
     public void setExternalEmails(ArrayList<String> ex) {
         this.externalEmails = ex;
     }
-
 
     static class PersonCell extends ListCell<Person> {
         VBox vbox = new VBox();
