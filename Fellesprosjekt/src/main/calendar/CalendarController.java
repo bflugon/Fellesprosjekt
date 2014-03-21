@@ -267,10 +267,8 @@ public class CalendarController implements Initializable{
 
         System.out.println("Name " + appointment.getAppointmentName());
 
-
         System.out.println(dateNow.getTime().compareTo(hoursEarlierDate.getTime()) );
         System.out.println( dateNow.getTime().compareTo(GeneralUtil.stringToDate(appointment.getAppointmentEnd())));
-
 
         if (dateNow.getTime().compareTo(hoursEarlierDate.getTime()) > -1 &&
             dateNow.getTime().compareTo(GeneralUtil.stringToDate(appointment.getAppointmentEnd())) < 1){
@@ -305,9 +303,20 @@ public class CalendarController implements Initializable{
 
         appointmentsCreated = RegisterSingleton.sharedInstance().getRegister().getAppointmentsCreatedByUsername(username);
         appointmentsAttending = RegisterSingleton.sharedInstance().getRegister().getAppointmentsAttendingForUsername(username);
+
+        System.out.println("YIYIIYIIYIYIIYIY");
+        System.out.println(RegisterSingleton.sharedInstance().getRegister().getAppointmentsCreatedByUsername(username));
+        System.out.println(RegisterSingleton.sharedInstance().getRegister().getAppointmentsAttendingForUsername(username));
+
+
         RegisterSingleton.sharedInstance().getRegister().setAppointmentsAttending(appointmentsAttending);
         RegisterSingleton.sharedInstance().getRegister().setAppointmentsCreated(appointmentsCreated);
         RegisterSingleton.sharedInstance().getRegister().setAppointmentsNotAttending(appointmentsNotAttending);
+
+
+        System.out.println(RegisterSingleton.sharedInstance().getRegister().getAppointmentsCreated());
+        System.out.println(RegisterSingleton.sharedInstance().getRegister().getAppointmentsAttending());
+        System.out.println(RegisterSingleton.sharedInstance().getRegister().getAppointmentsNotAttending());
 
 
 
@@ -654,42 +663,18 @@ public class CalendarController implements Initializable{
 
                 label.setText(appointment!=null ? appointment.getAppointmentName() : "<null>");
                 if(userIsAttendingAppointment(appointment)){
-                    setTextFill(Color.GREEN);
+                    label.setTextFill(Color.GREEN);
                 }else if (userIsNotAttendingAppointment(appointment)){
-                    setTextFill(Color.LIGHTGRAY);
+                    label.setTextFill(Color.LIGHTGRAY);
                 }else {
-                    setTextFill(Color.RED);
-
+                    label.setTextFill(Color.RED);
                 }
-
 
                 Calendar appointmentStart = GeneralUtil.dateToCalendar(GeneralUtil.stringToDate(appointment.getAppointmentStart()));
                 SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
                 String startDateText = sdf.format(appointmentStart.getTime());
                 clockLabel.setText(startDateText);
                 clockLabel.setTextFill(Color.GRAY);
-
-
-                /*ArrayList<Person> attendingPeople = RegisterSingleton.sharedInstance().getRegister().getAttendingPeople(appointment.getAppointmentID());
-                System.out.println(attendingPeople);*/
-
-                /*if(attendingPeople != null){
-                    for (Person person : attendingPeople){
-                        if (person != null){
-                            System.out.println(person.getName() + RegisterSingleton.sharedInstance().getRegister().getUsername());
-                            if (person.getName().equals(RegisterSingleton.sharedInstance().getRegister().getUsername())){
-                                label.setTextFill(Color.BLACK);
-                            }
-                        }else{
-                            label.setTextFill(Color.RED);
-
-                        }
-
-
-                    }
-                }*/
-
-
 
                 setGraphic(vbox);
             }
