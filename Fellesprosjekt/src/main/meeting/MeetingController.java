@@ -146,118 +146,126 @@ public class MeetingController implements Initializable {
         String redBorderStyling = "-fx-border-color: RED; -fx-border-width: 2px;";
 
 
-        if (nameTextField.getText().equals("")){
+        if (nameTextField.getText().equals("")) {
             nameTextField.setPromptText("FYLL INN NAVN!");
             //nameTextField.setEffect(redDropShadow);
             nameTextField.setStyle(redBorderStyling);
-        }
-
-        else if(!isValidTime(startTimeTextField.getText())){
+        } else if (!isValidTime(startTimeTextField.getText())) {
 
             System.out.println("Invalid startTime format: " + startTimeTextField.getText());
             startTimeTextField.setStyle(redBorderStyling);
 
-        }else if(!isValidDate(startDateTextField.getText())){
+        } else if (!isValidDate(startDateTextField.getText())) {
 
             System.out.println("Invalid startDate format: " + startDateTextField.getText());
             startDateTextField.setStyle(redBorderStyling);
 
-        }else if(!isValidTime(endTimeTextField.getText())){
+        } else if (!isValidTime(endTimeTextField.getText())) {
 
             System.out.println("Invalid endTime format: " + endTimeTextField.getText());
             endTimeTextField.setStyle(redBorderStyling);
 
 
-        }else if(!isValidDate(endDateTextField.getText())){
+        } else if (!isValidDate(endDateTextField.getText())) {
 
             System.out.println("Invalid endDate format: " + endDateTextField.getText());
             endDateTextField.setStyle(redBorderStyling);
-        }else if (peopleToInvite == null){
+        } else if (peopleToInvite == null) {
             chooseParticipantsButton.setStyle(redBorderStyling);
-        }
-        else {
+        } else {
             if (appointment.getRoom() == null) {
                 System.out.println("No room selected");
                 meetingRoomButton.setStyle(redBorderStyling);
 
-            }
-            else {
-
-                ArrayList<Appointment> avtaler = RegisterSingleton.sharedInstance().getRegister().getAppointments(appointment.getRoom().getRoomID());
+            } else {
+                boolean opptatt = false;
+                ArrayList<Appointment> avtaler = RegisterSingleton.sharedInstance().getRegister().getRoomAppointments(appointment.getRoom().getRoomID());
                 for (Appointment avtale : avtaler) {
-                    if (false){
-                        System.out.println("Rommet er opptatt");
+                    int sjekk1 = GeneralUtil.stringToDate(avtale.getAppointmentStart()).compareTo(GeneralUtil.stringToDate(appointment.getAppointmentStart()));
+                    int sjekk2 = GeneralUtil.stringToDate(avtale.getAppointmentStart()).compareTo(GeneralUtil.stringToDate(appointment.getAppointmentEnd()));
+                    int sjekk3 = GeneralUtil.stringToDate(avtale.getAppointmentEnd()).compareTo(GeneralUtil.stringToDate(appointment.getAppointmentStart()));
+                    int sjekk4 = GeneralUtil.stringToDate(avtale.getAppointmentEnd()).compareTo(GeneralUtil.stringToDate(appointment.getAppointmentEnd()));
+                    //if sjekk1 < 0 = avtalen starter etter starten på andre
+                    //if sjekk2 < 0 = avtalen slutter etter starten på andre
+                    //if sjekk3 < 0 = avtalen starter etter slutten på andre
+                    //if sjekk4 < 0 = avtalen slutter etter slutten på andre
+                    if ( (sjekk1 < 0 && sjekk3 > 0) || (sjekk2 < 0 && sjekk4 > 0)) {
+                        opptatt = true;
                         break;
+                    }}
+                if (opptatt) {
+                        System.out.println("Rommet er opptatt");
                     }
-                }
-                appointment.setAppointmentName(nameTextField.getText());
-                appointment.setDescription(descriptionTextArea.getText());
+                else {
+                    appointment.setAppointmentName(nameTextField.getText());
+                    appointment.setDescription(descriptionTextArea.getText());
 
-                String startTimeString = startDateTextField.getText() + " " + startTimeTextField.getText() + ":00";
-                String endTimeString = endDateTextField.getText() + " " + endTimeTextField.getText() + ":00";
+                    String startTimeString = startDateTextField.getText() + " " + startTimeTextField.getText() + ":00";
+                    String endTimeString = endDateTextField.getText() + " " + endTimeTextField.getText() + ":00";
 
-                Date startTime = GeneralUtil.stringToDate(startTimeString);
-                Date endTime = GeneralUtil.stringToDate(endTimeString);
+                    Date startTime = GeneralUtil.stringToDate(startTimeString);
+                    Date endTime = GeneralUtil.stringToDate(endTimeString);
 
-                appointment.setAppointmentStart(startTime);
-                appointment.setAppointmentEnd(endTime);
+                    appointment.setAppointmentStart(startTime);
+                    appointment.setAppointmentEnd(endTime);
 
-                if (priorityToggleGroup.getSelectedToggle().equals(lowPriRadioButton)) {
-                    appointment.setPriority(1);
-                }
-                if (priorityToggleGroup.getSelectedToggle().equals(mediumPriRadioButton)) {
-                    appointment.setPriority(2);
-                }
-                if (priorityToggleGroup.getSelectedToggle().equals(highPriRadioButton)) {
-                    appointment.setPriority(3);
-                }
-
-
-                //Legger til møtet i databasen!
+                    if (priorityToggleGroup.getSelectedToggle().equals(lowPriRadioButton)) {
+                        appointment.setPriority(1);
+                    }
+                    if (priorityToggleGroup.getSelectedToggle().equals(mediumPriRadioButton)) {
+                        appointment.setPriority(2);
+                    }
+                    if (priorityToggleGroup.getSelectedToggle().equals(highPriRadioButton)) {
+                        appointment.setPriority(3);
+                    }
 
 
-                if (isEditable){
-                    RegisterSingleton.sharedInstance().getRegister().editAppointment(appointment,appointment.getRoom());
-                }else{
-                    appointment = RegisterSingleton.sharedInstance().getRegister().addAppointment(appointment.getAppointmentName(), startTimeString, endTimeString, appointment.getDescription(), appointment.getPriority(), RegisterSingleton.sharedInstance().getRegister().getUsername(), appointment.getRoom(), appointment.getAlternativeLocation());
+                    //Legger til møtet i databasen!
 
-                    //Finner aller personer
-//                    ArrayList<Person> allPersons = RegisterSingleton.sharedInstance().getRegister().getPersons();
-//                    for (Person p : allPersons){
-//                        RegisterSingleton.sharedInstance().getRegister().invitePerson(p, appointment);
-//                    }
 
-                    String meetingName = nameTextField.getText();
-                }
+                    if (isEditable) {
+                        RegisterSingleton.sharedInstance().getRegister().editAppointment(appointment, appointment.getRoom());
+                    } else {
+                        appointment = RegisterSingleton.sharedInstance().getRegister().addAppointment(appointment.getAppointmentName(), startTimeString, endTimeString, appointment.getDescription(), appointment.getPriority(), RegisterSingleton.sharedInstance().getRegister().getUsername(), appointment.getRoom(), appointment.getAlternativeLocation());
 
-                //Inviterer alle personer
-                ArrayList<Person> alreadyInvited = RegisterSingleton.sharedInstance().getRegister().getInvitees(appointment.getAppointmentID());
-                if (alreadyInvited != null){
-                    ArrayList<Person> finalInviteList = new ArrayList<>();
-                    for (Person pti : peopleToInvite){
-                        finalInviteList.add(pti);
-                        for (Person ai : alreadyInvited){
-                            if(ai.getUsername().equals(pti.getUsername())){
-                                finalInviteList.remove(pti);
+                        //Finner aller personer
+                        //                    ArrayList<Person> allPersons = RegisterSingleton.sharedInstance().getRegister().getPersons();
+                        //                    for (Person p : allPersons){
+                        //                        RegisterSingleton.sharedInstance().getRegister().invitePerson(p, appointment);
+                        //                    }
+
+                        String meetingName = nameTextField.getText();
+                    }
+
+                    //Inviterer alle personer
+                    ArrayList<Person> alreadyInvited = RegisterSingleton.sharedInstance().getRegister().getInvitees(appointment.getAppointmentID());
+                    if (alreadyInvited != null) {
+                        ArrayList<Person> finalInviteList = new ArrayList<>();
+                        for (Person pti : peopleToInvite) {
+                            finalInviteList.add(pti);
+                            for (Person ai : alreadyInvited) {
+                                if (ai.getUsername().equals(pti.getUsername())) {
+                                    finalInviteList.remove(pti);
+                                }
                             }
                         }
-                    }
-                    for (Person p : finalInviteList){
-                        RegisterSingleton.sharedInstance().getRegister().invitePerson(p, appointment);
-                        System.out.println(p.getName() + "\t was invited to meeting: " + appointment.getAppointmentName());
+                        for (Person p : finalInviteList) {
+                            RegisterSingleton.sharedInstance().getRegister().invitePerson(p, appointment);
+                            System.out.println(p.getName() + "\t was invited to meeting: " + appointment.getAppointmentName());
+                        }
+
+
+                    } else {
+                        for (Person p : peopleToInvite) {
+                            RegisterSingleton.sharedInstance().getRegister().invitePerson(p, appointment);
+                            System.out.println(p.getName() + "\t was invited to meeting: " + appointment.getAppointmentName());
+                        }
                     }
 
 
-                }else{
-                    for (Person p : peopleToInvite){
-                        RegisterSingleton.sharedInstance().getRegister().invitePerson(p, appointment);
-                        System.out.println(p.getName() + "\t was invited to meeting: " + appointment.getAppointmentName());
-                    }
+                    parent.updateCalendarView();
+                    GuiUtils.closeWindow(actionEvent);
                 }
-
-
-                parent.updateCalendarView();
-                GuiUtils.closeWindow(actionEvent);
             }
         }
     }
