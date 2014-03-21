@@ -353,12 +353,13 @@ public class CalendarController implements Initializable{
             }
         }
 
-
-        if (RegisterSingleton.sharedInstance().getRegister().getAppointments() != null){
-            for (Appointment appointment : RegisterSingleton.sharedInstance().getRegister().getAppointments()){
+        if (RegisterSingleton.sharedInstance().getRegister().getUserAppointments(RegisterSingleton.sharedInstance().getRegister().getUsername()) != null){
+            for (Appointment appointment : RegisterSingleton.sharedInstance().getRegister().getUserAppointments(RegisterSingleton.sharedInstance().getRegister().getUsername())){
                 addAppointmentsToView(appointment);
-             }
+            }
         }
+
+
 
 
 

@@ -255,14 +255,11 @@ public class Register {
      */
     public ArrayList<Appointment> getUserAppointments(String username){
         System.out.println(username);
-        Packet response = this.client.request(new Packet("GET_USER_APPOINTMENT",username));
+        Packet response = this.client.request(new Packet("GET_USER_APPOINTMENTS",username));
         System.out.println(response.getName());
         if (response.getName().equals("USER_APPOINTMENT")){
             //System.out.println("Halla" + (ArrayList<Appointment>)response.getObjects()[0]);
 
-            for (Appointment a :(ArrayList<Appointment>)response.getObjects()[0] ){
-              //System.out.println("Appointment name: "+ a.getAppointmentName());
-            }
             return  (ArrayList<Appointment>) response.getObjects()[0];
         }else{
             //System.out.println("Returns empty array");
