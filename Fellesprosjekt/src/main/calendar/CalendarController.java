@@ -25,7 +25,9 @@ import main.meeting.MeetingController;
 import main.meetingRequest.MeetingRequestViewController;
 import main.settings.SettingsViewController;
 import model.Appointment;
+import model.Packet;
 import model.Person;
+import net.Client;
 import util.GeneralUtil;
 
 import java.net.URL;
@@ -74,6 +76,8 @@ public class CalendarController implements Initializable{
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        //Adds listener
+        Client.addListener(new CalendarListener());
 
         nameLabel.setText(RegisterSingleton.sharedInstance().getRegister().getPersonByUsername(RegisterSingleton.sharedInstance().getRegister().getUsername()).getName());
 
@@ -736,4 +740,15 @@ public class CalendarController implements Initializable{
         }
     }
 
+    public class CalendarListener implements Client.PacketListener{
+
+        @Override
+        public void packetSent(Packet p) {
+            //To change body of implemented methods use File | Settings | File Templates.
+            if (p.getName().equals("APP_EDITED")){
+                int aID = (Integer) p.getObjects()[0];
+                //GJØR HVA DU VIL MED AID
+            }
+        }
+    }
 }
