@@ -194,8 +194,8 @@ public class DatabaseHandler {
      * @return
      * @throws SQLException
      */
-    public ArrayList<Appointment> getUserAppointments(String username) throws SQLException{
-        PreparedStatement query = this.db.prepareStatement("select appointment.AID, appointment.AName, appointment.Description, appointment.Start, appointment.End, appointment.Priority, appointment.DateCreated, appointment.AlternativeLocation, isleader.Username, room.RName, room.RID, room.Capacity FROM appointment INNER JOIN isleader ON appointment.AID = isleader.AID AND isleader.Username = ? INNER JOIN takesplace ON appointment.AID = takesplace.AID INNER JOIN room ON takesplace.RID = room.RID ORDER BY appointment.AID WHERE isleader.Username = ?");
+    public ArrayList<Appointment> getUserOwnerAppointments(String username) throws SQLException{
+        PreparedStatement query = this.db.prepareStatement("select appointment.AID, appointment.AName, appointment.Description, appointment.Start, appointment.End, appointment.Priority, appointment.DateCreated, appointment.AlternativeLocation, isleader.Username, room.RName, room.RID, room.Capacity FROM appointment INNER JOIN isleader ON appointment.AID = isleader.AID AND isleader.Username = ? INNER JOIN takesplace ON appointment.AID = takesplace.AID INNER JOIN room ON takesplace.RID = room.RID ORDER BY appointment.AID");
         query.setString(1,username);
         ResultSet rs = query.executeQuery();
 
@@ -208,6 +208,47 @@ public class DatabaseHandler {
 
         while(rs.next()){
             results.add(new Appointment(rs.getInt("AID"),rs.getString("Username"),rs.getString("AName"), rs.getTimestamp("Start"), rs.getTimestamp("End"), rs.getInt("Priority"), rs.getString("Description"), rs.getTimestamp("DateCreated"), new MeetingRoom(rs.getInt("RID"),rs.getString("RName"), rs.getInt("Capacity")),rs.getString("AlternativeLocation")));
+        }
+        return results;
+    }
+
+    public ArrayList<Person> getPeopleInvitedToAppointment(int AID) throws SQLException{
+        PreparedStatement query = this.db.prepareStatement("SELECT * FROM invitedto WHERE AID = ?");
+        query.setInt(1,AID);
+        ResultSet rs = query.executeQuery();
+        if (!rs.next()){
+            return null;
+        }
+
+        ArrayList<Person> results = new ArrayList<Person>();
+        results.add(this.getPersonByUsername(rs.getString("Username")));
+        while(rs.next()){
+            results.add(this.getPersonByUsername(rs.getString("Username")));
+        }
+        return results;
+    }
+
+    public ArrayList<Appointment> getAppointmentsInvitedTo(String username) throws SQLException{
+        PreparedStatement query = this.db.prepareStatement("SELECT * FROM invitedto WHERE Username = ?");
+        query.setString(1,username);
+        ResultSet rs = query.executeQuery();
+        if (!rs.next()){
+            return null;
+        }
+
+        ArrayList<Appointment> results = new ArrayList<>();
+        results.add(this.getAppointment(rs.getInt("AID")));
+        while(rs.next()){
+            results.add(this.getAppointment(rs.getInt("AID")));
+        }
+        return results;
+    }
+
+    public ArrayList<Appointment> getUserAppointments(String username) throws SQLException{
+        ArrayList<Appointment> results = this.getUserOwnerAppointments(username);
+        results.addAll(this.getAppointmentsInvitedTo(username));
+        for(Appointment a : results){
+            System.out.println(a.toString());
         }
         return results;
     }
