@@ -74,6 +74,10 @@ public class Register {
     private ArrayList<Appointment> appointmentsNotAttending;
 
     public ArrayList<Integer> getEditedAIDS() {
+
+        if (editedAIDS == null){
+            editedAIDS = new ArrayList<Integer>();
+        }
         return editedAIDS;
     }
 
