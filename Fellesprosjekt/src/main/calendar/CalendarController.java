@@ -287,10 +287,12 @@ public class CalendarController implements Initializable{
         appointmentsFriday.clear();
         appointmentsSaturday.clear();
         appointmentsSunday.clear();
-        appointmentsNotAttending.clear();
+
         appointmentsAttending.clear();
+        appointmentsNotAttending.clear();
         appointmentsCreated.clear();
 
+        RegisterSingleton.sharedInstance().getRegister().clearAllNoitificationsArrays();
 
         String username = RegisterSingleton.sharedInstance().getRegister().getUsername();
 
@@ -301,8 +303,26 @@ public class CalendarController implements Initializable{
             System.out.println("Appointments not attending: " + appointmentsNotAttending);
         };
 
+
+        if(appointmentsNotAttending == null){
+            appointmentsAttending = new ArrayList<Appointment>();
+
+        }
+
+        if(appointmentsCreated == null){
+            appointmentsAttending = new ArrayList<Appointment>();
+
+        }
+
+        if(appointmentsAttending == null){
+            appointmentsAttending = new ArrayList<Appointment>();
+
+        }
+
         appointmentsCreated = RegisterSingleton.sharedInstance().getRegister().getAppointmentsCreatedByUsername(username);
         appointmentsAttending = RegisterSingleton.sharedInstance().getRegister().getAppointmentsAttendingForUsername(username);
+
+
 
         System.out.println("YIYIIYIIYIYIIYIY");
         System.out.println(RegisterSingleton.sharedInstance().getRegister().getAppointmentsCreatedByUsername(username));

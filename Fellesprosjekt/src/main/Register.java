@@ -87,6 +87,12 @@ public class Register {
 
     private String email;
 
+
+
+
+
+
+
     private Boolean hasAlarm;
 
     public Boolean getHidesNotAttendingMeetings() {
@@ -95,6 +101,16 @@ public class Register {
 
     public void setHidesNotAttendingMeetings(Boolean hidesNotAttendingMeetings) {
         this.hidesNotAttendingMeetings = hidesNotAttendingMeetings;
+    }
+
+    public void clearAllNoitificationsArrays(){
+         if(appointmentsAttending != null &&
+            appointmentsNotAttending != null &&
+            appointmentsCreated != null){
+             appointmentsCreated.clear();
+             appointmentsNotAttending.clear();
+             appointmentsCreated.clear();
+         }
     }
 
     private Boolean hidesNotAttendingMeetings;
