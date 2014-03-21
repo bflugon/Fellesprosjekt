@@ -368,6 +368,7 @@ public class CalendarController implements Initializable{
                 Parent root = (Parent)fxmlLoader.load();
                 MeetingController meetingController = fxmlLoader.<MeetingController>getController();
                 meetingController.setAppointment(selectedAppointment);
+                meetingController.setMinSizeTextField(RegisterSingleton.sharedInstance().getRegister().getInvitees(selectedAppointment.getAppointmentID()).size());
                 meetingController.setEditable(true);
                 meetingController.setParent(this);
                 newStage.setScene(new Scene(root));
