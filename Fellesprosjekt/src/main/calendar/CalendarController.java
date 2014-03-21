@@ -278,6 +278,7 @@ public class CalendarController implements Initializable{
             dateNow.getTime().compareTo(GeneralUtil.stringToDate(appointment.getAppointmentEnd())) < 1){
             return true;
         }
+
         return false;
     }
 
@@ -297,12 +298,10 @@ public class CalendarController implements Initializable{
         appointmentsCreated.clear();
 
         RegisterSingleton.sharedInstance().getRegister().clearAllNoitificationsArrays();
-
         String username = RegisterSingleton.sharedInstance().getRegister().getUsername();
 
         if (RegisterSingleton.sharedInstance().getRegister().getHidesNotAttendingMeetings() != null &&
                 RegisterSingleton.sharedInstance().getRegister().getHidesNotAttendingMeetings() ){
-
             appointmentsNotAttending = RegisterSingleton.sharedInstance().getRegister().getAppointmentsNotAttendingForUsername(username);
             System.out.println("Appointments not attending: " + appointmentsNotAttending);
         };
@@ -310,15 +309,12 @@ public class CalendarController implements Initializable{
         appointmentsNotAttending = RegisterSingleton.sharedInstance().getRegister().getAppointmentsNotAttendingForUsername(username);
 
 
-
         if(appointmentsNotAttending == null){
             appointmentsAttending = new ArrayList<Appointment>();
-
         }
 
         if(appointmentsCreated == null){
             appointmentsAttending = new ArrayList<Appointment>();
-
         }
 
         if(appointmentsAttending == null){
@@ -353,9 +349,14 @@ public class CalendarController implements Initializable{
             }
         }
 
-        for (Appointment appointment : RegisterSingleton.sharedInstance().getRegister().getAppointments()){
-            addAppointmentsToView(appointment);
+
+        if (RegisterSingleton.sharedInstance().getRegister().getAppointments() != null){
+            for (Appointment appointment : RegisterSingleton.sharedInstance().getRegister().getAppointments()){
+                addAppointmentsToView(appointment);
+            }
         }
+
+
 
         for (ObservableList<Appointment> dayAppointments : weekAppointments){
             Collections.sort(dayAppointments, new Comparator<Appointment>() {
@@ -492,6 +493,22 @@ public class CalendarController implements Initializable{
             System.out.println(listViewOfSelectedCell.getSelectionModel().getSelectedItem());
 
             Appointment selectedAppointment = listViewOfSelectedCell.getSelectionModel().getSelectedItem();
+
+            //RegisterSingleton.sharedInstance().getRegister().getEditedAIDS().remove();
+
+
+            //for(int )
+            int count = 0;
+            for(Integer i : RegisterSingleton.sharedInstance().getRegister().getEditedAIDS()){
+                if (i.intValue() == selectedAppointment.getAppointmentID()){
+                    break;
+                }
+                count ++;
+            }
+            if (RegisterSingleton.sharedInstance().getRegister().getEditedAIDS().size() > 0){
+                RegisterSingleton.sharedInstance().getRegister().getEditedAIDS().remove(count);
+            }
+
             if (selectedAppointment.getOwnerName().equals(RegisterSingleton.sharedInstance().getRegister().getUsername())){
                 System.out.println("User made meeting");
 
@@ -685,15 +702,12 @@ public class CalendarController implements Initializable{
 
         }
 
-
         VBox vbox = new VBox();
         Label label = new Label("(empty)");
         Pane pane = new Pane();
         Label clockLabel = new Label("(empty)");
         Label adminLabel = new Label("");
         Label editLabel = new Label("");
-
-
 
         String lastItem;
 
@@ -747,6 +761,8 @@ public class CalendarController implements Initializable{
             //To change body of implemented methods use File | Settings | File Templates.
             if (p.getName().equals("APP_EDITED")){
                 int aID = (Integer) p.getObjects()[0];
+                System.out.println("App was edited");
+                RegisterSingleton.sharedInstance().getRegister().getEditedAIDS().add(aID);
                 //GJØR HVA DU VIL MED AID
             }
         }
