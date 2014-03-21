@@ -371,6 +371,7 @@ public class CalendarController implements Initializable{
 
         //Skal
         //komme
+        //til
 
         listViewMonday.setItems(appointmentsMonday);
         listViewTuesday.setItems(appointmentsTuesday);
