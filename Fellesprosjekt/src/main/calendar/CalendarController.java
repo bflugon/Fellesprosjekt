@@ -712,12 +712,14 @@ public class CalendarController implements Initializable{
         Label clockLabel = new Label("(empty)");
         Label adminLabel = new Label("");
         Label editLabel = new Label("");
+        Label invitedLabel = new Label("");
+
 
         String lastItem;
 
         public CalenderCell() {
             super();
-            vbox.getChildren().addAll(label, pane, clockLabel,adminLabel,editLabel);
+            vbox.getChildren().addAll(label, pane, clockLabel,invitedLabel,adminLabel,editLabel);
             HBox.setHgrow(pane, Priority.ALWAYS);
         }
 
@@ -752,6 +754,23 @@ public class CalendarController implements Initializable{
                 String startDateText = sdf.format(appointmentStart.getTime());
                 clockLabel.setText(startDateText);
                 clockLabel.setTextFill(Color.GRAY);
+
+                int invitees;
+                if (RegisterSingleton.sharedInstance().getRegister().getInvitees(appointment.getAppointmentID()) != null){
+                    invitees = RegisterSingleton.sharedInstance().getRegister().getInvitees(appointment.getAppointmentID()).size();
+                }else{
+                    invitees = 0;
+                }
+
+                int attendees;
+                if (RegisterSingleton.sharedInstance().getRegister().getAttendingPeople(appointment.getAppointmentID()) != null){
+                    attendees = RegisterSingleton.sharedInstance().getRegister().getAttendingPeople(appointment.getAppointmentID()).size();
+                }else{
+                    attendees = 0;
+                }
+
+                invitedLabel.setText("("+attendees + "/" + invitees +")");
+
 
                 setGraphic(vbox);
             }
