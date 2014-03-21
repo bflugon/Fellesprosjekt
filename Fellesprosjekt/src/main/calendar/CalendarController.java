@@ -51,6 +51,8 @@ public class CalendarController implements Initializable{
     ObservableList<Appointment> appointmentsSaturday;
     ObservableList<Appointment> appointmentsSunday;
 
+    private ArrayList<Appointment> appointmentsNotAttending;
+
 
     ObservableList<Person> otherUsersAppointmentsToShow;
     ObservableList<Person> allCalendarUsers;
@@ -78,6 +80,8 @@ public class CalendarController implements Initializable{
         appointmentsFriday = FXCollections.observableArrayList();
         appointmentsSaturday = FXCollections.observableArrayList();
         appointmentsSunday = FXCollections.observableArrayList();
+
+        appointmentsNotAttending = new ArrayList<Appointment>();
 
         weekAppointments = FXCollections.observableArrayList();
         weekAppointments.addAll(appointmentsMonday,appointmentsTuesday,appointmentsWednesday,appointmentsThursday,appointmentsFriday,appointmentsSaturday,appointmentsSunday);
@@ -279,11 +283,27 @@ public class CalendarController implements Initializable{
         appointmentsFriday.clear();
         appointmentsSaturday.clear();
         appointmentsSunday.clear();
+        appointmentsNotAttending.clear();
+
+        if (RegisterSingleton.sharedInstance().getRegister().getHidesNotAttendingMeetings() != null &&
+                RegisterSingleton.sharedInstance().getRegister().getHidesNotAttendingMeetings() ){
+
+            appointmentsNotAttending = RegisterSingleton.sharedInstance().getRegister().getAppointmentsNotAttendingForUsername(RegisterSingleton.sharedInstance().getRegister().getUsername());
+            System.out.println("Appointments not attending: " + appointmentsNotAttending);
+        };
+
+
+
+
+        for (Person person : RegisterSingleton.sharedInstance().getRegister().getSelectedAdditionalPersonCalendars()){
+            for (Appointment appointment : RegisterSingleton.sharedInstance().getRegister().getUserAppointments(person.getUsername())){
+                addAppointmentsToView(appointment);
+            }
+        }
 
         for (Appointment appointment : RegisterSingleton.sharedInstance().getRegister().getAppointments()){
             addAppointmentsToView(appointment);
         }
-
 
         for (ObservableList<Appointment> dayAppointments : weekAppointments){
             Collections.sort(dayAppointments, new Comparator<Appointment>() {
@@ -292,7 +312,6 @@ public class CalendarController implements Initializable{
                 }
             });
         }
-
 
 
         listViewMonday.setItems(appointmentsMonday);
@@ -307,19 +326,50 @@ public class CalendarController implements Initializable{
     public void addAppointmentsToView(Appointment appointment){
         if (appointmentIsThisWeek(appointment)){
             switch (GeneralUtil.dateToCalendar(GeneralUtil.stringToDate(appointment.getAppointmentStart())).get(Calendar.DAY_OF_WEEK)) {
-                case 1:  appointmentsSunday.add(appointment);
+                case 1:{
+                    if (!appointmentsSunday.contains(appointment) && !shouldHideAppointment(appointment)){
+                        appointmentsSunday.add(appointment);
+                    }
+                }
                     break;
-                case 2:  appointmentsMonday.add(appointment);
+                case 2: {
+                    if (!appointmentsMonday.contains(appointment) && !shouldHideAppointment(appointment)){
+                        appointmentsMonday.add(appointment);
+                    }
+                }
                     break;
-                case 3:  appointmentsTuesday.add(appointment);
+                case 3:  {
+
+                    if (!appointmentsTuesday.contains(appointment) && !shouldHideAppointment(appointment)){
+                        appointmentsTuesday.add(appointment);
+                    }
+                }
                     break;
-                case 4:  appointmentsWednesday.add(appointment);
+                case 4: {
+                    if (!appointmentsWednesday.contains(appointment) && !shouldHideAppointment(appointment)){
+                        appointmentsWednesday.add(appointment);
+                    }
+
+                }
                     break;
-                case 5:  appointmentsThursday.add(appointment);
+                case 5: {
+                    if (!appointmentsThursday.contains(appointment) && !shouldHideAppointment(appointment)){
+                        appointmentsThursday.add(appointment);
+                    }
+                }
                     break;
-                case 6:  appointmentsFriday.add(appointment);
+                case 6: {
+
+                    if (!appointmentsFriday.contains(appointment) && !shouldHideAppointment(appointment)){
+                        appointmentsFriday.add(appointment);
+                    }
+                }
                     break;
-                case 7:  appointmentsSaturday.add(appointment);
+                case 7: {
+                    if (!appointmentsSaturday.contains(appointment) && !shouldHideAppointment(appointment)){
+                        appointmentsSaturday.add(appointment);
+                    }
+                }
                     break;
                 default:
                     break;
@@ -327,6 +377,16 @@ public class CalendarController implements Initializable{
 
 
         }
+    }
+
+    public boolean shouldHideAppointment(Appointment appointment){
+
+        for(Appointment a : appointmentsNotAttending){
+            if (a.getAppointmentID() == appointment.getAppointmentID()){
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean appointmentIsThisWeek(Appointment appointment){
