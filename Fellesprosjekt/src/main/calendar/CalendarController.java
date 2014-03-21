@@ -570,7 +570,7 @@ public class CalendarController implements Initializable{
     public void settingsButtonPressed(ActionEvent actionEvent) throws  Exception{
 
         Stage newStage = new Stage();
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../settings/settings.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../settings/settingsView.fxml"));
         Parent root = (Parent)fxmlLoader.load();
         SettingsViewController settingsViewController = fxmlLoader.<SettingsViewController>getController();
         settingsViewController.setParentController(this);
