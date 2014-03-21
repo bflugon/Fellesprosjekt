@@ -439,11 +439,15 @@ public class CalendarController implements Initializable{
     public boolean shouldHideAppointment(Appointment appointment){
         if (RegisterSingleton.sharedInstance().getRegister().getHidesNotAttendingMeetings() != null &&
             RegisterSingleton.sharedInstance().getRegister().getHidesNotAttendingMeetings() == true ){
-            for(Appointment a : appointmentsNotAttending){
-                if (a.getAppointmentID() == appointment.getAppointmentID()){
-                    return true;
+
+            if (appointmentsNotAttending != null){
+                for(Appointment a : appointmentsNotAttending){
+                    if (a.getAppointmentID() == appointment.getAppointmentID()){
+                        return true;
+                    }
                 }
             }
+
         }
         return false;
     }
