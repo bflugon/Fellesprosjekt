@@ -186,9 +186,22 @@ public class MeetingController implements Initializable {
 
             }
             else {
+
+                appointment.setAppointmentName(nameTextField.getText());
+                appointment.setDescription(descriptionTextArea.getText());
+
+                String startTimeString = startDateTextField.getText() + " " + startTimeTextField.getText() + ":00";
+                String endTimeString = endDateTextField.getText() + " " + endTimeTextField.getText() + ":00";
+
+                Date startTime = GeneralUtil.stringToDate(startTimeString);
+                Date endTime = GeneralUtil.stringToDate(endTimeString);
+
+                appointment.setAppointmentStart(startTime);
+                appointment.setAppointmentEnd(endTime);
+
                 boolean opptatt = false;
                 ArrayList<Appointment> avtaler = RegisterSingleton.sharedInstance().getRegister().getRoomAppointments(appointment.getRoom().getRoomID());
-                if (avtaler == null){
+                if (avtaler == null || appointment.getRoom().getRoomID() == 1){
                     avtaler = new ArrayList<>();
                 }
                 for (Appointment avtale : avtaler) {
@@ -209,17 +222,7 @@ public class MeetingController implements Initializable {
                         System.out.println("Rommet er opptatt");
                     }
                 else {
-                    appointment.setAppointmentName(nameTextField.getText());
-                    appointment.setDescription(descriptionTextArea.getText());
 
-                    String startTimeString = startDateTextField.getText() + " " + startTimeTextField.getText() + ":00";
-                    String endTimeString = endDateTextField.getText() + " " + endTimeTextField.getText() + ":00";
-
-                    Date startTime = GeneralUtil.stringToDate(startTimeString);
-                    Date endTime = GeneralUtil.stringToDate(endTimeString);
-
-                    appointment.setAppointmentStart(startTime);
-                    appointment.setAppointmentEnd(endTime);
 
                     if (priorityToggleGroup.getSelectedToggle().equals(lowPriRadioButton)) {
                         appointment.setPriority(1);
@@ -312,18 +315,6 @@ public class MeetingController implements Initializable {
             return true;
         }
         return false;
-//
-//        System.out.println("TIDER:");
-//        for (String s : endDate){
-//            System.out.println(s);;
-//        }
-//        for (String s : endTime){
-//            System.out.println(s);
-//        }
-//        System.out.println(endDate);
-//        System.out.println(endTime);
-//        System.out.println(startDate);
-//        System.out.println(startTime);
 
     }
 
