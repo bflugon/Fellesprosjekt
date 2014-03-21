@@ -19,8 +19,6 @@ import java.util.TreeMap;
 public class Register {
     private final Client client;
 
-
-
     private ArrayList<Person> persons;
     private ArrayList<Appointment> appointments;
     private ArrayList<Appointment> userAppointments;
@@ -37,6 +35,8 @@ public class Register {
     }
 
     public ArrayList<Appointment> getAppointmentsNotAttending() {
+
+
         return appointmentsNotAttending;
     }
 
@@ -46,20 +46,38 @@ public class Register {
 
 
     public void setAppointmentsNotAttending(ArrayList<Appointment> appointmentsNotAttending) {
+
+        if(appointmentsNotAttending == null){
+            this.appointmentsNotAttending = new ArrayList<Appointment>();
+        }
         this.appointmentsNotAttending = appointmentsNotAttending;
     }
 
     public void setAppointmentsAttending(ArrayList<Appointment> appointmentsAttending) {
+
+        if(appointmentsAttending == null){
+           appointmentsAttending =  new ArrayList<Appointment>();
+        }
+
         this.appointmentsAttending = appointmentsAttending;
     }
 
     public void setAppointmentsCreated(ArrayList<Appointment> appointmentsCreated) {
+        if(appointmentsCreated == null){
+            appointmentsCreated = new ArrayList<Appointment>();
+        }
         this.appointmentsCreated = appointmentsCreated;
     }
 
     private ArrayList<Appointment> appointmentsAttending;
     private ArrayList<Appointment> appointmentsCreated;
     private ArrayList<Appointment> appointmentsNotAttending;
+
+    public ArrayList<Integer> getEditedAIDS() {
+        return editedAIDS;
+    }
+
+    private ArrayList<Integer> editedAIDS;
 
     private String userName;
 
@@ -82,8 +100,6 @@ public class Register {
     private Boolean hidesNotAttendingMeetings;
 
     private int hoursBeforeAlarm;
-
-
 
     public ObservableList<Person> getAvailableAdditionalPersonCalendars() {
 

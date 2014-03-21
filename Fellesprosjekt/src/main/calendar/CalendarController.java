@@ -592,10 +592,14 @@ public class CalendarController implements Initializable{
 
     }
 
+    public void editedAppointmentNotification(int appointmentID){
+    }
+
     //Calendar cell class
 
     static class CalenderCell extends ListCell<Appointment> {
         public boolean userIsNotAttendingAppointment(Appointment appointment){
+
 
             for(Appointment a :  RegisterSingleton.sharedInstance().getRegister().getAppointmentsNotAttending()){
                 if (a.getAppointmentID() == appointment.getAppointmentID()){
