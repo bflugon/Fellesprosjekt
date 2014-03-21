@@ -182,7 +182,7 @@ public class Register {
             //System.out.println("Halla" + (ArrayList<Appointment>)response.getObjects()[0]);
 
             for (Appointment a :(ArrayList<Appointment>)response.getObjects()[0] ){
-                //System.out.println("Appointment name: "+ a.getAppointmentName());
+              //System.out.println("Appointment name: "+ a.getAppointmentName());
             }
             return  (ArrayList<Appointment>) response.getObjects()[0];
         }else{
