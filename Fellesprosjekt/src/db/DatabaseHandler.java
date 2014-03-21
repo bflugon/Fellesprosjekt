@@ -301,7 +301,7 @@ public class DatabaseHandler {
         query.executeUpdate();
 
         editTakesPlace(aID, mr);
-        broadcast(new Packet("APP_UPDATED",this.getAllAppointments()));
+        broadcast(new Packet("APP_EDITED",aID));
     }
 
     /**

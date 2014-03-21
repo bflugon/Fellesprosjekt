@@ -24,7 +24,7 @@ public class Client{
     private ObjectInputStream clientRequestInput;
     private ObjectOutputStream clientRequestOutput;
     private String ip;
-    private ArrayList<PacketListener> packetListeners;
+    private static ArrayList<PacketListener> packetListeners;
 
     /**
      * Constructor. Creates connection to the server.
@@ -91,7 +91,7 @@ public class Client{
      * Adds listener.
      * @param packetListener
      */
-    public void addListener (PacketListener packetListener){
+    public static void addListener (PacketListener packetListener){
         packetListeners.add(packetListener);
     }
 

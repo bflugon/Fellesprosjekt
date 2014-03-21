@@ -1,6 +1,5 @@
 package main;
 
-import com.javafx.tools.doclets.formats.html.SourceToHTMLConverter;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import model.*;
@@ -123,7 +122,7 @@ public class Register {
 
     public Register(Client client){
         this.client = client;
-        this.client.addListener(new registerPacketListener());
+        Client.addListener(new registerPacketListener());
 
         //Checks that the server is connected to the database
         this.client.request(new Packet("CONNECTING"));
@@ -571,6 +570,21 @@ public class Register {
             return (ArrayList<Appointment>) response.getObjects()[0];
         }
         return null;
+    }
+
+    /**
+     * Function to send out emails.
+     * @param recipient
+     * @param appointment
+     * @return
+     */
+    public boolean sendEmail(String recipient, Appointment appointment){
+        Packet response = this.client.request(new Packet("SEND_EMAIL", recipient, appointment));
+        if(response.getName().equals("MAIL_SENT")){
+            return true;
+        } else{
+            return false;
+        }
     }
 
     /**

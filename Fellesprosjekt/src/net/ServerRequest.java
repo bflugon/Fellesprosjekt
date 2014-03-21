@@ -208,7 +208,7 @@ public class ServerRequest {
     }
 
     private Packet getAppointmentsCreatedByUsername(String username) throws SQLException{
-        return new Packet("GOT_APP_C_U",db);
+        return new Packet("GOT_APP_C_U",db.getAppointmentsCreatedByUser(username));
     }
 
     private Packet getAppointmentsNotAttendingForUsername(String username) throws SQLException{

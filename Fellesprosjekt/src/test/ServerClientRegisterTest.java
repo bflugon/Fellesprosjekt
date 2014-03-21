@@ -6,6 +6,7 @@ import model.Group;
 import model.MeetingRoom;
 import model.Person;
 import net.Client;
+import util.GeneralUtil;
 
 import java.util.ArrayList;
 
@@ -27,6 +28,8 @@ public class ServerClientRegisterTest {
         ArrayList<Group> groups = reg.getGroups();
         ArrayList<MeetingRoom> meetingRooms = reg.getRooms();
         reg.getAllMembersOfGroup();
+
+        GeneralUtil.sendEmail("markuslund92@gmail.com",appointments.get(0));
 
         //System.out.println(reg.getPersonByUsername("herp").toString());
         //System.out.println(reg.getGroup(1).getGroupName());
